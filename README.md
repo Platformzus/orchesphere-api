@@ -46,7 +46,7 @@ The first release supports backend and native clients. It does not enable cross-
 Use Node.js 22 or later. In [My applications](https://orchesphere.ai/orchesphere/developers), register `http://127.0.0.1:8788/callback` exactly and allow `orchesphere.read` and `offline_access`.
 
 ```sh
-git clone https://github.com/PlatformzHQ/orchesphere-api.git
+git clone https://github.com/Platformzus/orchesphere-api.git
 cd orchesphere-api
 export ORCH_CLIENT_ID="orch_app_YOUR_REGISTERED_ID"
 node examples/oauth-client.mjs
