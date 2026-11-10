@@ -92,3 +92,7 @@ The build derives the production Worker's `apiEnabled` gate from `RELEASE_PENDIN
 ## Support and security
 
 Use GitHub issues for reproducible documentation problems without tokens, authorization codes, customer data or private request bodies. For a security concern, use the contact route on the [OrcheSphere security page](https://orchesphere.ai/security). See the [privacy notice](https://orchesphere.ai/legal/privacy).
+
+## Reference maintenance
+
+Browse the [endpoint and tool directory](https://api.orchesphere.ai/reference), [scope mapping](https://api.orchesphere.ai/scopes) and [current coverage](https://api.orchesphere.ai/coverage). The [contributor checklist](CONTRIBUTING.md) explains how to update descriptions, examples and contracts with each implementation change. Public checks run on pushes and pull requests; publication follows the reviewed release process.

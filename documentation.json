@@ -1,0 +1,609 @@
+{
+  "version": "2026-11-10.1",
+  "reviewedAt": "2026-11-10",
+  "mcp": {
+    "list_workspaces": {
+      "title": "List accessible companies",
+      "purpose": "Find the company workspaces currently available to the signed-in identity.",
+      "useWhen": "Start here, then pass a returned workspaceId to company-specific tools.",
+      "effects": [
+        "Reads company names and IDs. It does not create membership or change company access."
+      ],
+      "limitations": [
+        "Current identity, company access and any existing designated platform authority determine the result; OAuth scope alone adds no access.",
+        "This MCP result has a workspaces array and no REST page wrapper or pagination parameters."
+      ],
+      "retry": "Use bounded retries for temporary read failures. If authorization fails, refresh once when appropriate or reconnect. Check result.isError even when HTTP status is 200.",
+      "exampleArguments": {},
+      "exampleResult": {
+        "workspaces": [
+          {
+            "id": "11111111-1111-4111-8111-111111111111",
+            "name": "Example Company"
+          }
+        ]
+      }
+    },
+    "list_connections": {
+      "title": "List connections",
+      "purpose": "Read permitted saved connections, identity-verification evidence and worker availability for one company.",
+      "useWhen": "Find a connectionId and inspect its saved state before starting or reviewing verification.",
+      "effects": [
+        "Reads permitted connection information and runtime status. It does not connect a provider or run a verification job."
+      ],
+      "limitations": [
+        "Requires current company access and effective service read rights for each returned connection and environment.",
+        "Configured, hasCredential and an online worker do not prove completed provider access. Read the verification state and timestamps.",
+        "Registered and managed connections can have different optional fields. Credential values are not returned.",
+        "The MCP result includes connections and runtime, with no REST page wrapper. The current runtime does not claim verified unattended operation."
+      ],
+      "retry": "Use bounded retries for temporary read failures. If authorization fails, refresh once when appropriate or reconnect. Check result.isError even when HTTP status is 200.",
+      "exampleArguments": {
+        "workspaceId": "11111111-1111-4111-8111-111111111111"
+      },
+      "exampleResult": {
+        "connections": [
+          {
+            "id": "22222222-2222-4222-8222-222222222222",
+            "version": 1,
+            "provider": "quickbooks",
+            "name": "QuickBooks Online",
+            "environment": "production",
+            "expectedAccountId": "example-account",
+            "expectedCompanyName": "Example Company",
+            "authMode": "secrets_manager",
+            "hasCredential": false,
+            "state": "configured",
+            "actualAccountId": null,
+            "actualCompanyName": null,
+            "lastCheckedAt": null,
+            "lastReadAt": null,
+            "lastRenewedAt": null,
+            "credentialCheckedAt": null,
+            "credentialErrorCode": null,
+            "credentialError": null,
+            "errorCode": null,
+            "error": null,
+            "allowedActions": [
+              "read",
+              "verify"
+            ]
+          }
+        ],
+        "runtime": {
+          "workerState": "not_verified",
+          "lastHeartbeat": null,
+          "persistence": "PostgreSQL",
+          "unattendedVerified": false
+        }
+      }
+    },
+    "list_portals": {
+      "title": "List assigned portals",
+      "purpose": "Find the portals the current user may access within a company.",
+      "useWhen": "Choose an accessible portal before creating a task.",
+      "effects": [
+        "Reads portal names, descriptions and the current user’s portal capabilities."
+      ],
+      "limitations": [
+        "Current company and portal assignments apply. Company administrators can access their company’s portals.",
+        "canCreateTask and canManage describe current OrcheSphere rights; they do not grant provider access.",
+        "This MCP result has a portals array and no REST page wrapper or pagination parameters."
+      ],
+      "retry": "Use bounded retries for temporary read failures. If authorization fails, refresh once when appropriate or reconnect. Check result.isError even when HTTP status is 200.",
+      "exampleArguments": {
+        "workspaceId": "11111111-1111-4111-8111-111111111111"
+      },
+      "exampleResult": {
+        "portals": [
+          {
+            "id": "33333333-3333-4333-8333-333333333333",
+            "workspaceId": "11111111-1111-4111-8111-111111111111",
+            "name": "Operations",
+            "slug": "operations-example",
+            "description": "Review connection checks and requested work.",
+            "role": "operator",
+            "canManage": false,
+            "canCreateTask": true,
+            "createdAt": "2026-01-01T00:00:00.000Z"
+          }
+        ]
+      }
+    },
+    "list_tasks": {
+      "title": "List accessible tasks",
+      "purpose": "Read saved tasks visible to the current user in one company.",
+      "useWhen": "Find a taskId, review work status or reconcile a task change after an uncertain response.",
+      "effects": [
+        "Reads saved task details and the current user’s task role and edit capabilities."
+      ],
+      "limitations": [
+        "Requires company access, parent-portal access and task assignment, unless current company or portal administrator rights apply.",
+        "Saved tasks describe requested work. Their status is not evidence that an external system executed anything.",
+        "This MCP result has a tasks array and no REST page wrapper or pagination parameters."
+      ],
+      "retry": "Use bounded retries for temporary read failures. If authorization fails, refresh once when appropriate or reconnect. Check result.isError even when HTTP status is 200.",
+      "exampleArguments": {
+        "workspaceId": "11111111-1111-4111-8111-111111111111"
+      },
+      "exampleResult": {
+        "tasks": [
+          {
+            "id": "44444444-4444-4444-8444-444444444444",
+            "workspaceId": "11111111-1111-4111-8111-111111111111",
+            "portalId": "33333333-3333-4333-8333-333333333333",
+            "title": "Review the connection evidence",
+            "description": "Check the saved identity-verification result.",
+            "status": "todo",
+            "assigneeEmail": null,
+            "createdBy": "developer@example.com",
+            "createdAt": "2026-01-01T00:00:00.000Z",
+            "updatedAt": "2026-01-01T00:00:00.000Z",
+            "role": "contributor",
+            "canEdit": true,
+            "canManage": false
+          }
+        ]
+      }
+    },
+    "create_task": {
+      "title": "Create a task",
+      "purpose": "Save requested work in an accessible company portal.",
+      "useWhen": "Record a task for follow-up or review in OrcheSphere.",
+      "effects": [
+        "Creates a saved task and an audit record. A non-administrator creator receives contributor access to that task.",
+        "Does not execute provider actions, run a coding agent or automatically assign the task to another user."
+      ],
+      "limitations": [
+        "Requires orchesphere.jobs in addition to read, and current portal operator or administrator rights.",
+        "Providing assigneeEmail additionally requires the designated access administrator. The assignee must be an eligible active company and portal member.",
+        "The trimmed title must contain at least two characters and fit the advertised 240-character limit; description is limited to 6000 characters.",
+        "Task creation has no idempotency key or automatic deduplication guarantee."
+      ],
+      "retry": "After a lost response, use list_tasks to check whether the task was saved before creating it again. Do not blindly retry task creation.",
+      "exampleArguments": {
+        "workspaceId": "11111111-1111-4111-8111-111111111111",
+        "portalId": "33333333-3333-4333-8333-333333333333",
+        "title": "Review the connection evidence",
+        "description": "Check the saved identity-verification result."
+      },
+      "exampleResult": {
+        "ok": true,
+        "workspaceId": "11111111-1111-4111-8111-111111111111",
+        "task": {
+          "id": "44444444-4444-4444-8444-444444444444",
+          "workspaceId": "11111111-1111-4111-8111-111111111111",
+          "portalId": "33333333-3333-4333-8333-333333333333",
+          "title": "Review the connection evidence",
+          "description": "Check the saved identity-verification result.",
+          "status": "todo",
+          "assigneeEmail": null,
+          "createdBy": "developer@example.com",
+          "createdAt": "2026-01-01T00:00:00.000Z",
+          "updatedAt": "2026-01-01T00:00:00.000Z",
+          "role": "contributor",
+          "canEdit": true,
+          "canManage": false
+        }
+      }
+    },
+    "update_task": {
+      "title": "Update a task",
+      "purpose": "Change permitted fields of an existing saved task.",
+      "useWhen": "Update the title, description or work status after reviewing the current task.",
+      "effects": [
+        "Updates the saved task and records the change in the audit history.",
+        "Does not perform the task or modify provider business records."
+      ],
+      "limitations": [
+        "Requires orchesphere.jobs in addition to read, current company and portal access, and task contributor, reviewer or administrator rights.",
+        "Reviewers may change only status. The MCP tool does not expose task reassignment.",
+        "Allowed statuses are todo, in_progress, blocked, review, done and cancelled. A task status is separate from verification-job status.",
+        "The title must remain at least two trimmed characters; advertised field-length limits apply."
+      ],
+      "retry": "Read list_tasks after an uncertain response, reconcile the current fields and then apply the intended change if still needed.",
+      "exampleArguments": {
+        "workspaceId": "11111111-1111-4111-8111-111111111111",
+        "taskId": "44444444-4444-4444-8444-444444444444",
+        "status": "in_progress"
+      },
+      "exampleResult": {
+        "ok": true,
+        "workspaceId": "11111111-1111-4111-8111-111111111111",
+        "task": {
+          "id": "44444444-4444-4444-8444-444444444444",
+          "workspaceId": "11111111-1111-4111-8111-111111111111",
+          "portalId": "33333333-3333-4333-8333-333333333333",
+          "title": "Review the connection evidence",
+          "description": "Check the saved identity-verification result.",
+          "status": "in_progress",
+          "assigneeEmail": null,
+          "createdBy": "developer@example.com",
+          "createdAt": "2026-01-01T00:00:00.000Z",
+          "updatedAt": "2026-01-01T00:01:00.000Z",
+          "role": "contributor",
+          "canEdit": true,
+          "canManage": false
+        }
+      }
+    },
+    "list_jobs": {
+      "title": "List verification jobs",
+      "purpose": "Read the latest permitted saved verification jobs for one company.",
+      "useWhen": "Track queued work or find a jobId to inspect its result.",
+      "effects": [
+        "Reads saved jobs and available cancellation/resume guidance. It does not start, cancel or resume work."
+      ],
+      "limitations": [
+        "Company administrators can read company jobs. Other users need service read access and must be the requester or have jobs_read_all for the service and environment.",
+        "Returns the latest 100 permitted jobs. MCP does not return page, total, cursor or mayHaveMore metadata.",
+        "canCancel and canResume are current guidance, not a permission grant. No MCP resume_job operation exists; protected browser recovery remains in OrcheSphere.",
+        "Queued or running is not completed provider verification. Inspect status, result and errorCode."
+      ],
+      "retry": "Use bounded retries for temporary read failures. If authorization fails, refresh once when appropriate or reconnect. Check result.isError even when HTTP status is 200.",
+      "exampleArguments": {
+        "workspaceId": "11111111-1111-4111-8111-111111111111"
+      },
+      "exampleResult": {
+        "jobs": [
+          {
+            "id": "55555555-5555-4555-8555-555555555555",
+            "connectionId": "22222222-2222-4222-8222-222222222222",
+            "provider": "quickbooks",
+            "operation": "verify",
+            "status": "queued",
+            "attempts": 0,
+            "createdBy": "developer@example.com",
+            "createdAt": "2026-01-01T00:00:00.000Z",
+            "updatedAt": "2026-01-01T00:00:00.000Z",
+            "finishedAt": null,
+            "result": null,
+            "errorCode": null,
+            "error": null,
+            "environment": "production",
+            "canCancel": true,
+            "canResume": false,
+            "resumeBlockedReason": null
+          }
+        ]
+      }
+    },
+    "get_job": {
+      "title": "Get a job result",
+      "purpose": "Read one saved verification job and its recorded result.",
+      "useWhen": "Poll a returned jobId until it reaches a result or needs attention.",
+      "effects": [
+        "Reads job status, attempts, timestamps and the sanitized provider-identity result when available."
+      ],
+      "limitations": [
+        "Requires current service read access and requester rights or jobs_read_all, with company-administrator rights applied by the server.",
+        "A successful verification result identifies the observed account and company. It does not contain provider orders, payments, inventory or other business records.",
+        "Results and completion timestamps can be null while work is pending or unsuccessful. This result does not add the list_jobs cancellation/resume fields.",
+        "Saved verification evidence reflects its observedAt time and is not a guarantee of permanent provider access."
+      ],
+      "retry": "Use bounded retries for temporary read failures. If authorization fails, refresh once when appropriate or reconnect. Check result.isError even when HTTP status is 200.",
+      "exampleArguments": {
+        "workspaceId": "11111111-1111-4111-8111-111111111111",
+        "jobId": "55555555-5555-4555-8555-555555555555"
+      },
+      "exampleResult": {
+        "job": {
+          "id": "55555555-5555-4555-8555-555555555555",
+          "connectionId": "22222222-2222-4222-8222-222222222222",
+          "provider": "quickbooks",
+          "operation": "verify",
+          "status": "succeeded",
+          "attempts": 1,
+          "createdBy": "developer@example.com",
+          "createdAt": "2026-01-01T00:00:00.000Z",
+          "updatedAt": "2026-01-01T00:00:05.000Z",
+          "finishedAt": "2026-01-01T00:00:05.000Z",
+          "result": {
+            "accountId": "example-account",
+            "companyName": "Example Company",
+            "observedAt": "2026-01-01T00:00:05.000Z",
+            "identityLabelKind": "company_name",
+            "credentialRenewedAt": null
+          },
+          "errorCode": null,
+          "error": null,
+          "environment": "production"
+        }
+      }
+    },
+    "verify_connection": {
+      "title": "Verify a connection",
+      "purpose": "Queue a durable read-only check that the provider credentials reach the expected account.",
+      "useWhen": "Confirm the identity behind an existing connection and follow the returned jobId.",
+      "effects": [
+        "Saves a verification job and audit record. The worker can continue processing after the requesting chat closes.",
+        "The provider operation reads account identity; a successful check updates saved identity evidence. Supported credential maintenance may renew authorization as needed."
+      ],
+      "limitations": [
+        "Requires orchesphere.jobs in addition to read and current service verify rights for the connection environment.",
+        "The connection needs a supported identity-verification adapter and applicable company access/allowances. A directory entry alone is insufficient.",
+        "idempotencyKey must contain 8–100 ASCII letters, digits, underscores or hyphens. The key is scoped to the current requester and company.",
+        "Returning a queued job is not completed provider access. Read get_job and do not infer that provider business-record access is implemented.",
+        "At most 30 new company jobs may be admitted in one minute; other allowances may apply. A returned job can later need provider sign-in or permission correction."
+      ],
+      "retry": "Reuse the same idempotencyKey only for the same connection submission. Reuse with another connection fails; do not generate a new key merely because the response was lost. Read the returned job to follow progress.",
+      "exampleArguments": {
+        "workspaceId": "11111111-1111-4111-8111-111111111111",
+        "connectionId": "22222222-2222-4222-8222-222222222222",
+        "idempotencyKey": "verification_example_001"
+      },
+      "exampleResult": {
+        "job": {
+          "id": "55555555-5555-4555-8555-555555555555",
+          "connectionId": "22222222-2222-4222-8222-222222222222",
+          "provider": "quickbooks",
+          "operation": "verify",
+          "status": "queued",
+          "attempts": 0,
+          "createdBy": "developer@example.com",
+          "createdAt": "2026-01-01T00:00:00.000Z",
+          "updatedAt": "2026-01-01T00:00:00.000Z",
+          "finishedAt": null,
+          "result": null,
+          "errorCode": null,
+          "error": null
+        }
+      }
+    },
+    "cancel_job": {
+      "title": "Cancel a verification job",
+      "purpose": "Cancel permitted pending or running verification work in OrcheSphere.",
+      "useWhen": "Stop a queued, retrying, running or blocked job that is no longer needed.",
+      "effects": [
+        "Marks an eligible saved job cancelled, invalidates its worker lease and records the cancellation request.",
+        "Does not undo a provider read or a result that already completed."
+      ],
+      "limitations": [
+        "Requires orchesphere.jobs in addition to read. Company administrators may cancel; other callers must be non-viewers with service read access and either requester rights or jobs_cancel_all.",
+        "Terminal jobs are not rewritten. The acknowledgment is {ok:true}, not a refreshed job object.",
+        "Cancellation does not revoke the provider connection or the application’s OAuth grant."
+      ],
+      "retry": "Read get_job after an uncertain cancellation response. Confirm the current job state before repeating.",
+      "exampleArguments": {
+        "workspaceId": "11111111-1111-4111-8111-111111111111",
+        "jobId": "55555555-5555-4555-8555-555555555555"
+      },
+      "exampleResult": {
+        "ok": true
+      }
+    },
+    "configure_connection": {
+      "title": "Configure a connection",
+      "purpose": "Register or replace the expected account and authentication configuration for a company provider connection.",
+      "useWhen": "Save a connection after the authorized account details and credential reference are known.",
+      "effects": [
+        "Saves configuration for the company, provider and environment. A changed configuration increments its version and clears previous identity-verification evidence.",
+        "An unchanged configuration may return reused:true. Saving configuration does not call provider business-record APIs or prove the connection works."
+      ],
+      "limitations": [
+        "Requires orchesphere.manage in addition to read and effective service configure rights. Browser-session mode additionally requires company-administrator rights.",
+        "Provider and authMode must be a supported combination. Account ID and company name must be nonempty and at most 160 characters each.",
+        "credentialRef is an authorized credential reference, never a password, API token or secret value. Omitting it preserves a same-mode existing reference; an explicit empty string can clear it.",
+        "Browser credentials must be entered in protected provider sign-in, and browser_session rejects credentialRef. Disconnect a saved browser session before changing its pinned account or authentication mode.",
+        "Production allowances can apply. The synthetic example intentionally has no credential and returns configured, not verified."
+      ],
+      "retry": "Read list_connections after an uncertain response and compare the current configuration before repeating a change. Do not assume replacement is harmless merely because the request looks identical.",
+      "exampleArguments": {
+        "workspaceId": "11111111-1111-4111-8111-111111111111",
+        "provider": "quickbooks",
+        "environment": "production",
+        "expectedAccountId": "example-account",
+        "expectedCompanyName": "Example Company",
+        "authMode": "secrets_manager"
+      },
+      "exampleResult": {
+        "connection": {
+          "id": "22222222-2222-4222-8222-222222222222",
+          "version": 1,
+          "provider": "quickbooks",
+          "name": "QuickBooks Online",
+          "environment": "production",
+          "expectedAccountId": "example-account",
+          "expectedCompanyName": "Example Company",
+          "authMode": "secrets_manager",
+          "hasCredential": false,
+          "state": "configured",
+          "actualAccountId": null,
+          "actualCompanyName": null,
+          "lastCheckedAt": null,
+          "lastReadAt": null,
+          "lastRenewedAt": null,
+          "credentialCheckedAt": null,
+          "credentialErrorCode": null,
+          "credentialError": null,
+          "errorCode": null,
+          "error": null
+        }
+      }
+    },
+    "set_service_permissions": {
+      "title": "Set connection permissions",
+      "purpose": "Replace an assigned company member’s OrcheSphere rights for one provider and environment.",
+      "useWhen": "An authorized access administrator needs to set or remove service-specific access.",
+      "effects": [
+        "Replaces that member’s saved service grant and records the permission change.",
+        "Changes OrcheSphere authorization only. It does not edit the provider account’s API role or increase what its credentials permit."
+      ],
+      "limitations": [
+        "Requires orchesphere.manage in addition to read and designated global access-administrator authority. Company-admin status or scope approval alone is insufficient.",
+        "The target must be an assigned company member. An exact production/sandbox grant overrides the all-environments default; an empty actions array denies that grant’s access.",
+        "Nonempty actions must include read. jobs_cancel_all also requires jobs_read_all. Viewers can receive read-only rights only.",
+        "Supported rights are read, verify, configure, jobs_read_all and jobs_cancel_all. This is not a universal provider business-record read/write role mapping."
+      ],
+      "retry": "Review the member’s current permissions in OrcheSphere after an uncertain response before repeating a replacement.",
+      "exampleArguments": {
+        "workspaceId": "11111111-1111-4111-8111-111111111111",
+        "email": "operator@example.com",
+        "provider": "quickbooks",
+        "environment": "production",
+        "actions": [
+          "read",
+          "verify"
+        ]
+      },
+      "exampleResult": {
+        "ok": true
+      }
+    },
+    "set_platform_role": {
+      "title": "Revoke platform authority",
+      "purpose": "Revoke an existing platform authority assignment through the restricted internal MCP flow.",
+      "useWhen": "An existing designated platform administrator must remove a platform authority assignment.",
+      "effects": [
+        "Revokes the existing assignment and records the authority change. The only accepted role value is none."
+      ],
+      "limitations": [
+        "Internal authority only: requires orchesphere.admin in addition to read and current platform-administrator authority. Registered developer applications cannot request this scope or use this tool.",
+        "Cannot create or transfer global authority, and cannot remove the last active platform administrator.",
+        "This tool has no public REST equivalent and does not grant or revoke ordinary client-company memberships.",
+        "The example is a fictional internal-administration shape, not an operation available to registered developer applications."
+      ],
+      "retry": "Review current platform authority in the authorized administration interface before repeating an uncertain revocation. Do not retry a protected last-administrator failure.",
+      "exampleArguments": {
+        "workspaceId": "11111111-1111-4111-8111-111111111111",
+        "email": "former-admin@example.com",
+        "role": "none"
+      },
+      "exampleResult": {
+        "ok": true
+      }
+    }
+  },
+  "protocol": [
+    {
+      "id": "rest-resource-discovery",
+      "title": "Discover REST authorization",
+      "method": "GET",
+      "url": "https://api.orchesphere.ai/.well-known/oauth-protected-resource",
+      "purpose": "Discover the exact REST resource, its authorization server and supported resource scopes.",
+      "authentication": "No Bearer token required.",
+      "input": "No body or query parameters. HEAD is also supported for metadata headers.",
+      "result": "JSON resource=https://api.orchesphere.ai; authorization_servers=[https://orchesphere.ai]; scopes_supported contains orchesphere.read, orchesphere.jobs and orchesphere.manage; bearer_methods_supported=[header]; resource_name=OrcheSphere API.",
+      "limitations": [
+        "The resource string has no /v1 path or trailing slash. A token bound to the MCP resource is rejected by REST.",
+        "offline_access is requested at authorization to obtain refresh tokens; it is not a REST operation scope.",
+        "Browser cross-origin API calls are not enabled. Use a backend or native client."
+      ]
+    },
+    {
+      "id": "mcp-resource-discovery",
+      "title": "Discover MCP authorization",
+      "method": "GET",
+      "url": "https://orchesphere.ai/.well-known/oauth-protected-resource",
+      "purpose": "Discover the exact MCP resource, authorization server and resource scopes.",
+      "authentication": "No Bearer token required.",
+      "input": "No request body.",
+      "result": "JSON resource=https://orchesphere.ai/mcp; authorization_servers=[https://orchesphere.ai]; scopes_supported contains orchesphere.read, orchesphere.jobs, orchesphere.manage and orchesphere.admin; bearer_methods_supported=[header]; resource_name=OrcheSphere.",
+      "limitations": [
+        "orchesphere.admin is reserved for the existing internal authority flow; registered developer applications cannot request it.",
+        "REST and MCP tokens are resource-bound and cannot be substituted for each other.",
+        "A discovery response means authorization is available; it does not prove that an AI client or provider is connected."
+      ]
+    },
+    {
+      "id": "authorization-server-discovery",
+      "title": "Discover the authorization server",
+      "method": "GET",
+      "url": "https://orchesphere.ai/.well-known/oauth-authorization-server",
+      "purpose": "Find the issuer, OAuth endpoints and supported authorization behavior.",
+      "authentication": "No Bearer token required.",
+      "input": "No request body.",
+      "result": "JSON issuer=https://orchesphere.ai with authorization_endpoint=/oauth/authorize, token_endpoint=/oauth/token and revocation_endpoint=/oauth/revoke on that issuer; code response type; authorization_code and refresh_token grant types; S256 PKCE; public-client authentication method none; supported scopes and authorization-response issuer support.",
+      "limitations": [
+        "The server advertises official client metadata-document support as well as registered applications; this is not unrestricted URL-based client registration.",
+        "No public dynamic-registration or JWKS endpoint is advertised. Register an application through signed-in API & developers.",
+        "Metadata may include an internal scope unavailable to registered developer applications."
+      ]
+    },
+    {
+      "id": "authorize-application",
+      "title": "Authorize an application",
+      "method": "GET",
+      "url": "https://orchesphere.ai/oauth/authorize",
+      "purpose": "Let a signed-in user review and approve an application’s resource and scopes using Authorization Code with S256 PKCE.",
+      "authentication": "The user completes OrcheSphere browser sign-in, current account-security requirements and explicit consent.",
+      "input": "Browser query: response_type=code, registered client_id, exact redirect_uri, explicit resource, requested scope, fresh random state, code_challenge and code_challenge_method=S256. Keep the original verifier in the client’s one-use pending authorization record.",
+      "result": "The browser shows sign-in or consent. On approval, the registered callback receives code, the original state and iss=https://orchesphere.ai. On denial, it receives error=access_denied, state and iss. The authorization code expires after 120 seconds.",
+      "limitations": [
+        "The exact resource is https://api.orchesphere.ai for REST or https://orchesphere.ai/mcp for MCP. Scope approval grants no company membership.",
+        "Registered applications must use an exact registered HTTPS or HTTP loopback-IP callback, including the port. Official Codex metadata-based callbacks have a separate ephemeral-loopback-port rule.",
+        "The authorization request is not a client-credentials grant or a JSON API. The server-generated consent form is browser-session-bound; third-party clients must not call it directly.",
+        "Validate state, issuer, callback path and a fresh pending record before exchanging a code. Reject duplicate or reused callback parameters."
+      ]
+    },
+    {
+      "id": "exchange-or-refresh-token",
+      "title": "Exchange or refresh tokens",
+      "method": "POST",
+      "url": "https://orchesphere.ai/oauth/token",
+      "purpose": "Exchange a one-use authorization code for an access token, or rotate tokens for an existing offline authorization.",
+      "authentication": "Public client with client_id and PKCE for code exchange. Do not send an Authorization header, client secret or client assertion.",
+      "input": "application/x-www-form-urlencoded. Code exchange: grant_type=authorization_code, client_id, code, exact redirect_uri, exact resource and original code_verifier. Refresh: grant_type=refresh_token, client_id, exact resource and current refresh_token.",
+      "result": "HTTP 200 JSON access_token, token_type, expires_in and scope. A refresh_token is returned only when offline_access was approved. Access-token lifetime is 300 seconds; refresh rotates the token pair within the original 30-day grant. Errors use OAuth error and error_description.",
+      "limitations": [
+        "Forms are limited to 16KiB. Duplicate parameters and oversized field values are rejected.",
+        "Use the same exact resource during authorization, code exchange and refresh. REST tokens cannot call MCP and MCP tokens cannot call REST.",
+        "Serialize refresh requests and replace the saved pair atomically. Reusing an already-rotated refresh token revokes its grant.",
+        "Expiry, revocation, account-security changes and current company permissions still apply. offline_access is not a guarantee of unattended or permanent access."
+      ]
+    },
+    {
+      "id": "revoke-authorization",
+      "title": "Revoke an authorization",
+      "method": "POST",
+      "url": "https://orchesphere.ai/oauth/revoke",
+      "purpose": "Disconnect the grant associated with an application’s access or refresh token.",
+      "authentication": "Public client_id and the token to revoke. No Authorization header or client secret.",
+      "input": "application/x-www-form-urlencoded with client_id and token. token_type_hint may be sent but the current implementation does not use it to select the token type.",
+      "result": "Empty HTTP 200. A matching token revokes its authorization grant; an unknown token is a successful no-op. Later use of tokens from a revoked grant is rejected.",
+      "limitations": [
+        "Forms are limited to 16KiB. The client must be recognized.",
+        "Revocation does not delete saved jobs/tasks or disconnect provider credentials. Already saved work remains subject to current authorization checks.",
+        "Revoking this user grant differs from revoking a registered application itself through API & developers."
+      ]
+    },
+    {
+      "id": "mcp-transport",
+      "title": "Call the MCP interface",
+      "method": "POST",
+      "url": "https://orchesphere.ai/mcp",
+      "purpose": "Initialize an MCP connection, discover permitted tools and call them with explicit company context.",
+      "authentication": "Authorization: Bearer token approved for the exact resource https://orchesphere.ai/mcp.",
+      "input": "JSON-RPC 2.0 with initialize, notifications/initialized, ping, tools/list or tools/call. For calls, supply params.name and params.arguments matching the tool schema. Send Content-Type: application/json.",
+      "result": "initialize returns protocolVersion, tool capabilities, serverInfo and instructions; initialized notification returns empty 202; ping returns an empty result; tools/list returns scope-filtered definitions. Successful calls return result.content, result.structuredContent and isError:false. Tool/action failures commonly return HTTP 200 with isError:true.",
+      "limitations": [
+        "Supported protocol versions are 2025-06-18, 2025-03-26 and 2024-11-05. This endpoint does not use SSE transport or a session ID.",
+        "The JSON request body is limited to 24,000 bytes; batches are not supported. A malformed or oversized request produces the current generic parse-error response.",
+        "Missing/invalid authorization produces HTTP 401. Insufficient tool scope produces HTTP 403 with WWW-Authenticate. Inspect isError even when HTTP is 200.",
+        "Tools/list reflects approved OAuth scopes, not proof of authority for a particular company. Every call still checks current identity and company/service/portal permissions.",
+        "The ordinary MCP list payloads do not carry REST pagination metadata. Job lists return the latest 100 permitted jobs. No separate outputSchema is advertised by these tool definitions."
+      ]
+    }
+  ],
+  "coverage": {
+    "mcpToolCount": 13,
+    "publicMcpToolCount": 12,
+    "internalMcpToolCount": 1,
+    "protocolEndpointCount": 7,
+    "examples": "All identifiers, accounts, people and timestamps in these examples are fictional. Replace them with values returned for the consenting user. Examples are not live receipts.",
+    "mcpResultFormat": "exampleArguments is the tools/call arguments object. exampleResult is the successful structuredContent payload, also JSON-encoded in text content; it is not the enclosing JSON-RPC response. No separate runtime outputSchema is claimed.",
+    "scopeDiscoveryCounts": {
+      "read": 6,
+      "readAndJobs": 10,
+      "readJobsAndManage": 12,
+      "includingInternalAdmin": 13
+    },
+    "boundaries": [
+      "Only the API companion is public. Browser/session APIs, provider callbacks and private application source are outside this developer endpoint catalog.",
+      "Provider directory entries are not equivalent to implemented adapters or verified company connections.",
+      "Current public operations cover saved company information, task coordination, connection configuration/access and provider-identity verification. No provider business-record read/write API is enabled.",
+      "Service rights control OrcheSphere operations and never expand the native provider credentials’ rights."
+    ],
+    "updatePolicy": "Review endpoint/tool/protocol documentation with every contract change. Release checks should compare the actual private runtime definitions with the approved public contract, validate examples and links, and require a changelog/reviewed-version update before publication."
+  }
+}

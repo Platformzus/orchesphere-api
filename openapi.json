@@ -15,7 +15,7 @@
       "get": {
         "operationId": "listWorkspaces",
         "summary": "List assigned workspaces",
-        "description": "Current active company assignments; verified global authority may see all company workspaces. No query parameters are accepted. OAuth scopes never grant company rights.",
+        "description": "Find the company workspaces available to the consenting identity and obtain the workspace IDs needed by every company-scoped operation. Current active company assignments; verified global authority may see all company workspaces. No query parameters are accepted. OAuth scopes never grant company rights.",
         "tags": [
           "Workspaces"
         ],
@@ -176,6 +176,22 @@
                 }
               }
             }
+          },
+          "502": {
+            "description": "The gateway received an unexpected upstream response (upstream_response_invalid). For a write, read the current state and reconcile before repeating it.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "code": "upstream_response_invalid",
+                    "message": "The API returned an unexpected response. Retry later."
+                  }
+                }
+              }
+            }
           }
         },
         "x-permission": "Current active company assignments; verified global authority may see all company workspaces."
@@ -185,7 +201,7 @@
       "get": {
         "operationId": "listConnections",
         "summary": "List connection evidence",
-        "description": "Provider read permission in the selected workspace/environment. Configured is not proof of live access; managed_admin entries are read-only external projections. No query parameters are accepted. OAuth scopes never grant company rights.",
+        "description": "Read saved provider connections, expected and observed identities, current service rights and recorded verification evidence for one company. Provider read permission in the selected workspace/environment. Configured is not proof of live access; managed_admin entries are read-only external projections. No query parameters are accepted. OAuth scopes never grant company rights.",
         "tags": [
           "Connections"
         ],
@@ -206,7 +222,8 @@
               "pattern": "^[A-Za-z0-9_-]{8,80}$",
               "minLength": 8,
               "maxLength": 80
-            }
+            },
+            "description": "Accessible OrcheSphere company workspace ID from GET /v1/workspaces. Other record IDs in this request must belong to this company."
           }
         ],
         "responses": {
@@ -382,6 +399,22 @@
                 }
               }
             }
+          },
+          "502": {
+            "description": "The gateway received an unexpected upstream response (upstream_response_invalid). For a write, read the current state and reconcile before repeating it.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "code": "upstream_response_invalid",
+                    "message": "The API returned an unexpected response. Retry later."
+                  }
+                }
+              }
+            }
           }
         },
         "x-permission": "Provider read permission in the selected workspace/environment. Configured is not proof of live access; managed_admin entries are read-only external projections."
@@ -391,7 +424,7 @@
       "get": {
         "operationId": "listPortals",
         "summary": "List assigned portals",
-        "description": "Current company membership and a parent portal assignment, or company-owner authority. No query parameters are accepted. OAuth scopes never grant company rights.",
+        "description": "Find the company work areas visible to the caller, including the current portal role and whether the caller may create tasks there. Current company membership and a parent portal assignment, or company-owner authority. No query parameters are accepted. OAuth scopes never grant company rights.",
         "tags": [
           "Portals"
         ],
@@ -412,7 +445,8 @@
               "pattern": "^[A-Za-z0-9_-]{8,80}$",
               "minLength": 8,
               "maxLength": 80
-            }
+            },
+            "description": "Accessible OrcheSphere company workspace ID from GET /v1/workspaces. Other record IDs in this request must belong to this company."
           }
         ],
         "responses": {
@@ -424,10 +458,22 @@
                   "$ref": "#/components/schemas/PortalList"
                 },
                 "example": {
-                  "portals": [],
+                  "portals": [
+                    {
+                      "id": "22222222-2222-4222-8222-222222222222",
+                      "workspaceId": "11111111-1111-4111-8111-111111111111",
+                      "name": "Operations review",
+                      "slug": "operations-review-22222222",
+                      "description": "Review saved connection evidence and requested work.",
+                      "role": "operator",
+                      "canManage": false,
+                      "canCreateTask": true,
+                      "createdAt": "2026-01-01T00:00:00.000Z"
+                    }
+                  ],
                   "page": {
                     "limit": 200,
-                    "returned": 0,
+                    "returned": 1,
                     "mayHaveMore": false
                   }
                 }
@@ -559,6 +605,22 @@
                 }
               }
             }
+          },
+          "502": {
+            "description": "The gateway received an unexpected upstream response (upstream_response_invalid). For a write, read the current state and reconcile before repeating it.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "code": "upstream_response_invalid",
+                    "message": "The API returned an unexpected response. Retry later."
+                  }
+                }
+              }
+            }
           }
         },
         "x-permission": "Current company membership and a parent portal assignment, or company-owner authority."
@@ -568,7 +630,7 @@
       "get": {
         "operationId": "listTasks",
         "summary": "List accessible tasks",
-        "description": "Current company/portal access and a task assignment/role. This lists saved requested work, not provider execution. No query parameters are accepted. OAuth scopes never grant company rights.",
+        "description": "Read saved requested work visible through the caller's company, portal and task assignments, together with current editing capabilities. Current company/portal access and a task assignment/role. This lists saved requested work, not provider execution. No query parameters are accepted. OAuth scopes never grant company rights.",
         "tags": [
           "Tasks"
         ],
@@ -589,7 +651,8 @@
               "pattern": "^[A-Za-z0-9_-]{8,80}$",
               "minLength": 8,
               "maxLength": 80
-            }
+            },
+            "description": "Accessible OrcheSphere company workspace ID from GET /v1/workspaces. Other record IDs in this request must belong to this company."
           }
         ],
         "responses": {
@@ -752,6 +815,22 @@
                 }
               }
             }
+          },
+          "502": {
+            "description": "The gateway received an unexpected upstream response (upstream_response_invalid). For a write, read the current state and reconcile before repeating it.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "code": "upstream_response_invalid",
+                    "message": "The API returned an unexpected response. Retry later."
+                  }
+                }
+              }
+            }
           }
         },
         "x-permission": "Current company/portal access and a task assignment/role. This lists saved requested work, not provider execution."
@@ -759,7 +838,7 @@
       "post": {
         "operationId": "createTask",
         "summary": "Create a task",
-        "description": "Portal admin/operator. Explicit assigneeEmail additionally requires the designated access administrator and an eligible active portal member. Saves requested work; no external execution. No query parameters are accepted. OAuth scopes never grant company rights.",
+        "description": "Save a new requested-work task in an existing company portal and return its identifier, initial todo state and current caller capabilities. Portal admin/operator. Explicit assigneeEmail additionally requires the designated access administrator and an eligible active portal member. Saves requested work; no external execution. No query parameters are accepted. OAuth scopes never grant company rights.",
         "tags": [
           "Tasks"
         ],
@@ -781,7 +860,8 @@
               "pattern": "^[A-Za-z0-9_-]{8,80}$",
               "minLength": 8,
               "maxLength": 80
-            }
+            },
+            "description": "Accessible OrcheSphere company workspace ID from GET /v1/workspaces. Other record IDs in this request must belong to this company."
           }
         ],
         "requestBody": {
@@ -954,6 +1034,22 @@
                 }
               }
             }
+          },
+          "502": {
+            "description": "The gateway received an unexpected upstream response (upstream_response_invalid). For a write, read the current state and reconcile before repeating it.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "code": "upstream_response_invalid",
+                    "message": "The API returned an unexpected response. Read the current state and reconcile the result before repeating this request."
+                  }
+                }
+              }
+            }
           }
         },
         "x-permission": "Portal admin/operator. Explicit assigneeEmail additionally requires the designated access administrator and an eligible active portal member. Saves requested work; no external execution."
@@ -963,7 +1059,7 @@
       "get": {
         "operationId": "listJobs",
         "summary": "List saved verification jobs",
-        "description": "Provider read permission plus requester identity or jobs_read_all. Latest 100 matching saved jobs, newest first. No query parameters are accepted. OAuth scopes never grant company rights.",
+        "description": "Read the latest saved identity-verification jobs the caller may inspect, including recorded attempts, results, errors and optional product capabilities. Provider read permission plus requester identity or jobs_read_all. Latest 100 matching saved jobs, newest first. No query parameters are accepted. OAuth scopes never grant company rights.",
         "tags": [
           "Jobs"
         ],
@@ -984,7 +1080,8 @@
               "pattern": "^[A-Za-z0-9_-]{8,80}$",
               "minLength": 8,
               "maxLength": 80
-            }
+            },
+            "description": "Accessible OrcheSphere company workspace ID from GET /v1/workspaces. Other record IDs in this request must belong to this company."
           }
         ],
         "responses": {
@@ -1147,6 +1244,22 @@
                 }
               }
             }
+          },
+          "502": {
+            "description": "The gateway received an unexpected upstream response (upstream_response_invalid). For a write, read the current state and reconcile before repeating it.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "code": "upstream_response_invalid",
+                    "message": "The API returned an unexpected response. Retry later."
+                  }
+                }
+              }
+            }
           }
         },
         "x-permission": "Provider read permission plus requester identity or jobs_read_all. Latest 100 matching saved jobs, newest first."
@@ -1156,7 +1269,7 @@
       "get": {
         "operationId": "getJob",
         "summary": "Get a saved job",
-        "description": "Provider read permission plus requester identity or jobs_read_all. Missing and inaccessible jobs both return 404. No query parameters are accepted. OAuth scopes never grant company rights.",
+        "description": "Inspect one saved identity-verification job and distinguish a queued or running request from a completed identity result, failure or cancellation. Provider read permission plus requester identity or jobs_read_all. Missing and inaccessible jobs both return 404. No query parameters are accepted. OAuth scopes never grant company rights.",
         "tags": [
           "Jobs"
         ],
@@ -1177,7 +1290,8 @@
               "pattern": "^[A-Za-z0-9_-]{8,80}$",
               "minLength": 8,
               "maxLength": 80
-            }
+            },
+            "description": "Accessible OrcheSphere company workspace ID from GET /v1/workspaces. Other record IDs in this request must belong to this company."
           },
           {
             "name": "jobId",
@@ -1188,7 +1302,8 @@
               "pattern": "^[A-Za-z0-9_-]{8,80}$",
               "minLength": 8,
               "maxLength": 80
-            }
+            },
+            "description": "Saved OrcheSphere verification job ID returned by verifyConnection or listJobs in this workspace."
           }
         ],
         "responses": {
@@ -1205,15 +1320,22 @@
                     "connectionId": "22222222-2222-4222-8222-222222222222",
                     "provider": "quickbooks",
                     "operation": "verify",
-                    "status": "queued",
-                    "attempts": 0,
+                    "status": "succeeded",
+                    "attempts": 1,
                     "createdBy": "developer@example.com",
                     "createdAt": "2026-01-01T00:00:00.000Z",
-                    "updatedAt": "2026-01-01T00:00:00.000Z",
-                    "finishedAt": null,
-                    "result": null,
+                    "updatedAt": "2026-01-01T00:00:05.000Z",
+                    "finishedAt": "2026-01-01T00:00:05.000Z",
+                    "result": {
+                      "accountId": "example-account",
+                      "companyName": "Example Company",
+                      "observedAt": "2026-01-01T00:00:05.000Z",
+                      "identityLabelKind": "company_name",
+                      "credentialRenewedAt": null
+                    },
                     "errorCode": null,
-                    "error": null
+                    "error": null,
+                    "environment": "production"
                   }
                 }
               }
@@ -1344,6 +1466,22 @@
                 }
               }
             }
+          },
+          "502": {
+            "description": "The gateway received an unexpected upstream response (upstream_response_invalid). For a write, read the current state and reconcile before repeating it.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "code": "upstream_response_invalid",
+                    "message": "The API returned an unexpected response. Retry later."
+                  }
+                }
+              }
+            }
           }
         },
         "x-permission": "Provider read permission plus requester identity or jobs_read_all. Missing and inaccessible jobs both return 404."
@@ -1353,7 +1491,7 @@
       "patch": {
         "operationId": "updateTask",
         "summary": "Update a task",
-        "description": "Task admin/contributor/reviewer. Reviewer can update status only. Reassignment is not exposed. Parent portal and company rights still apply. No query parameters are accepted. OAuth scopes never grant company rights.",
+        "description": "Replace the supplied title, description or work-tracking status on an accessible saved task, while retaining all omitted fields. Task admin/contributor/reviewer. Reviewer can update status only. Reassignment is not exposed. Parent portal and company rights still apply. No query parameters are accepted. OAuth scopes never grant company rights.",
         "tags": [
           "Tasks"
         ],
@@ -1375,7 +1513,8 @@
               "pattern": "^[A-Za-z0-9_-]{8,80}$",
               "minLength": 8,
               "maxLength": 80
-            }
+            },
+            "description": "Accessible OrcheSphere company workspace ID from GET /v1/workspaces. Other record IDs in this request must belong to this company."
           },
           {
             "name": "taskId",
@@ -1386,7 +1525,8 @@
               "pattern": "^[A-Za-z0-9_-]{8,80}$",
               "minLength": 8,
               "maxLength": 80
-            }
+            },
+            "description": "Saved task ID returned by createTask or listTasks in this workspace."
           }
         ],
         "requestBody": {
@@ -1557,6 +1697,22 @@
                 }
               }
             }
+          },
+          "502": {
+            "description": "The gateway received an unexpected upstream response (upstream_response_invalid). For a write, read the current state and reconcile before repeating it.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "code": "upstream_response_invalid",
+                    "message": "The API returned an unexpected response. Read the current state and reconcile the result before repeating this request."
+                  }
+                }
+              }
+            }
           }
         },
         "x-permission": "Task admin/contributor/reviewer. Reviewer can update status only. Reassignment is not exposed. Parent portal and company rights still apply."
@@ -1566,7 +1722,7 @@
       "post": {
         "operationId": "verifyConnection",
         "summary": "Queue an identity verification",
-        "description": "Provider verify permission, implemented identity adapter and current entitlement/quota. Requires Idempotency-Key; replay with the same workspace/requester/key and connection returns the existing job, possibly already terminal. A different connection conflicts. No query parameters are accepted. OAuth scopes never grant company rights.",
+        "description": "Queue a durable, read-only provider identity check for a saved connection, or return the existing submission for the same requester and idempotency key. Provider verify permission, implemented identity adapter and current entitlement/quota. Requires Idempotency-Key; replay with the same workspace/requester/key and connection returns the existing job, possibly already terminal. A different connection conflicts. No query parameters are accepted. OAuth scopes never grant company rights.",
         "tags": [
           "Connections"
         ],
@@ -1588,7 +1744,8 @@
               "pattern": "^[A-Za-z0-9_-]{8,80}$",
               "minLength": 8,
               "maxLength": 80
-            }
+            },
+            "description": "Accessible OrcheSphere company workspace ID from GET /v1/workspaces. Other record IDs in this request must belong to this company."
           },
           {
             "name": "connectionId",
@@ -1599,7 +1756,8 @@
               "pattern": "^[A-Za-z0-9_-]{8,80}$",
               "minLength": 8,
               "maxLength": 80
-            }
+            },
+            "description": "Saved worker-managed connection ID returned by listConnections or configureConnection in this workspace. Externally managed read-only entries cannot be verified here."
           },
           {
             "name": "Idempotency-Key",
@@ -1611,7 +1769,7 @@
               "minLength": 8,
               "maxLength": 100
             },
-            "description": "Unique workspace/requester key; reuse only for this same connection submission."
+            "description": "Caller-generated submission key scoped to the workspace and requester. Reuse only for this same connection submission, including after a lost response; a different connection conflicts."
           }
         ],
         "requestBody": {
@@ -1778,6 +1936,22 @@
                 }
               }
             }
+          },
+          "502": {
+            "description": "The gateway received an unexpected upstream response (upstream_response_invalid). For a write, read the current state and reconcile before repeating it.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "code": "upstream_response_invalid",
+                    "message": "The API returned an unexpected response. Read the current state and reconcile the result before repeating this request."
+                  }
+                }
+              }
+            }
           }
         },
         "x-permission": "Provider verify permission, implemented identity adapter and current entitlement/quota. Requires Idempotency-Key; replay with the same workspace/requester/key and connection returns the existing job, possibly already terminal. A different connection conflicts."
@@ -1787,7 +1961,7 @@
       "post": {
         "operationId": "cancelJob",
         "summary": "Cancel a saved job",
-        "description": "Company owner, or non-viewer requester with provider read, or provider jobs_cancel_all. Applies to queued/retry_wait/running/blocked states; terminal jobs remain unchanged. No query parameters are accepted. OAuth scopes never grant company rights.",
+        "description": "Mark a permitted saved verification job cancelled when it is queued, awaiting retry, running or blocked; already-terminal jobs remain unchanged. Company owner, or non-viewer requester with provider read, or provider jobs_cancel_all. Applies to queued/retry_wait/running/blocked states; terminal jobs remain unchanged. No query parameters are accepted. OAuth scopes never grant company rights.",
         "tags": [
           "Jobs"
         ],
@@ -1809,7 +1983,8 @@
               "pattern": "^[A-Za-z0-9_-]{8,80}$",
               "minLength": 8,
               "maxLength": 80
-            }
+            },
+            "description": "Accessible OrcheSphere company workspace ID from GET /v1/workspaces. Other record IDs in this request must belong to this company."
           },
           {
             "name": "jobId",
@@ -1820,7 +1995,8 @@
               "pattern": "^[A-Za-z0-9_-]{8,80}$",
               "minLength": 8,
               "maxLength": 80
-            }
+            },
+            "description": "Saved OrcheSphere verification job ID returned by verifyConnection or listJobs in this workspace."
           }
         ],
         "requestBody": {
@@ -1973,6 +2149,22 @@
                 }
               }
             }
+          },
+          "502": {
+            "description": "The gateway received an unexpected upstream response (upstream_response_invalid). For a write, read the current state and reconcile before repeating it.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "code": "upstream_response_invalid",
+                    "message": "The API returned an unexpected response. Read the current state and reconcile the result before repeating this request."
+                  }
+                }
+              }
+            }
           }
         },
         "x-permission": "Company owner, or non-viewer requester with provider read, or provider jobs_cancel_all. Applies to queued/retry_wait/running/blocked states; terminal jobs remain unchanged."
@@ -1982,7 +2174,7 @@
       "put": {
         "operationId": "configureConnection",
         "summary": "Configure a connection",
-        "description": "Provider configure permission; browser_session also requires company owner. Allowed mode depends on catalog provider. Production entitlements/limits apply. Uses a credential reference only; changing settings invalidates previous evidence. No query parameters are accepted. OAuth scopes never grant company rights.",
+        "description": "Create or update the saved expected identity and authentication settings for one provider and environment in a company, using approved credential references only. Provider configure permission; browser_session also requires company owner. Allowed mode depends on catalog provider. Production entitlements/limits apply. Uses a credential reference only; changing settings invalidates previous evidence. No query parameters are accepted. OAuth scopes never grant company rights.",
         "tags": [
           "Connections"
         ],
@@ -2004,7 +2196,8 @@
               "pattern": "^[A-Za-z0-9_-]{8,80}$",
               "minLength": 8,
               "maxLength": 80
-            }
+            },
+            "description": "Accessible OrcheSphere company workspace ID from GET /v1/workspaces. Other record IDs in this request must belong to this company."
           },
           {
             "name": "provider",
@@ -2172,7 +2365,8 @@
                 "heygen",
                 "cursor"
               ]
-            }
+            },
+            "description": "Exact provider directory identifier, such as netsuite or pipe17. A directory entry does not guarantee an implemented identity adapter."
           },
           {
             "name": "environment",
@@ -2184,7 +2378,8 @@
                 "production",
                 "sandbox"
               ]
-            }
+            },
+            "description": "Provider environment whose saved configuration or permission rule is addressed. Production and sandbox are separate."
           }
         ],
         "requestBody": {
@@ -2362,6 +2557,22 @@
                 }
               }
             }
+          },
+          "502": {
+            "description": "The gateway received an unexpected upstream response (upstream_response_invalid). For a write, read the current state and reconcile before repeating it.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "code": "upstream_response_invalid",
+                    "message": "The API returned an unexpected response. Read the current state and reconcile the result before repeating this request."
+                  }
+                }
+              }
+            }
           }
         },
         "x-permission": "Provider configure permission; browser_session also requires company owner. Allowed mode depends on catalog provider. Production entitlements/limits apply. Uses a credential reference only; changing settings invalidates previous evidence."
@@ -2371,7 +2582,7 @@
       "put": {
         "operationId": "setServicePermissions",
         "summary": "Set exact service permissions",
-        "description": "Designated global access administrator only, for an existing active/invited company member. Exact production/sandbox grant overrides the * default; empty actions deny access. Does not assign company membership. No query parameters are accepted. OAuth scopes never grant company rights.",
+        "description": "Replace one existing company member's exact OrcheSphere service-rights rule for a provider and environment, including an explicit empty rule that denies access. Designated global access administrator only, for an existing active/invited company member. Exact production/sandbox grant overrides the * default; empty actions deny access. Does not assign company membership. No query parameters are accepted. OAuth scopes never grant company rights.",
         "tags": [
           "Permissions"
         ],
@@ -2393,7 +2604,8 @@
               "pattern": "^[A-Za-z0-9_-]{8,80}$",
               "minLength": 8,
               "maxLength": 80
-            }
+            },
+            "description": "Accessible OrcheSphere company workspace ID from GET /v1/workspaces. Other record IDs in this request must belong to this company."
           },
           {
             "name": "provider",
@@ -2561,7 +2773,8 @@
                 "heygen",
                 "cursor"
               ]
-            }
+            },
+            "description": "Exact provider directory identifier, such as netsuite or pipe17. A directory entry does not guarantee an implemented identity adapter."
           },
           {
             "name": "environment",
@@ -2574,7 +2787,8 @@
                 "sandbox",
                 "*"
               ]
-            }
+            },
+            "description": "Provider environment whose saved configuration or permission rule is addressed. Production and sandbox are separate. Use * for the all-environments default; an exact production or sandbox rule overrides it."
           }
         ],
         "requestBody": {
@@ -2733,6 +2947,22 @@
                 }
               }
             }
+          },
+          "502": {
+            "description": "The gateway received an unexpected upstream response (upstream_response_invalid). For a write, read the current state and reconcile before repeating it.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "code": "upstream_response_invalid",
+                    "message": "The API returned an unexpected response. Read the current state and reconcile the result before repeating this request."
+                  }
+                }
+              }
+            }
           }
         },
         "x-permission": "Designated global access administrator only, for an existing active/invited company member. Exact production/sandbox grant overrides the * default; empty actions deny access. Does not assign company membership."
@@ -2767,23 +2997,27 @@
             "type": "object",
             "properties": {
               "code": {
-                "type": "string"
+                "type": "string",
+                "description": "Machine-readable failure identifier. Gateway and application codes share this envelope but are not always identical; branch on HTTP status and the documented code."
               },
               "message": {
-                "type": "string"
+                "type": "string",
+                "description": "Safe explanation of the failure and possible recovery. Do not parse this human-readable text as a stable identifier."
               }
             },
             "required": [
               "code",
               "message"
             ],
-            "additionalProperties": false
+            "additionalProperties": false,
+            "description": "Failure details. A failure after a submitted write does not prove that nothing was saved."
           }
         },
         "required": [
           "error"
         ],
-        "additionalProperties": false
+        "additionalProperties": false,
+        "description": "An API or gateway failure. HTTP status and the machine code identify the recovery path; messages are safe explanations for the caller."
       },
       "Page": {
         "type": "object",
@@ -2793,15 +3027,18 @@
             "enum": [
               100,
               200
-            ]
+            ],
+            "description": "Maximum number of items returned by this operation: 100 for jobs and 200 for other lists."
           },
           "returned": {
             "type": "integer",
             "minimum": 0,
-            "maximum": 200
+            "maximum": 200,
+            "description": "Number of items actually present in this response after current access filtering."
           },
           "mayHaveMore": {
-            "type": "boolean"
+            "type": "boolean",
+            "description": "True when the available list reaches the limit. This conservative flag is not proof of additional records; v1 has no cursor or next-page parameter."
           }
         },
         "required": [
@@ -2809,7 +3046,8 @@
           "returned",
           "mayHaveMore"
         ],
-        "additionalProperties": false
+        "additionalProperties": false,
+        "description": "Bounds for one returned collection. This is not cursor pagination and does not expose a total count."
       },
       "Workspace": {
         "type": "object",
@@ -2818,36 +3056,44 @@
             "type": "string",
             "pattern": "^[A-Za-z0-9_-]{8,80}$",
             "minLength": 8,
-            "maxLength": 80
+            "maxLength": 80,
+            "description": "OrcheSphere workspace identifier. Use this value as workspaceId in subsequent requests; it is not a provider account ID."
           },
           "name": {
-            "type": "string"
+            "type": "string",
+            "description": "Saved company workspace display name."
           }
         },
         "required": [
           "id",
           "name"
         ],
-        "additionalProperties": false
+        "additionalProperties": false,
+        "description": "A company workspace that the current identity may access."
       },
       "ProviderContext": {
         "type": "object",
         "properties": {
           "accountId": {
-            "type": "string"
+            "type": "string",
+            "description": "Saved NetSuite account identifier associated with the connection context."
           },
           "environment": {
-            "type": "string"
+            "type": "string",
+            "description": "Saved provider environment label associated with this context."
           },
           "roleId": {
-            "type": "string"
+            "type": "string",
+            "description": "Saved NetSuite role identifier, when available. It does not itself prove which business-record operations are enabled."
           },
           "roleName": {
-            "type": "string"
+            "type": "string",
+            "description": "Saved NetSuite role display name, when available."
           }
         },
         "required": [],
-        "additionalProperties": false
+        "additionalProperties": false,
+        "description": "Optional saved provider identity context. Currently projected for NetSuite; fields describe recorded evidence, not a new provider permission grant."
       },
       "Connection": {
         "type": "object",
@@ -2856,30 +3102,37 @@
             "type": "string",
             "pattern": "^[A-Za-z0-9_-]{8,80}$",
             "minLength": 8,
-            "maxLength": 80
+            "maxLength": 80,
+            "description": "OrcheSphere connection identifier. Use it for verification only when this is a worker-managed connection with permitted verification access."
           },
           "version": {
             "type": "integer",
-            "minimum": 1
+            "minimum": 1,
+            "description": "Saved configuration version. A settings change increments it so queued work can detect an outdated connection."
           },
           "provider": {
-            "type": "string"
+            "type": "string",
+            "description": "Provider identifier from the OrcheSphere directory, such as netsuite or pipe17. Directory inclusion does not prove an implemented adapter."
           },
           "name": {
-            "type": "string"
+            "type": "string",
+            "description": "Provider display name from the directory."
           },
           "environment": {
             "type": "string",
             "enum": [
               "production",
               "sandbox"
-            ]
+            ],
+            "description": "Connection environment. Production and sandbox have separate saved settings and access rules."
           },
           "expectedAccountId": {
-            "type": "string"
+            "type": "string",
+            "description": "Saved provider account identifier that verification is expected to match."
           },
           "expectedCompanyName": {
-            "type": "string"
+            "type": "string",
+            "description": "Saved company or account label used by the provider identity check."
           },
           "authMode": {
             "type": "string",
@@ -2888,10 +3141,12 @@
               "agentcore",
               "browser_session",
               "managed_admin"
-            ]
+            ],
+            "description": "Saved authentication method. secrets_manager and agentcore use approved references; browser_session uses a separately authorized managed browser. managed_admin is an externally managed read-only projection and cannot be submitted to configureConnection."
           },
           "hasCredential": {
-            "type": "boolean"
+            "type": "boolean",
+            "description": "Whether a credential reference or external authorization identifier is recorded. This does not confirm valid credentials or a successful provider read."
           },
           "state": {
             "type": "string",
@@ -2905,7 +3160,8 @@
               "adapter_required",
               "data_read_verified",
               "disconnect_pending"
-            ]
+            ],
+            "description": "Recorded connection evidence: configured means settings are saved; data_read_verified means a supported identity read succeeded. Other values describe required authentication/permission, provider availability, identity mismatch, missing adapter or pending disconnection. Check timestamps and current errors before treating older evidence as current."
           },
           "actualAccountId": {
             "anyOf": [
@@ -2915,7 +3171,8 @@
               {
                 "type": "null"
               }
-            ]
+            ],
+            "description": "Provider account identifier from recorded successful evidence, or null when no such evidence is recorded for these settings."
           },
           "actualCompanyName": {
             "anyOf": [
@@ -2925,7 +3182,8 @@
               {
                 "type": "null"
               }
-            ]
+            ],
+            "description": "Provider company or account label from recorded successful evidence, or null when unavailable."
           },
           "lastCheckedAt": {
             "anyOf": [
@@ -2936,7 +3194,8 @@
               {
                 "type": "null"
               }
-            ]
+            ],
+            "description": "Time of the recorded connection verification check, or null. This is evidence timing, not a promise of continuous monitoring."
           },
           "lastReadAt": {
             "anyOf": [
@@ -2947,7 +3206,8 @@
               {
                 "type": "null"
               }
-            ]
+            ],
+            "description": "Time of the last recorded successful identity read, or null. A later credential or verification error can supersede this evidence."
           },
           "lastRenewedAt": {
             "anyOf": [
@@ -2958,7 +3218,8 @@
               {
                 "type": "null"
               }
-            ]
+            ],
+            "description": "Time of the last recorded successful credential renewal, or null; it does not establish unattended renewal reliability."
           },
           "credentialCheckedAt": {
             "anyOf": [
@@ -2969,7 +3230,8 @@
               {
                 "type": "null"
               }
-            ]
+            ],
+            "description": "Time of the recorded credential maintenance check, or null. This is separate from an identity-read check."
           },
           "credentialErrorCode": {
             "anyOf": [
@@ -2979,7 +3241,8 @@
               {
                 "type": "null"
               }
-            ]
+            ],
+            "description": "Machine code for the recorded credential maintenance problem, or null when no such problem is recorded."
           },
           "credentialError": {
             "anyOf": [
@@ -2989,7 +3252,8 @@
               {
                 "type": "null"
               }
-            ]
+            ],
+            "description": "Safe explanation of the recorded credential maintenance problem, or null."
           },
           "errorCode": {
             "anyOf": [
@@ -2999,7 +3263,8 @@
               {
                 "type": "null"
               }
-            ]
+            ],
+            "description": "Machine code for the recorded connection verification problem, or null."
           },
           "error": {
             "anyOf": [
@@ -3009,7 +3274,8 @@
               {
                 "type": "null"
               }
-            ]
+            ],
+            "description": "Safe explanation of the recorded connection verification problem, or null."
           },
           "allowedActions": {
             "type": "array",
@@ -3022,23 +3288,29 @@
                 "jobs_read_all",
                 "jobs_cancel_all"
               ]
-            }
+            },
+            "description": "Current effective OrcheSphere service rights when supplied by a connection list. These control saved configuration and verification work, not provider business-record read/write roles."
           },
           "providerContext": {
-            "$ref": "#/components/schemas/ProviderContext"
+            "$ref": "#/components/schemas/ProviderContext",
+            "description": "Optional provider-specific context retained from the saved connection; currently NetSuite account and role labels."
           },
           "managedExternally": {
-            "type": "boolean"
+            "type": "boolean",
+            "description": "True for an authorization managed in another Platformz service rather than by the OrcheSphere integration worker."
           },
           "managedBy": {
-            "type": "string"
+            "type": "string",
+            "description": "Display name of the service that owns an externally managed authorization."
           },
           "manageUrl": {
             "type": "string",
-            "format": "uri"
+            "format": "uri",
+            "description": "Management page for an externally managed authorization. It is not a provider API endpoint."
           },
           "note": {
-            "type": "string"
+            "type": "string",
+            "description": "Additional explanation of the connection projection and its current operational limitations."
           }
         },
         "required": [
@@ -3052,7 +3324,8 @@
           "hasCredential",
           "state"
         ],
-        "additionalProperties": false
+        "additionalProperties": false,
+        "description": "Saved connection settings and recorded identity evidence. Optional fields may be omitted, particularly for externally managed projections; no provider secret or credential reference is returned."
       },
       "Runtime": {
         "type": "object",
@@ -3062,7 +3335,8 @@
             "enum": [
               "online",
               "not_verified"
-            ]
+            ],
+            "description": "online when a worker heartbeat falls within the accepted recent window; otherwise not_verified. A heartbeat does not prove that this company has completed a job."
           },
           "lastHeartbeat": {
             "anyOf": [
@@ -3073,14 +3347,17 @@
               {
                 "type": "null"
               }
-            ]
+            ],
+            "description": "Latest heartbeat within the accepted recent window, or null when no recent heartbeat is recorded. It is not the timestamp of this company's last job."
           },
           "persistence": {
             "type": "string",
-            "const": "PostgreSQL"
+            "const": "PostgreSQL",
+            "description": "Storage backing saved jobs and results. The current implementation reports PostgreSQL."
           },
           "unattendedVerified": {
-            "const": false
+            "const": false,
+            "description": "Currently always false. Renewal, restart and recovery evidence has not established verified unattended operation."
           }
         },
         "required": [
@@ -3089,7 +3366,8 @@
           "persistence",
           "unattendedVerified"
         ],
-        "additionalProperties": false
+        "additionalProperties": false,
+        "description": "Recorded worker and persistence evidence accompanying the connection list. This does not certify successful unattended operation."
       },
       "Portal": {
         "type": "object",
@@ -3098,22 +3376,27 @@
             "type": "string",
             "pattern": "^[A-Za-z0-9_-]{8,80}$",
             "minLength": 8,
-            "maxLength": 80
+            "maxLength": 80,
+            "description": "OrcheSphere portal identifier. Use it as portalId when creating a task in this work area."
           },
           "workspaceId": {
             "type": "string",
             "pattern": "^[A-Za-z0-9_-]{8,80}$",
             "minLength": 8,
-            "maxLength": 80
+            "maxLength": 80,
+            "description": "Company workspace that owns this portal."
           },
           "name": {
-            "type": "string"
+            "type": "string",
+            "description": "Saved portal display name."
           },
           "slug": {
-            "type": "string"
+            "type": "string",
+            "description": "Saved URL-friendly portal label; use id, not this slug, in API request fields."
           },
           "description": {
-            "type": "string"
+            "type": "string",
+            "description": "Saved explanation of the portal's purpose; may be empty."
           },
           "role": {
             "type": "string",
@@ -3121,17 +3404,21 @@
               "admin",
               "operator",
               "viewer"
-            ]
+            ],
+            "description": "Current caller's effective portal role: admin, operator or viewer."
           },
           "canManage": {
-            "type": "boolean"
+            "type": "boolean",
+            "description": "Whether the caller has portal administrator authority. Portal-management operations are not exposed by REST v1."
           },
           "canCreateTask": {
-            "type": "boolean"
+            "type": "boolean",
+            "description": "Whether the effective portal role allows task creation. The API token must also include orchesphere.jobs."
           },
           "createdAt": {
             "type": "string",
-            "format": "date-time"
+            "format": "date-time",
+            "description": "Timestamp when this portal record was created."
           }
         },
         "required": [
@@ -3145,7 +3432,8 @@
           "canCreateTask",
           "createdAt"
         ],
-        "additionalProperties": false
+        "additionalProperties": false,
+        "description": "An accessible work area within a company. Its role and capability fields describe the current caller."
       },
       "Task": {
         "type": "object",
@@ -3154,28 +3442,33 @@
             "type": "string",
             "pattern": "^[A-Za-z0-9_-]{8,80}$",
             "minLength": 8,
-            "maxLength": 80
+            "maxLength": 80,
+            "description": "OrcheSphere task identifier. Use it as taskId to update this record."
           },
           "workspaceId": {
             "type": "string",
             "pattern": "^[A-Za-z0-9_-]{8,80}$",
             "minLength": 8,
-            "maxLength": 80
+            "maxLength": 80,
+            "description": "Company workspace that owns this task."
           },
           "portalId": {
             "type": "string",
             "pattern": "^[A-Za-z0-9_-]{8,80}$",
             "minLength": 8,
-            "maxLength": 80
+            "maxLength": 80,
+            "description": "Parent portal identifier; company and portal access still apply to task access."
           },
           "title": {
             "type": "string",
             "minLength": 2,
-            "maxLength": 240
+            "maxLength": 240,
+            "description": "Saved short task title."
           },
           "description": {
             "type": "string",
-            "maxLength": 6000
+            "maxLength": 6000,
+            "description": "Saved task instructions or context; may be empty. This is not an executable provider command."
           },
           "status": {
             "type": "string",
@@ -3186,7 +3479,8 @@
               "review",
               "done",
               "cancelled"
-            ]
+            ],
+            "description": "Saved work-tracking state: todo, in_progress, blocked, review, done or cancelled. This does not report an integration worker or provider result."
           },
           "assigneeEmail": {
             "anyOf": [
@@ -3197,18 +3491,22 @@
               {
                 "type": "null"
               }
-            ]
+            ],
+            "description": "Assigned eligible portal member email, or null when unassigned. REST updates do not support reassignment."
           },
           "createdBy": {
-            "type": "string"
+            "type": "string",
+            "description": "Email identity recorded as the task creator."
           },
           "createdAt": {
             "type": "string",
-            "format": "date-time"
+            "format": "date-time",
+            "description": "Timestamp when this task record was created."
           },
           "updatedAt": {
             "type": "string",
-            "format": "date-time"
+            "format": "date-time",
+            "description": "Timestamp when this task record was last updated."
           },
           "role": {
             "type": "string",
@@ -3217,13 +3515,16 @@
               "contributor",
               "reviewer",
               "viewer"
-            ]
+            ],
+            "description": "Current caller's effective task role. A reviewer may change status only; viewer access does not allow edits."
           },
           "canEdit": {
-            "type": "boolean"
+            "type": "boolean",
+            "description": "Whether the caller has any task editing authority. Reviewers still cannot edit title or description; required OAuth scopes also apply."
           },
           "canManage": {
-            "type": "boolean"
+            "type": "boolean",
+            "description": "Whether the caller has task administrator authority. This does not add management operations to REST v1."
           }
         },
         "required": [
@@ -3241,27 +3542,32 @@
           "canEdit",
           "canManage"
         ],
-        "additionalProperties": false
+        "additionalProperties": false,
+        "description": "Saved requested work in a portal. A task status is maintained work tracking, not evidence that a provider operation ran."
       },
       "VerificationResult": {
         "type": "object",
         "properties": {
           "accountId": {
-            "type": "string"
+            "type": "string",
+            "description": "Provider account identifier observed by the identity adapter."
           },
           "companyName": {
-            "type": "string"
+            "type": "string",
+            "description": "Provider company name or account label observed by the identity adapter; interpret it using identityLabelKind."
           },
           "observedAt": {
             "type": "string",
-            "format": "date-time"
+            "format": "date-time",
+            "description": "Timestamp when this successful identity result was recorded."
           },
           "identityLabelKind": {
             "type": "string",
             "enum": [
               "account_label",
               "company_name"
-            ]
+            ],
+            "description": "Whether companyName represents a company_name or a provider account_label."
           },
           "credentialRenewedAt": {
             "anyOf": [
@@ -3272,7 +3578,8 @@
               {
                 "type": "null"
               }
-            ]
+            ],
+            "description": "Credential renewal timestamp reported during this successful check, or null if no renewal was recorded."
           }
         },
         "required": [
@@ -3282,7 +3589,8 @@
           "identityLabelKind",
           "credentialRenewedAt"
         ],
-        "additionalProperties": false
+        "additionalProperties": false,
+        "description": "Recorded output of a successful supported provider identity check. It contains identity evidence only, not orders, payments or other business records."
       },
       "Job": {
         "type": "object",
@@ -3291,27 +3599,32 @@
             "type": "string",
             "pattern": "^[A-Za-z0-9_-]{8,80}$",
             "minLength": 8,
-            "maxLength": 80
+            "maxLength": 80,
+            "description": "Saved OrcheSphere job identifier. Use it to poll getJob or request cancellation."
           },
           "connectionId": {
             "type": "string",
             "pattern": "^[A-Za-z0-9_-]{8,80}$",
             "minLength": 8,
-            "maxLength": 80
+            "maxLength": 80,
+            "description": "Saved connection whose identity this job checks."
           },
           "provider": {
-            "type": "string"
+            "type": "string",
+            "description": "Provider identifier associated with the job."
           },
           "environment": {
             "type": "string",
             "enum": [
               "production",
               "sandbox"
-            ]
+            ],
+            "description": "Connection environment when supplied by the returned projection; it can be omitted from the initial queue response."
           },
           "operation": {
             "type": "string",
-            "const": "verify"
+            "const": "verify",
+            "description": "Requested worker operation. REST v1 supports verify only."
           },
           "status": {
             "type": "string",
@@ -3323,22 +3636,27 @@
               "failed",
               "blocked",
               "cancelled"
-            ]
+            ],
+            "description": "Recorded worker state: queued awaits execution; running is claimed; retry_wait awaits a bounded retry; blocked needs attention; succeeded, failed and cancelled are terminal outcomes. Read result and error fields for the recorded outcome."
           },
           "attempts": {
             "type": "integer",
-            "minimum": 0
+            "minimum": 0,
+            "description": "Number of recorded worker execution attempts; a newly queued job starts at zero."
           },
           "createdBy": {
-            "type": "string"
+            "type": "string",
+            "description": "Email identity recorded as the verification requester."
           },
           "createdAt": {
             "type": "string",
-            "format": "date-time"
+            "format": "date-time",
+            "description": "Timestamp when the saved job was created."
           },
           "updatedAt": {
             "type": "string",
-            "format": "date-time"
+            "format": "date-time",
+            "description": "Timestamp when the saved job state was last updated."
           },
           "finishedAt": {
             "anyOf": [
@@ -3349,7 +3667,8 @@
               {
                 "type": "null"
               }
-            ]
+            ],
+            "description": "Recorded job finish timestamp, or null when no finish time is recorded."
           },
           "result": {
             "anyOf": [
@@ -3359,7 +3678,8 @@
               {
                 "type": "null"
               }
-            ]
+            ],
+            "description": "Recorded identity-verification output when available, otherwise null. The presence of a job ID is not successful evidence."
           },
           "errorCode": {
             "anyOf": [
@@ -3369,7 +3689,8 @@
               {
                 "type": "null"
               }
-            ]
+            ],
+            "description": "Recorded worker error code, or null. Job failures are returned as saved state in a successful getJob response, not necessarily as an HTTP error."
           },
           "error": {
             "anyOf": [
@@ -3379,13 +3700,16 @@
               {
                 "type": "null"
               }
-            ]
+            ],
+            "description": "Safe explanation of the recorded worker problem, or null."
           },
           "canCancel": {
-            "type": "boolean"
+            "type": "boolean",
+            "description": "Caller cancellation authority when the list projection supplies it. Terminal jobs remain unchanged by cancellation, and the server rechecks current authority."
           },
           "canResume": {
-            "type": "boolean"
+            "type": "boolean",
+            "description": "Whether the signed-in product can offer resumption when this optional projection is supplied. REST v1 has no resume operation."
           },
           "resumeBlockedReason": {
             "anyOf": [
@@ -3395,7 +3719,8 @@
               {
                 "type": "null"
               }
-            ]
+            ],
+            "description": "Explanation of why resumption is unavailable when the optional projection supplies it, otherwise null."
           }
         },
         "required": [
@@ -3413,7 +3738,8 @@
           "errorCode",
           "error"
         ],
-        "additionalProperties": false
+        "additionalProperties": false,
+        "description": "A saved identity-verification job. Optional capability fields are included in list projections when available and must not be assumed on every job response."
       },
       "CreateTask": {
         "type": "object",
@@ -3422,29 +3748,34 @@
             "type": "string",
             "pattern": "^[A-Za-z0-9_-]{8,80}$",
             "minLength": 8,
-            "maxLength": 80
+            "maxLength": 80,
+            "description": "Existing portal ID returned by listPortals in this workspace. Creating a portal is outside REST v1."
           },
           "title": {
             "type": "string",
             "minLength": 2,
-            "maxLength": 240
+            "maxLength": 240,
+            "description": "Task title, trimmed before saving; must retain at least two characters after trimming."
           },
           "description": {
             "type": "string",
-            "maxLength": 6000
+            "maxLength": 6000,
+            "description": "Optional task instructions, trimmed before saving. Omit for an empty description."
           },
           "assigneeEmail": {
             "type": "string",
             "format": "email",
             "minLength": 3,
-            "maxLength": 254
+            "maxLength": 254,
+            "description": "Optional email of an eligible active member of this portal. Explicit assignment requires the designated access administrator; omission creates an unassigned task. Normalized to lowercase."
           }
         },
         "required": [
           "portalId",
           "title"
         ],
-        "additionalProperties": false
+        "additionalProperties": false,
+        "description": "Fields for saving new requested work in an existing accessible portal."
       },
       "UpdateTask": {
         "type": "object",
@@ -3452,11 +3783,13 @@
           "title": {
             "type": "string",
             "minLength": 2,
-            "maxLength": 240
+            "maxLength": 240,
+            "description": "Replacement task title, trimmed before saving. Requires task admin or contributor authority."
           },
           "description": {
             "type": "string",
-            "maxLength": 6000
+            "maxLength": 6000,
+            "description": "Replacement instructions, trimmed before saving. An empty string clears the description; omission keeps it. Requires task admin or contributor authority."
           },
           "status": {
             "type": "string",
@@ -3467,12 +3800,14 @@
               "review",
               "done",
               "cancelled"
-            ]
+            ],
+            "description": "Replacement work-tracking state. Task reviewers may update this field only; this does not execute or cancel a provider operation."
           }
         },
         "required": [],
         "additionalProperties": false,
-        "minProperties": 1
+        "minProperties": 1,
+        "description": "Fields to replace on an accessible task. Supply at least one field; omitted fields retain their saved values."
       },
       "ConfigureConnection": {
         "type": "object",
@@ -3480,12 +3815,14 @@
           "expectedAccountId": {
             "type": "string",
             "minLength": 1,
-            "maxLength": 160
+            "maxLength": 160,
+            "description": "Exact expected provider account identifier, trimmed before saving and checked by the supported identity adapter."
           },
           "expectedCompanyName": {
             "type": "string",
             "minLength": 1,
-            "maxLength": 160
+            "maxLength": 160,
+            "description": "Expected company name or account label, trimmed before saving and evaluated by the provider's identity rules."
           },
           "authMode": {
             "type": "string",
@@ -3493,7 +3830,8 @@
               "secrets_manager",
               "agentcore",
               "browser_session"
-            ]
+            ],
+            "description": "Authentication method supported by this catalog provider. secrets_manager and agentcore require an approved reference to use saved credentials; browser_session requires owner authority and a separate protected sign-in. Saving the mode alone does not authorize the provider."
           },
           "credentialRef": {
             "type": "string",
@@ -3506,7 +3844,8 @@
           "expectedCompanyName",
           "authMode"
         ],
-        "additionalProperties": false
+        "additionalProperties": false,
+        "description": "Expected identity and authentication settings for one provider/environment in a company. Raw provider secrets must never be submitted here."
       },
       "ServicePermissions": {
         "type": "object",
@@ -3515,7 +3854,8 @@
             "type": "string",
             "format": "email",
             "minLength": 3,
-            "maxLength": 254
+            "maxLength": 254,
+            "description": "Existing active or invited member email in this workspace, normalized to lowercase. The service rule does not activate an invitation."
           },
           "actions": {
             "type": "array",
@@ -3531,47 +3871,54 @@
             },
             "uniqueItems": true,
             "maxItems": 5,
-            "description": "Nonempty actions require read. jobs_cancel_all requires jobs_read_all. Empty array denies access. Viewer members may receive read-only actions only."
+            "description": "Exact replacement rights, not additions to the current list. Nonempty actions require read. jobs_cancel_all requires jobs_read_all. Empty array denies access. Viewer members may receive read-only actions only."
           }
         },
         "required": [
           "email",
           "actions"
         ],
-        "additionalProperties": false
+        "additionalProperties": false,
+        "description": "Replacement rights for an existing company member at the provider/environment in the request path. This does not create membership or set provider-side API roles."
       },
       "Empty": {
         "type": "object",
         "properties": {},
         "required": [],
-        "additionalProperties": false
+        "additionalProperties": false,
+        "description": "Optional empty JSON object for verification and cancellation. Omit the body or send {}; additional fields are rejected."
       },
       "Ok": {
         "type": "object",
         "properties": {
           "ok": {
-            "const": true
+            "const": true,
+            "description": "Always true for a successful response. Cancellation can acknowledge an already-terminal job without changing it."
           }
         },
         "required": [
           "ok"
         ],
-        "additionalProperties": false
+        "additionalProperties": false,
+        "description": "Acknowledgment that the requested saved-state operation was accepted. Read the affected resource to inspect its resulting state."
       },
       "TaskResponse": {
         "type": "object",
         "properties": {
           "ok": {
-            "const": true
+            "const": true,
+            "description": "Always true after the task save succeeds."
           },
           "workspaceId": {
             "type": "string",
             "pattern": "^[A-Za-z0-9_-]{8,80}$",
             "minLength": 8,
-            "maxLength": 80
+            "maxLength": 80,
+            "description": "Company workspace in which this task was saved."
           },
           "task": {
-            "$ref": "#/components/schemas/Task"
+            "$ref": "#/components/schemas/Task",
+            "description": "Saved task record after the accepted change."
           }
         },
         "required": [
@@ -3579,34 +3926,40 @@
           "workspaceId",
           "task"
         ],
-        "additionalProperties": false
+        "additionalProperties": false,
+        "description": "Saved task returned after creation or update, with current caller capabilities."
       },
       "JobResponse": {
         "type": "object",
         "properties": {
           "job": {
-            "$ref": "#/components/schemas/Job"
+            "$ref": "#/components/schemas/Job",
+            "description": "Current saved job. A 202 submission can return an existing job in any recorded state when its idempotency key is replayed."
           }
         },
         "required": [
           "job"
         ],
-        "additionalProperties": false
+        "additionalProperties": false,
+        "description": "Saved verification job returned by getJob or queueing/replaying verification."
       },
       "ConnectionResponse": {
         "type": "object",
         "properties": {
           "connection": {
-            "$ref": "#/components/schemas/Connection"
+            "$ref": "#/components/schemas/Connection",
+            "description": "Saved connection settings and recorded evidence after the operation; this response does not by itself prove live provider access."
           },
           "reused": {
-            "const": true
+            "const": true,
+            "description": "Present and true when identical existing settings were reused without resetting evidence. Omitted when a configuration was inserted or changed."
           }
         },
         "required": [
           "connection"
         ],
-        "additionalProperties": false
+        "additionalProperties": false,
+        "description": "Connection record returned after saving or reusing identical settings."
       },
       "WorkspaceList": {
         "type": "object",
@@ -3616,17 +3969,20 @@
             "items": {
               "$ref": "#/components/schemas/Workspace"
             },
-            "maxItems": 200
+            "maxItems": 200,
+            "description": "Current company assignments visible to this identity; may be empty."
           },
           "page": {
-            "$ref": "#/components/schemas/Page"
+            "$ref": "#/components/schemas/Page",
+            "description": "Returned item count and conservative truncation indicator."
           }
         },
         "required": [
           "workspaces",
           "page"
         ],
-        "additionalProperties": false
+        "additionalProperties": false,
+        "description": "Bounded list of currently accessible company workspaces."
       },
       "ConnectionList": {
         "type": "object",
@@ -3636,13 +3992,16 @@
             "items": {
               "$ref": "#/components/schemas/Connection"
             },
-            "maxItems": 200
+            "maxItems": 200,
+            "description": "Saved connections with current read permission, including eligible externally managed read-only projections; may be empty."
           },
           "page": {
-            "$ref": "#/components/schemas/Page"
+            "$ref": "#/components/schemas/Page",
+            "description": "Returned item count and conservative truncation indicator."
           },
           "runtime": {
-            "$ref": "#/components/schemas/Runtime"
+            "$ref": "#/components/schemas/Runtime",
+            "description": "Recent worker-heartbeat and persistence evidence. It does not certify provider access or uninterrupted operation."
           }
         },
         "required": [
@@ -3650,7 +4009,8 @@
           "page",
           "runtime"
         ],
-        "additionalProperties": false
+        "additionalProperties": false,
+        "description": "Bounded list of saved connections visible under current company and service rights, plus worker evidence."
       },
       "PortalList": {
         "type": "object",
@@ -3660,17 +4020,20 @@
             "items": {
               "$ref": "#/components/schemas/Portal"
             },
-            "maxItems": 200
+            "maxItems": 200,
+            "description": "Portals permitted by current company and portal authority; may be empty."
           },
           "page": {
-            "$ref": "#/components/schemas/Page"
+            "$ref": "#/components/schemas/Page",
+            "description": "Returned item count and conservative truncation indicator."
           }
         },
         "required": [
           "portals",
           "page"
         ],
-        "additionalProperties": false
+        "additionalProperties": false,
+        "description": "Bounded list of accessible saved company work areas."
       },
       "TaskList": {
         "type": "object",
@@ -3680,17 +4043,20 @@
             "items": {
               "$ref": "#/components/schemas/Task"
             },
-            "maxItems": 200
+            "maxItems": 200,
+            "description": "Tasks visible through current company, portal and task authority; may be empty."
           },
           "page": {
-            "$ref": "#/components/schemas/Page"
+            "$ref": "#/components/schemas/Page",
+            "description": "Returned item count and conservative truncation indicator."
           }
         },
         "required": [
           "tasks",
           "page"
         ],
-        "additionalProperties": false
+        "additionalProperties": false,
+        "description": "Bounded list of saved requested work visible to the caller."
       },
       "JobList": {
         "type": "object",
@@ -3700,17 +4066,20 @@
             "items": {
               "$ref": "#/components/schemas/Job"
             },
-            "maxItems": 100
+            "maxItems": 100,
+            "description": "Saved verification jobs visible to the requester or a caller with company job-read authority; may be empty."
           },
           "page": {
-            "$ref": "#/components/schemas/Page"
+            "$ref": "#/components/schemas/Page",
+            "description": "Returned item count and conservative truncation indicator. This is not a total historical job count."
           }
         },
         "required": [
           "jobs",
           "page"
         ],
-        "additionalProperties": false
+        "additionalProperties": false,
+        "description": "At most the latest 100 visible verification jobs, ordered newest first."
       }
     }
   },

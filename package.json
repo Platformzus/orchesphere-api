@@ -4,6 +4,14 @@
   "private": true,
   "type": "module",
   "description": "OrcheSphere public API documentation, contract and client examples",
-  "engines": {"node": ">=22"},
-  "scripts": {"build": "node scripts/build.mjs", "test": "node --test tests/*.test.mjs", "preview": "node scripts/preview.mjs", "check:public": "node scripts/check-public.mjs"}
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "test": "node --test tests/*.test.mjs",
+    "preview": "node scripts/preview.mjs",
+    "check:public": "node scripts/check-public.mjs",
+    "check:docs": "node scripts/check-docs.mjs"
+  }
 }
