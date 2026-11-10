@@ -58,7 +58,7 @@ export function createWorker({routes,publicPaths,apiEnabled=false,fetcher=fetch}
    const asset=await env.ASSETS.fetch(new Request(PUBLIC_ORIGIN+target,{method:request.method}));
    if(asset.status!==200)return denied();
    const headers=new Headers(publicSecurity);for(const key of ['content-type','etag'])if(asset.headers.has(key))headers.set(key,asset.headers.get(key));
-   headers.set('cache-control',/-[a-f0-9]{12}\./.test(target)?'public, max-age=31536000, immutable':'public, max-age=300');
+   headers.set('cache-control',/-[a-f0-9]{12}\./.test(target)?'public, max-age=31536000, immutable, no-transform':'public, max-age=300, no-transform');
    return new Response(request.method==='HEAD'?null:asset.body,{status:200,headers});
   }catch{return error(503,'documentation_unavailable','Documentation is temporarily unavailable. Retry later.');}
  }};
