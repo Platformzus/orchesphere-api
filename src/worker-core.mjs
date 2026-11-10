@@ -21,7 +21,7 @@ const publicSecurity={
  'permissions-policy':'camera=(), microphone=(), geolocation=()',
  'content-security-policy':"default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self'; font-src 'self'; object-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'none'; upgrade-insecure-requests",
 };
-export function createWorker({routes,publicPaths,fetcher=fetch}){
+export function createWorker({routes,publicPaths,apiEnabled=false,fetcher=fetch}){
  const admitted=routes.map(route=>({...route,pattern:routePattern(route.path)}));
  async function forward(request,path,{discovery=false}={}){
   const headers=new Headers({accept:'application/json'});
@@ -40,8 +40,10 @@ export function createWorker({routes,publicPaths,fetcher=fetch}){
  }
  return {async fetch(request,env){
   const url=new URL(request.url);if(url.origin!==PUBLIC_ORIGIN)return denied();
-  const path=url.pathname;if(path.includes('%')||path.includes('\\'))return error(400,'invalid_path','Use the documented path without encoded components.');
+  const path=url.pathname;
   const discovery=path==='/.well-known/oauth-protected-resource';
+  if((path==='/v1'||path.startsWith('/v1/')||discovery)&&apiEnabled!==true)return error(503,'api_not_ready','The API release is pending. See the documentation for current availability.');
+  if(path.includes('%')||path.includes('\\'))return error(400,'invalid_path','Use the documented path without encoded components.');
   if(path==='/v1'||path.startsWith('/v1/')||discovery){
    if(url.search)return error(400,'unsupported_query','Query parameters are not supported on this endpoint.');
    if(request.headers.has('origin')&&request.headers.get('origin')!==PUBLIC_ORIGIN)return error(403,'origin_not_permitted','Use a backend or native client for API access.');

@@ -5,3 +5,4 @@
 .release-notice{background:#f2f6fd;border:1px solid #c7d8ef;border-radius:7px;padding:13px 16px;margin:20px 0;font-size:13px;color:#355479}.table-wrap:focus-visible{outline:3px solid #76a5ff;outline-offset:3px}.table-wrap table{min-width:540px}.page-links a{min-height:44px;display:inline-flex;align-items:center}.search-field:focus-within{outline:3px solid #76a5ff;outline-offset:3px}
 @media(max-width:850px){body.menu-open{overflow:hidden}}
 @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
+.content h1{overflow-wrap:anywhere}

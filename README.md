@@ -2,7 +2,9 @@
 
 Public documentation, OpenAPI contract and client examples for OrcheSphere.
 
-**Release status: pending.** This repository contains the prepared developer API contract and examples. The new REST service, developer application registration and API documentation domain have not yet completed a verified production rollout. The addresses below are the intended release addresses; wait for this notice to be removed before expecting the new flow to work.
+The documentation is available as a release preview. While the API release is pending, `/v1` requests and `/.well-known/oauth-protected-resource` return non-cacheable HTTP 503 with error code `api_not_ready`. These requests are not forwarded to the backend, and their request bodies are not read. The documentation remains accessible; developer registration and API use await verified production rollout.
+
+**API release status: pending.** The public documentation preview is available at `https://api.orchesphere.ai`. The new REST service and developer application registration still await verified production rollout. The portal and API addresses below describe the prepared release; wait for this notice to be removed before expecting the new authorization flow to work.
 
 - [Documentation](https://api.orchesphere.ai)
 - [Register an application](https://orchesphere.ai/orchesphere/developers)
@@ -68,6 +70,8 @@ Verification requires an `Idempotency-Key`. Reuse it only for the same submissio
 `src/worker.mjs` serves an explicit static-file allowlist and forwards only the contract's supported REST methods and paths to a fixed OrcheSphere backend. It strips website cookies and unrelated headers, does not follow upstream redirects, and marks API responses private and non-cacheable. Authorization and tenant policy are enforced by the backend. No credentials or account identifiers are needed in this source tree.
 
 `wrangler.jsonc` describes the public custom domain and static assets. Deployment requires an authorized Cloudflare account and is separate from a local preview or test run. Request observability is disabled in this Worker configuration; no application code logs tokens or request bodies.
+
+The build derives the production Worker's `apiEnabled` gate from `RELEASE_PENDING` in `src/content.mjs`, keeping the release notice and API admission together. Leave it pending until the backend rollout and runtime checks are verified, then rebuild and deploy the reviewed release. The core Worker defaults to disabled unless admission is explicitly enabled; local preview never forwards live API requests.
 
 `scripts/check-public.mjs` checks the explicit publication allowlist, rejects unexpected files and symlinks, and returns SHA-256 hashes. Generated output, local dependencies, credentials and private service source are excluded. The public tree contains no private application backend or customer records.
 
