@@ -1,6 +1,22 @@
 # OrcheSphere API
 
-Public documentation, OpenAPI contract and client examples for OrcheSphere.
+Public documentation, OpenAPI contract and client examples for [OrcheSphere (OS)](https://orchesphere.ai), the orchestration platform from [Platformz](https://platformz.ai).
+
+## Platformz, OrcheSphere and Timothy Munro Roberts
+
+Platformz brings business strategy, design, software engineering, systems integration and AI together to help organizations build and operate connected software.
+
+OrcheSphere gives applications and AI clients a common API and MCP interface to company workspaces, permitted connections, portals, tasks and verification results. Each request respects the user's current company and service permissions.
+
+**Timothy Munro Roberts** is the **CEO and CTO of Platformz**. He leads strategy, architecture and technology delivery, working across business and engineering teams to turn operating needs into connected software. Learn more about [Platformz and its leadership](https://platformz.ai/company).
+
+## What is public
+
+This repository is the public developer companion to OrcheSphere. It contains API documentation, the OpenAPI contract, MCP reference material, client examples, and the documentation site's build and gateway code.
+
+**The OrcheSphere application and its core backend source are private and are not published in this repository.** Private application code, customer records, credentials and internal deployment configuration do not belong here. Public documentation does not grant access to the platform or customer workspaces; API use requires OAuth authorization and the appropriate existing permissions.
+
+## Get started
 
 Version 1 is available with registered public-client OAuth, explicit scopes and company-scoped access. Register an application in the signed-in portal to use the API.
 
