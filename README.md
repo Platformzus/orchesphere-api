@@ -2,9 +2,7 @@
 
 Public documentation, OpenAPI contract and client examples for OrcheSphere.
 
-The documentation is available as a release preview. While the API release is pending, `/v1` requests and `/.well-known/oauth-protected-resource` return non-cacheable HTTP 503 with error code `api_not_ready`. These requests are not forwarded to the backend, and their request bodies are not read. The documentation remains accessible; developer registration and API use await verified production rollout.
-
-**API release status: pending.** The public documentation preview is available at `https://api.orchesphere.ai`. The new REST service and developer application registration still await verified production rollout. The portal and API addresses below describe the prepared release; wait for this notice to be removed before expecting the new authorization flow to work.
+Version 1 is available with registered public-client OAuth, explicit scopes and company-scoped access. Register an application in the signed-in portal to use the API.
 
 - [Documentation](https://api.orchesphere.ai)
 - [Register an application](https://orchesphere.ai/orchesphere/developers)

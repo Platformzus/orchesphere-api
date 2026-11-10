@@ -1,5 +1,5 @@
 export const SITE='https://api.orchesphere.ai',ISSUER='https://orchesphere.ai',REPO='https://github.com/PlatformzHQ/orchesphere-api',REGISTER=ISSUER+'/orchesphere/developers';
-export const RELEASE_PENDING=true;
+export const RELEASE_PENDING=false;
 export const escape=value=>String(value??'').replace(/[&<>"']/g,value=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[value]));
 let codeIndex=0;
 export function code(value,language='json'){const id='code-'+(++codeIndex);return `<div class="code-block"><div class="code-head"><span>${escape(language)}</span><button type="button" data-copy="${id}" aria-label="Copy ${escape(language)} example">Copy</button></div><pre><code id="${id}">${escape(value)}</code></pre></div>`;}
