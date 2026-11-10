@@ -1,0 +1,8 @@
+node_modules/
+dist/
+.wrangler/
+src/generated.mjs
+.env
+.env.*
+!.env.example
+*.log

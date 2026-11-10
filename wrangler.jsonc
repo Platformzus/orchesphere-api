@@ -1,0 +1,11 @@
+{
+  "name": "orchesphere-api",
+  "main": "src/worker.mjs",
+  "compatibility_date": "2026-11-10",
+  "workers_dev": false,
+  "preview_urls": false,
+  "assets": {"directory": "./dist", "binding": "ASSETS", "run_worker_first": true, "html_handling": "none", "not_found_handling": "none"},
+  "build": {"command": "node scripts/build.mjs"},
+  "observability": {"enabled": false},
+  "routes": [{"pattern": "api.orchesphere.ai", "custom_domain": true}]
+}

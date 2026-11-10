@@ -1,0 +1,11 @@
+import http from 'node:http';
+import fs from 'node:fs/promises';
+import path from 'node:path';
+import {fileURLToPath} from 'node:url';
+import {createWorker} from '../src/worker-core.mjs';
+import {apiRoutes,publicPaths} from '../src/generated.mjs';
+const dist=fileURLToPath(new URL('../dist/',import.meta.url)),port=Number(process.env.PORT||4177);
+const worker=createWorker({routes:apiRoutes,publicPaths,fetcher:async()=>Response.json({error:{code:'preview_only',message:'The local documentation preview does not make live API calls.'}},{status:503})});
+const types={'.html':'text/html; charset=utf-8','.js':'text/javascript; charset=utf-8','.css':'text/css; charset=utf-8','.json':'application/json; charset=utf-8','.txt':'text/plain; charset=utf-8','.xml':'application/xml; charset=utf-8','.png':'image/png'};
+const env={ASSETS:{async fetch(request){const pathname=new URL(request.url).pathname,target=path.resolve(dist,'.'+pathname);if(!target.startsWith(path.resolve(dist)+path.sep))return new Response(null,{status:404});try{return new Response(request.method==='HEAD'?null:await fs.readFile(target),{headers:{'content-type':types[path.extname(target)]||'application/octet-stream'}});}catch{return new Response(null,{status:404});}}}};
+http.createServer(async(req,res)=>{try{const response=await worker.fetch(new Request('https://api.orchesphere.ai'+req.url,{method:req.method,headers:req.headers,...(!['GET','HEAD'].includes(req.method)?{body:req,duplex:'half'}:{})}),env);res.writeHead(response.status,Object.fromEntries(response.headers));res.end(Buffer.from(await response.arrayBuffer()));}catch{res.writeHead(500,{'content-type':'text/plain'});res.end('Local preview error.');}}).listen(port,'127.0.0.1',()=>console.log(`Documentation preview: http://127.0.0.1:${port} (live API forwarding disabled)`));

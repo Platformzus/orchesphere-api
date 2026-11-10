@@ -1,0 +1,2069 @@
+{
+  "version": "1.0.0",
+  "rest": {
+    "resource": "https://api.orchesphere.ai",
+    "base": "https://api.orchesphere.ai/v1",
+    "operations": [
+      {
+        "operationId": "listWorkspaces",
+        "method": "GET",
+        "path": "/v1/workspaces",
+        "summary": "List assigned workspaces",
+        "description": "Current active company assignments; verified global authority may see all company workspaces.",
+        "scope": [
+          "orchesphere.read"
+        ],
+        "permission": "Current active company assignments; verified global authority may see all company workspaces.",
+        "requestSchema": null,
+        "responseSchema": {
+          "$ref": "#/components/schemas/WorkspaceList"
+        },
+        "status": 200,
+        "requestRequired": false,
+        "exampleRequest": null,
+        "exampleResponse": {
+          "workspaces": [
+            {
+              "id": "11111111-1111-4111-8111-111111111111",
+              "name": "Example Company"
+            }
+          ],
+          "page": {
+            "limit": 200,
+            "returned": 1,
+            "mayHaveMore": false
+          }
+        }
+      },
+      {
+        "operationId": "listConnections",
+        "method": "GET",
+        "path": "/v1/workspaces/{workspaceId}/connections",
+        "summary": "List connection evidence",
+        "description": "Provider read permission in the selected workspace/environment. Configured is not proof of live access; managed_admin entries are read-only external projections.",
+        "scope": [
+          "orchesphere.read"
+        ],
+        "permission": "Provider read permission in the selected workspace/environment. Configured is not proof of live access; managed_admin entries are read-only external projections.",
+        "requestSchema": null,
+        "responseSchema": {
+          "$ref": "#/components/schemas/ConnectionList"
+        },
+        "status": 200,
+        "requestRequired": false,
+        "exampleRequest": null,
+        "exampleResponse": {
+          "connections": [
+            {
+              "id": "22222222-2222-4222-8222-222222222222",
+              "version": 1,
+              "provider": "quickbooks",
+              "name": "QuickBooks Online",
+              "environment": "production",
+              "expectedAccountId": "example-account",
+              "expectedCompanyName": "Example Company",
+              "authMode": "secrets_manager",
+              "hasCredential": false,
+              "state": "configured",
+              "actualAccountId": null,
+              "actualCompanyName": null,
+              "lastCheckedAt": null,
+              "lastReadAt": null,
+              "lastRenewedAt": null,
+              "credentialCheckedAt": null,
+              "credentialErrorCode": null,
+              "credentialError": null,
+              "errorCode": null,
+              "error": null
+            }
+          ],
+          "page": {
+            "limit": 200,
+            "returned": 1,
+            "mayHaveMore": false
+          },
+          "runtime": {
+            "workerState": "not_verified",
+            "lastHeartbeat": null,
+            "persistence": "PostgreSQL",
+            "unattendedVerified": false
+          }
+        }
+      },
+      {
+        "operationId": "listPortals",
+        "method": "GET",
+        "path": "/v1/workspaces/{workspaceId}/portals",
+        "summary": "List assigned portals",
+        "description": "Current company membership and a parent portal assignment, or company-owner authority.",
+        "scope": [
+          "orchesphere.read"
+        ],
+        "permission": "Current company membership and a parent portal assignment, or company-owner authority.",
+        "requestSchema": null,
+        "responseSchema": {
+          "$ref": "#/components/schemas/PortalList"
+        },
+        "status": 200,
+        "requestRequired": false,
+        "exampleRequest": null,
+        "exampleResponse": {
+          "portals": [],
+          "page": {
+            "limit": 200,
+            "returned": 0,
+            "mayHaveMore": false
+          }
+        }
+      },
+      {
+        "operationId": "listTasks",
+        "method": "GET",
+        "path": "/v1/workspaces/{workspaceId}/tasks",
+        "summary": "List accessible tasks",
+        "description": "Current company/portal access and a task assignment/role. This lists saved requested work, not provider execution.",
+        "scope": [
+          "orchesphere.read"
+        ],
+        "permission": "Current company/portal access and a task assignment/role. This lists saved requested work, not provider execution.",
+        "requestSchema": null,
+        "responseSchema": {
+          "$ref": "#/components/schemas/TaskList"
+        },
+        "status": 200,
+        "requestRequired": false,
+        "exampleRequest": null,
+        "exampleResponse": {
+          "tasks": [
+            {
+              "id": "33333333-3333-4333-8333-333333333333",
+              "workspaceId": "11111111-1111-4111-8111-111111111111",
+              "portalId": "22222222-2222-4222-8222-222222222222",
+              "title": "Review the saved verification",
+              "description": "Requested work only.",
+              "status": "todo",
+              "assigneeEmail": null,
+              "createdBy": "developer@example.com",
+              "createdAt": "2026-01-01T00:00:00.000Z",
+              "updatedAt": "2026-01-01T00:00:00.000Z",
+              "role": "contributor",
+              "canEdit": true,
+              "canManage": false
+            }
+          ],
+          "page": {
+            "limit": 200,
+            "returned": 1,
+            "mayHaveMore": false
+          }
+        }
+      },
+      {
+        "operationId": "listJobs",
+        "method": "GET",
+        "path": "/v1/workspaces/{workspaceId}/jobs",
+        "summary": "List saved verification jobs",
+        "description": "Provider read permission plus requester identity or jobs_read_all. Latest 100 matching saved jobs, newest first.",
+        "scope": [
+          "orchesphere.read"
+        ],
+        "permission": "Provider read permission plus requester identity or jobs_read_all. Latest 100 matching saved jobs, newest first.",
+        "requestSchema": null,
+        "responseSchema": {
+          "$ref": "#/components/schemas/JobList"
+        },
+        "status": 200,
+        "requestRequired": false,
+        "exampleRequest": null,
+        "exampleResponse": {
+          "jobs": [
+            {
+              "id": "33333333-3333-4333-8333-333333333333",
+              "connectionId": "22222222-2222-4222-8222-222222222222",
+              "provider": "quickbooks",
+              "operation": "verify",
+              "status": "queued",
+              "attempts": 0,
+              "createdBy": "developer@example.com",
+              "createdAt": "2026-01-01T00:00:00.000Z",
+              "updatedAt": "2026-01-01T00:00:00.000Z",
+              "finishedAt": null,
+              "result": null,
+              "errorCode": null,
+              "error": null
+            }
+          ],
+          "page": {
+            "limit": 100,
+            "returned": 1,
+            "mayHaveMore": false
+          }
+        }
+      },
+      {
+        "operationId": "getJob",
+        "method": "GET",
+        "path": "/v1/workspaces/{workspaceId}/jobs/{jobId}",
+        "summary": "Get a saved job",
+        "description": "Provider read permission plus requester identity or jobs_read_all. Missing and inaccessible jobs both return 404.",
+        "scope": [
+          "orchesphere.read"
+        ],
+        "permission": "Provider read permission plus requester identity or jobs_read_all. Missing and inaccessible jobs both return 404.",
+        "requestSchema": null,
+        "responseSchema": {
+          "$ref": "#/components/schemas/JobResponse"
+        },
+        "status": 200,
+        "requestRequired": false,
+        "exampleRequest": null,
+        "exampleResponse": {
+          "job": {
+            "id": "33333333-3333-4333-8333-333333333333",
+            "connectionId": "22222222-2222-4222-8222-222222222222",
+            "provider": "quickbooks",
+            "operation": "verify",
+            "status": "queued",
+            "attempts": 0,
+            "createdBy": "developer@example.com",
+            "createdAt": "2026-01-01T00:00:00.000Z",
+            "updatedAt": "2026-01-01T00:00:00.000Z",
+            "finishedAt": null,
+            "result": null,
+            "errorCode": null,
+            "error": null
+          }
+        }
+      },
+      {
+        "operationId": "createTask",
+        "method": "POST",
+        "path": "/v1/workspaces/{workspaceId}/tasks",
+        "summary": "Create a task",
+        "description": "Portal admin/operator. Explicit assigneeEmail additionally requires the designated access administrator and an eligible active portal member. Saves requested work; no external execution.",
+        "scope": [
+          "orchesphere.read",
+          "orchesphere.jobs"
+        ],
+        "permission": "Portal admin/operator. Explicit assigneeEmail additionally requires the designated access administrator and an eligible active portal member. Saves requested work; no external execution.",
+        "requestSchema": {
+          "$ref": "#/components/schemas/CreateTask"
+        },
+        "responseSchema": {
+          "$ref": "#/components/schemas/TaskResponse"
+        },
+        "status": 201,
+        "requestRequired": true,
+        "exampleRequest": {
+          "portalId": "22222222-2222-4222-8222-222222222222",
+          "title": "Review the saved verification",
+          "description": "Requested work only."
+        },
+        "exampleResponse": {
+          "ok": true,
+          "workspaceId": "11111111-1111-4111-8111-111111111111",
+          "task": {
+            "id": "33333333-3333-4333-8333-333333333333",
+            "workspaceId": "11111111-1111-4111-8111-111111111111",
+            "portalId": "22222222-2222-4222-8222-222222222222",
+            "title": "Review the saved verification",
+            "description": "Requested work only.",
+            "status": "todo",
+            "assigneeEmail": null,
+            "createdBy": "developer@example.com",
+            "createdAt": "2026-01-01T00:00:00.000Z",
+            "updatedAt": "2026-01-01T00:00:00.000Z",
+            "role": "contributor",
+            "canEdit": true,
+            "canManage": false
+          }
+        }
+      },
+      {
+        "operationId": "updateTask",
+        "method": "PATCH",
+        "path": "/v1/workspaces/{workspaceId}/tasks/{taskId}",
+        "summary": "Update a task",
+        "description": "Task admin/contributor/reviewer. Reviewer can update status only. Reassignment is not exposed. Parent portal and company rights still apply.",
+        "scope": [
+          "orchesphere.read",
+          "orchesphere.jobs"
+        ],
+        "permission": "Task admin/contributor/reviewer. Reviewer can update status only. Reassignment is not exposed. Parent portal and company rights still apply.",
+        "requestSchema": {
+          "$ref": "#/components/schemas/UpdateTask"
+        },
+        "responseSchema": {
+          "$ref": "#/components/schemas/TaskResponse"
+        },
+        "status": 200,
+        "requestRequired": true,
+        "exampleRequest": {
+          "status": "in_progress"
+        },
+        "exampleResponse": {
+          "ok": true,
+          "workspaceId": "11111111-1111-4111-8111-111111111111",
+          "task": {
+            "id": "33333333-3333-4333-8333-333333333333",
+            "workspaceId": "11111111-1111-4111-8111-111111111111",
+            "portalId": "22222222-2222-4222-8222-222222222222",
+            "title": "Review the saved verification",
+            "description": "Requested work only.",
+            "status": "in_progress",
+            "assigneeEmail": null,
+            "createdBy": "developer@example.com",
+            "createdAt": "2026-01-01T00:00:00.000Z",
+            "updatedAt": "2026-01-01T00:00:00.000Z",
+            "role": "contributor",
+            "canEdit": true,
+            "canManage": false
+          }
+        }
+      },
+      {
+        "operationId": "verifyConnection",
+        "method": "POST",
+        "path": "/v1/workspaces/{workspaceId}/connections/{connectionId}/verify",
+        "summary": "Queue an identity verification",
+        "description": "Provider verify permission, implemented identity adapter and current entitlement/quota. Requires Idempotency-Key; replay with the same workspace/requester/key and connection returns the existing job, possibly already terminal. A different connection conflicts.",
+        "scope": [
+          "orchesphere.read",
+          "orchesphere.jobs"
+        ],
+        "permission": "Provider verify permission, implemented identity adapter and current entitlement/quota. Requires Idempotency-Key; replay with the same workspace/requester/key and connection returns the existing job, possibly already terminal. A different connection conflicts.",
+        "requestSchema": {
+          "$ref": "#/components/schemas/Empty"
+        },
+        "responseSchema": {
+          "$ref": "#/components/schemas/JobResponse"
+        },
+        "status": 202,
+        "requestRequired": false,
+        "exampleRequest": {},
+        "exampleResponse": {
+          "job": {
+            "id": "33333333-3333-4333-8333-333333333333",
+            "connectionId": "22222222-2222-4222-8222-222222222222",
+            "provider": "quickbooks",
+            "operation": "verify",
+            "status": "queued",
+            "attempts": 0,
+            "createdBy": "developer@example.com",
+            "createdAt": "2026-01-01T00:00:00.000Z",
+            "updatedAt": "2026-01-01T00:00:00.000Z",
+            "finishedAt": null,
+            "result": null,
+            "errorCode": null,
+            "error": null
+          }
+        },
+        "requiredHeaders": {
+          "Idempotency-Key": "example-verify-001"
+        }
+      },
+      {
+        "operationId": "cancelJob",
+        "method": "POST",
+        "path": "/v1/workspaces/{workspaceId}/jobs/{jobId}/cancel",
+        "summary": "Cancel a saved job",
+        "description": "Company owner, or non-viewer requester with provider read, or provider jobs_cancel_all. Applies to queued/retry_wait/running/blocked states; terminal jobs remain unchanged.",
+        "scope": [
+          "orchesphere.read",
+          "orchesphere.jobs"
+        ],
+        "permission": "Company owner, or non-viewer requester with provider read, or provider jobs_cancel_all. Applies to queued/retry_wait/running/blocked states; terminal jobs remain unchanged.",
+        "requestSchema": {
+          "$ref": "#/components/schemas/Empty"
+        },
+        "responseSchema": {
+          "$ref": "#/components/schemas/Ok"
+        },
+        "status": 200,
+        "requestRequired": false,
+        "exampleRequest": {},
+        "exampleResponse": {
+          "ok": true
+        }
+      },
+      {
+        "operationId": "configureConnection",
+        "method": "PUT",
+        "path": "/v1/workspaces/{workspaceId}/connections/{provider}/{environment}",
+        "summary": "Configure a connection",
+        "description": "Provider configure permission; browser_session also requires company owner. Allowed mode depends on catalog provider. Production entitlements/limits apply. Uses a credential reference only; changing settings invalidates previous evidence.",
+        "scope": [
+          "orchesphere.read",
+          "orchesphere.manage"
+        ],
+        "permission": "Provider configure permission; browser_session also requires company owner. Allowed mode depends on catalog provider. Production entitlements/limits apply. Uses a credential reference only; changing settings invalidates previous evidence.",
+        "requestSchema": {
+          "$ref": "#/components/schemas/ConfigureConnection"
+        },
+        "responseSchema": {
+          "$ref": "#/components/schemas/ConnectionResponse"
+        },
+        "status": 200,
+        "requestRequired": true,
+        "exampleRequest": {
+          "expectedAccountId": "example-account",
+          "expectedCompanyName": "Example Company",
+          "authMode": "secrets_manager"
+        },
+        "exampleResponse": {
+          "connection": {
+            "id": "22222222-2222-4222-8222-222222222222",
+            "version": 1,
+            "provider": "quickbooks",
+            "name": "QuickBooks Online",
+            "environment": "production",
+            "expectedAccountId": "example-account",
+            "expectedCompanyName": "Example Company",
+            "authMode": "secrets_manager",
+            "hasCredential": false,
+            "state": "configured",
+            "actualAccountId": null,
+            "actualCompanyName": null,
+            "lastCheckedAt": null,
+            "lastReadAt": null,
+            "lastRenewedAt": null,
+            "credentialCheckedAt": null,
+            "credentialErrorCode": null,
+            "credentialError": null,
+            "errorCode": null,
+            "error": null
+          }
+        }
+      },
+      {
+        "operationId": "setServicePermissions",
+        "method": "PUT",
+        "path": "/v1/workspaces/{workspaceId}/service-permissions/{provider}/{environment}",
+        "summary": "Set exact service permissions",
+        "description": "Designated global access administrator only, for an existing active/invited company member. Exact production/sandbox grant overrides the * default; empty actions deny access. Does not assign company membership.",
+        "scope": [
+          "orchesphere.read",
+          "orchesphere.manage"
+        ],
+        "permission": "Designated global access administrator only, for an existing active/invited company member. Exact production/sandbox grant overrides the * default; empty actions deny access. Does not assign company membership.",
+        "requestSchema": {
+          "$ref": "#/components/schemas/ServicePermissions"
+        },
+        "responseSchema": {
+          "$ref": "#/components/schemas/Ok"
+        },
+        "status": 200,
+        "requestRequired": true,
+        "exampleRequest": {
+          "email": "developer@example.com",
+          "actions": [
+            "read",
+            "verify"
+          ]
+        },
+        "exampleResponse": {
+          "ok": true
+        }
+      }
+    ]
+  },
+  "mcp": {
+    "endpoint": "https://orchesphere.ai/mcp",
+    "resource": "https://orchesphere.ai/mcp",
+    "protocolVersions": [
+      "2025-06-18",
+      "2025-03-26",
+      "2024-11-05"
+    ],
+    "transport": "POST JSON-RPC; no SSE or session ID",
+    "tools": [
+      {
+        "name": "list_workspaces",
+        "description": "List only companies assigned to this verified identity.",
+        "inputSchema": {
+          "type": "object",
+          "properties": {},
+          "additionalProperties": false
+        },
+        "annotations": {
+          "readOnlyHint": true,
+          "destructiveHint": false,
+          "openWorldHint": false
+        },
+        "securitySchemes": [
+          {
+            "type": "oauth2",
+            "scopes": [
+              "orchesphere.read"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "list_connections",
+        "description": "Read permitted provider status and evidence. Registration is not proof of live access.",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "workspaceId": {
+              "type": "string",
+              "description": "An assigned company workspace ID."
+            }
+          },
+          "required": [
+            "workspaceId"
+          ],
+          "additionalProperties": false
+        },
+        "annotations": {
+          "readOnlyHint": true,
+          "destructiveHint": false,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "securitySchemes": [
+          {
+            "type": "oauth2",
+            "scopes": [
+              "orchesphere.read"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "list_portals",
+        "description": "List portals assigned to this identity within the selected company.",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "workspaceId": {
+              "type": "string",
+              "description": "An assigned company workspace ID."
+            }
+          },
+          "required": [
+            "workspaceId"
+          ],
+          "additionalProperties": false
+        },
+        "annotations": {
+          "readOnlyHint": true,
+          "destructiveHint": false,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "securitySchemes": [
+          {
+            "type": "oauth2",
+            "scopes": [
+              "orchesphere.read"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "list_tasks",
+        "description": "List only tasks this identity can access in the selected company.",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "workspaceId": {
+              "type": "string",
+              "description": "An assigned company workspace ID."
+            }
+          },
+          "required": [
+            "workspaceId"
+          ],
+          "additionalProperties": false
+        },
+        "annotations": {
+          "readOnlyHint": true,
+          "destructiveHint": false,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "securitySchemes": [
+          {
+            "type": "oauth2",
+            "scopes": [
+              "orchesphere.read"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "create_task",
+        "description": "Save a task in an assigned portal. This records requested work; it does not execute actions in external systems.",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "workspaceId": {
+              "type": "string",
+              "description": "An assigned company workspace ID."
+            },
+            "portalId": {
+              "type": "string"
+            },
+            "title": {
+              "type": "string",
+              "maxLength": 240
+            },
+            "description": {
+              "type": "string",
+              "maxLength": 6000
+            },
+            "assigneeEmail": {
+              "type": "string",
+              "maxLength": 254
+            }
+          },
+          "required": [
+            "workspaceId",
+            "portalId",
+            "title"
+          ],
+          "additionalProperties": false
+        },
+        "annotations": {
+          "readOnlyHint": false,
+          "destructiveHint": false,
+          "idempotentHint": false,
+          "openWorldHint": true
+        },
+        "securitySchemes": [
+          {
+            "type": "oauth2",
+            "scopes": [
+              "orchesphere.read",
+              "orchesphere.jobs"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "update_task",
+        "description": "Update an authorized task. Contributor, reviewer and portal-administrator permissions are enforced by the server.",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "workspaceId": {
+              "type": "string",
+              "description": "An assigned company workspace ID."
+            },
+            "taskId": {
+              "type": "string"
+            },
+            "title": {
+              "type": "string",
+              "maxLength": 240
+            },
+            "description": {
+              "type": "string",
+              "maxLength": 6000
+            },
+            "status": {
+              "type": "string",
+              "enum": [
+                "todo",
+                "in_progress",
+                "blocked",
+                "review",
+                "done",
+                "cancelled"
+              ]
+            }
+          },
+          "required": [
+            "workspaceId",
+            "taskId"
+          ],
+          "additionalProperties": false
+        },
+        "annotations": {
+          "readOnlyHint": false,
+          "destructiveHint": false,
+          "idempotentHint": false,
+          "openWorldHint": true
+        },
+        "securitySchemes": [
+          {
+            "type": "oauth2",
+            "scopes": [
+              "orchesphere.read",
+              "orchesphere.jobs"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "list_jobs",
+        "description": "Read saved jobs submitted by this user; company administrators can read company jobs.",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "workspaceId": {
+              "type": "string",
+              "description": "An assigned company workspace ID."
+            }
+          },
+          "required": [
+            "workspaceId"
+          ],
+          "additionalProperties": false
+        },
+        "annotations": {
+          "readOnlyHint": true,
+          "destructiveHint": false,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "securitySchemes": [
+          {
+            "type": "oauth2",
+            "scopes": [
+              "orchesphere.read"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "get_job",
+        "description": "Retrieve a saved job and its result by ID.",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "workspaceId": {
+              "type": "string",
+              "description": "An assigned company workspace ID."
+            },
+            "jobId": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "workspaceId",
+            "jobId"
+          ],
+          "additionalProperties": false
+        },
+        "annotations": {
+          "readOnlyHint": true,
+          "destructiveHint": false,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "securitySchemes": [
+          {
+            "type": "oauth2",
+            "scopes": [
+              "orchesphere.read"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "verify_connection",
+        "description": "Save a durable, read-only provider identity check and return its job ID. The AWS worker continues after this chat closes. Requires a service verification grant.",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "workspaceId": {
+              "type": "string",
+              "description": "An assigned company workspace ID."
+            },
+            "connectionId": {
+              "type": "string"
+            },
+            "idempotencyKey": {
+              "type": "string",
+              "description": "Unique request key, reused when retrying this exact submission."
+            }
+          },
+          "required": [
+            "workspaceId",
+            "connectionId",
+            "idempotencyKey"
+          ],
+          "additionalProperties": false
+        },
+        "annotations": {
+          "readOnlyHint": false,
+          "destructiveHint": false,
+          "idempotentHint": false,
+          "openWorldHint": true
+        },
+        "securitySchemes": [
+          {
+            "type": "oauth2",
+            "scopes": [
+              "orchesphere.read",
+              "orchesphere.jobs"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "cancel_job",
+        "description": "Cancel a saved job. Requires requester rights or a company-job cancellation grant.",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "workspaceId": {
+              "type": "string",
+              "description": "An assigned company workspace ID."
+            },
+            "jobId": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "workspaceId",
+            "jobId"
+          ],
+          "additionalProperties": false
+        },
+        "annotations": {
+          "readOnlyHint": false,
+          "destructiveHint": true,
+          "idempotentHint": false,
+          "openWorldHint": true
+        },
+        "securitySchemes": [
+          {
+            "type": "oauth2",
+            "scopes": [
+              "orchesphere.read",
+              "orchesphere.jobs"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "configure_connection",
+        "description": "Register or replace this company’s provider configuration. Use an AWS credential reference, never a secret. This does not establish live provider access.",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "workspaceId": {
+              "type": "string",
+              "description": "An assigned company workspace ID."
+            },
+            "provider": {
+              "type": "string"
+            },
+            "environment": {
+              "type": "string",
+              "enum": [
+                "production",
+                "sandbox"
+              ]
+            },
+            "expectedAccountId": {
+              "type": "string"
+            },
+            "expectedCompanyName": {
+              "type": "string"
+            },
+            "authMode": {
+              "type": "string",
+              "enum": [
+                "secrets_manager",
+                "agentcore",
+                "browser_session"
+              ]
+            },
+            "credentialRef": {
+              "type": "string",
+              "maxLength": 512
+            }
+          },
+          "required": [
+            "workspaceId",
+            "provider",
+            "environment",
+            "expectedAccountId",
+            "expectedCompanyName",
+            "authMode"
+          ],
+          "additionalProperties": false
+        },
+        "annotations": {
+          "readOnlyHint": false,
+          "destructiveHint": true,
+          "idempotentHint": false,
+          "openWorldHint": true
+        },
+        "securitySchemes": [
+          {
+            "type": "oauth2",
+            "scopes": [
+              "orchesphere.read",
+              "orchesphere.manage"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "set_service_permissions",
+        "description": "Assign exact service rights to a company member. Exact environment grants replace the all-environments default. An empty actions array denies access. Only the designated global administrator may change grants.",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "workspaceId": {
+              "type": "string",
+              "description": "An assigned company workspace ID."
+            },
+            "email": {
+              "type": "string"
+            },
+            "provider": {
+              "type": "string"
+            },
+            "environment": {
+              "type": "string",
+              "enum": [
+                "*",
+                "production",
+                "sandbox"
+              ]
+            },
+            "actions": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "read",
+                  "verify",
+                  "configure",
+                  "jobs_read_all",
+                  "jobs_cancel_all"
+                ]
+              },
+              "maxItems": 5
+            }
+          },
+          "required": [
+            "workspaceId",
+            "email",
+            "provider",
+            "environment",
+            "actions"
+          ],
+          "additionalProperties": false
+        },
+        "annotations": {
+          "readOnlyHint": false,
+          "destructiveHint": true,
+          "idempotentHint": false,
+          "openWorldHint": true
+        },
+        "securitySchemes": [
+          {
+            "type": "oauth2",
+            "scopes": [
+              "orchesphere.read",
+              "orchesphere.manage"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "set_platform_role",
+        "description": "Revoke an existing platform authority assignment using a platform-admin-controlled internal OAuth binding. Global authority cannot be created or transferred through the application. The last active platform administrator cannot be removed.",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "workspaceId": {
+              "type": "string",
+              "description": "An assigned company workspace ID."
+            },
+            "email": {
+              "type": "string"
+            },
+            "role": {
+              "type": "string",
+              "enum": [
+                "none"
+              ]
+            }
+          },
+          "required": [
+            "workspaceId",
+            "email",
+            "role"
+          ],
+          "additionalProperties": false
+        },
+        "annotations": {
+          "readOnlyHint": false,
+          "destructiveHint": true,
+          "idempotentHint": false,
+          "openWorldHint": true
+        },
+        "securitySchemes": [
+          {
+            "type": "oauth2",
+            "scopes": [
+              "orchesphere.read",
+              "orchesphere.admin"
+            ]
+          }
+        ]
+      }
+    ],
+    "notes": [
+      "Registered developer applications cannot request orchesphere.admin; set_platform_role remains an internal-authority MCP operation.",
+      "Initial 401 challenge requests orchesphere.read only. Insufficient tool scope returns 403 with the required scopes in WWW-Authenticate.",
+      "Successful tools include both content text and structuredContent; other tool errors use isError:true."
+    ]
+  },
+  "scopes": {
+    "orchesphere.read": "Read only the current user’s permitted company data. Required for every operation.",
+    "orchesphere.jobs": "Create/update authorized tasks and queue/cancel permitted identity-verification jobs.",
+    "orchesphere.manage": "Configure permitted connections; service-grant changes still require the designated access administrator.",
+    "offline_access": "Receive rotating refresh tokens, bounded by the grant lifetime. Adds no company permission."
+  },
+  "limits": {
+    "requestBodyBytes": 24000,
+    "ordinaryListItems": 200,
+    "jobsListItems": 100,
+    "pagination": "No query, cursor or pagination parameters in v1. page.mayHaveMore is conservative when a cap is reached; it is not an exact total.",
+    "accessTokenSeconds": 300,
+    "grantDays": 30,
+    "verificationNewJobsPerCompanyPerMinute": 30,
+    "idempotency": "Only verification accepts Idempotency-Key. Task creation has no idempotent retry guarantee. Read current records after a lost mutation response."
+  },
+  "permissions": {
+    "serviceRights": [
+      "read",
+      "verify",
+      "configure",
+      "jobs_read_all",
+      "jobs_cancel_all"
+    ],
+    "notes": [
+      "Exact environment rights override the all-environments default. Empty actions deny access.",
+      "Nonempty service grants require read; jobs_cancel_all also requires jobs_read_all.",
+      "Company viewers receive read-only rights. Scope does not create membership or service/portal/task authority.",
+      "Service-permission writes require designated global access-administrator authority."
+    ]
+  },
+  "providers": {
+    "directoryCount": 157,
+    "identityAdapters": [
+      {
+        "id": "quickbooks",
+        "name": "QuickBooks Online"
+      },
+      {
+        "id": "netsuite",
+        "name": "NetSuite"
+      },
+      {
+        "id": "stripe",
+        "name": "Stripe"
+      },
+      {
+        "id": "pipe17",
+        "name": "Pipe17"
+      },
+      {
+        "id": "bigcommerce",
+        "name": "BigCommerce"
+      },
+      {
+        "id": "entra",
+        "name": "Microsoft Entra"
+      },
+      {
+        "id": "slack",
+        "name": "Slack"
+      },
+      {
+        "id": "asana",
+        "name": "Asana"
+      },
+      {
+        "id": "hubspot",
+        "name": "HubSpot"
+      },
+      {
+        "id": "cloudflare",
+        "name": "Cloudflare"
+      },
+      {
+        "id": "github",
+        "name": "GitHub"
+      }
+    ],
+    "businessOperations": "No provider business-record read/write API is enabled."
+  },
+  "errors": {
+    "400": "Invalid path/query/body/header or business validation.",
+    "401": "Missing, expired, revoked, invalid or wrong-resource token.",
+    "402": "Verified company payment is required.",
+    "403": "Insufficient token scope or current company/service/portal/task authority.",
+    "404": "Unknown endpoint or record not found/inaccessible.",
+    "405": "Method is not supported for this path.",
+    "409": "State, quota or idempotency conflict; re-read current state.",
+    "413": "Request exceeds 24,000 bytes.",
+    "415": "Use uncompressed application/json.",
+    "429": "Company job/rate/paid-period allowance reached.",
+    "503": "Temporarily unavailable; a lost mutation response does not prove nothing was saved."
+  },
+  "schemas": {
+    "Error": {
+      "type": "object",
+      "properties": {
+        "error": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "string"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "error"
+      ],
+      "additionalProperties": false
+    },
+    "Page": {
+      "type": "object",
+      "properties": {
+        "limit": {
+          "type": "integer",
+          "enum": [
+            100,
+            200
+          ]
+        },
+        "returned": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 200
+        },
+        "mayHaveMore": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "limit",
+        "returned",
+        "mayHaveMore"
+      ],
+      "additionalProperties": false
+    },
+    "Workspace": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_-]{8,80}$",
+          "minLength": 8,
+          "maxLength": 80
+        },
+        "name": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "name"
+      ],
+      "additionalProperties": false
+    },
+    "ProviderContext": {
+      "type": "object",
+      "properties": {
+        "accountId": {
+          "type": "string"
+        },
+        "environment": {
+          "type": "string"
+        },
+        "roleId": {
+          "type": "string"
+        },
+        "roleName": {
+          "type": "string"
+        }
+      },
+      "required": [],
+      "additionalProperties": false
+    },
+    "Connection": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_-]{8,80}$",
+          "minLength": 8,
+          "maxLength": 80
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "provider": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "environment": {
+          "type": "string",
+          "enum": [
+            "production",
+            "sandbox"
+          ]
+        },
+        "expectedAccountId": {
+          "type": "string"
+        },
+        "expectedCompanyName": {
+          "type": "string"
+        },
+        "authMode": {
+          "type": "string",
+          "enum": [
+            "secrets_manager",
+            "agentcore",
+            "browser_session",
+            "managed_admin"
+          ]
+        },
+        "hasCredential": {
+          "type": "boolean"
+        },
+        "state": {
+          "type": "string",
+          "enum": [
+            "configured",
+            "authentication_required",
+            "permission_missing",
+            "provider_error",
+            "server_unavailable",
+            "identity_mismatch",
+            "adapter_required",
+            "data_read_verified",
+            "disconnect_pending"
+          ]
+        },
+        "actualAccountId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "actualCompanyName": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "lastCheckedAt": {
+          "anyOf": [
+            {
+              "type": "string",
+              "format": "date-time"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "lastReadAt": {
+          "anyOf": [
+            {
+              "type": "string",
+              "format": "date-time"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "lastRenewedAt": {
+          "anyOf": [
+            {
+              "type": "string",
+              "format": "date-time"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "credentialCheckedAt": {
+          "anyOf": [
+            {
+              "type": "string",
+              "format": "date-time"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "credentialErrorCode": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "credentialError": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "errorCode": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "allowedActions": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "read",
+              "verify",
+              "configure",
+              "jobs_read_all",
+              "jobs_cancel_all"
+            ]
+          }
+        },
+        "providerContext": {
+          "$ref": "#/components/schemas/ProviderContext"
+        },
+        "managedExternally": {
+          "type": "boolean"
+        },
+        "managedBy": {
+          "type": "string"
+        },
+        "manageUrl": {
+          "type": "string",
+          "format": "uri"
+        },
+        "note": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "provider",
+        "name",
+        "environment",
+        "expectedAccountId",
+        "expectedCompanyName",
+        "authMode",
+        "hasCredential",
+        "state"
+      ],
+      "additionalProperties": false
+    },
+    "Runtime": {
+      "type": "object",
+      "properties": {
+        "workerState": {
+          "type": "string",
+          "enum": [
+            "online",
+            "not_verified"
+          ]
+        },
+        "lastHeartbeat": {
+          "anyOf": [
+            {
+              "type": "string",
+              "format": "date-time"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "persistence": {
+          "type": "string",
+          "const": "PostgreSQL"
+        },
+        "unattendedVerified": {
+          "const": false
+        }
+      },
+      "required": [
+        "workerState",
+        "lastHeartbeat",
+        "persistence",
+        "unattendedVerified"
+      ],
+      "additionalProperties": false
+    },
+    "Portal": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_-]{8,80}$",
+          "minLength": 8,
+          "maxLength": 80
+        },
+        "workspaceId": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_-]{8,80}$",
+          "minLength": 8,
+          "maxLength": 80
+        },
+        "name": {
+          "type": "string"
+        },
+        "slug": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "role": {
+          "type": "string",
+          "enum": [
+            "admin",
+            "operator",
+            "viewer"
+          ]
+        },
+        "canManage": {
+          "type": "boolean"
+        },
+        "canCreateTask": {
+          "type": "boolean"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "workspaceId",
+        "name",
+        "slug",
+        "description",
+        "role",
+        "canManage",
+        "canCreateTask",
+        "createdAt"
+      ],
+      "additionalProperties": false
+    },
+    "Task": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_-]{8,80}$",
+          "minLength": 8,
+          "maxLength": 80
+        },
+        "workspaceId": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_-]{8,80}$",
+          "minLength": 8,
+          "maxLength": 80
+        },
+        "portalId": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_-]{8,80}$",
+          "minLength": 8,
+          "maxLength": 80
+        },
+        "title": {
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 240
+        },
+        "description": {
+          "type": "string",
+          "maxLength": 6000
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "todo",
+            "in_progress",
+            "blocked",
+            "review",
+            "done",
+            "cancelled"
+          ]
+        },
+        "assigneeEmail": {
+          "anyOf": [
+            {
+              "type": "string",
+              "format": "email"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "createdBy": {
+          "type": "string"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "role": {
+          "type": "string",
+          "enum": [
+            "admin",
+            "contributor",
+            "reviewer",
+            "viewer"
+          ]
+        },
+        "canEdit": {
+          "type": "boolean"
+        },
+        "canManage": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "id",
+        "workspaceId",
+        "portalId",
+        "title",
+        "description",
+        "status",
+        "assigneeEmail",
+        "createdBy",
+        "createdAt",
+        "updatedAt",
+        "role",
+        "canEdit",
+        "canManage"
+      ],
+      "additionalProperties": false
+    },
+    "VerificationResult": {
+      "type": "object",
+      "properties": {
+        "accountId": {
+          "type": "string"
+        },
+        "companyName": {
+          "type": "string"
+        },
+        "observedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "identityLabelKind": {
+          "type": "string",
+          "enum": [
+            "account_label",
+            "company_name"
+          ]
+        },
+        "credentialRenewedAt": {
+          "anyOf": [
+            {
+              "type": "string",
+              "format": "date-time"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "accountId",
+        "companyName",
+        "observedAt",
+        "identityLabelKind",
+        "credentialRenewedAt"
+      ],
+      "additionalProperties": false
+    },
+    "Job": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_-]{8,80}$",
+          "minLength": 8,
+          "maxLength": 80
+        },
+        "connectionId": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_-]{8,80}$",
+          "minLength": 8,
+          "maxLength": 80
+        },
+        "provider": {
+          "type": "string"
+        },
+        "environment": {
+          "type": "string",
+          "enum": [
+            "production",
+            "sandbox"
+          ]
+        },
+        "operation": {
+          "type": "string",
+          "const": "verify"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "queued",
+            "running",
+            "retry_wait",
+            "succeeded",
+            "failed",
+            "blocked",
+            "cancelled"
+          ]
+        },
+        "attempts": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "createdBy": {
+          "type": "string"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "finishedAt": {
+          "anyOf": [
+            {
+              "type": "string",
+              "format": "date-time"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "result": {
+          "anyOf": [
+            {
+              "$ref": "#/components/schemas/VerificationResult"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "errorCode": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "canCancel": {
+          "type": "boolean"
+        },
+        "canResume": {
+          "type": "boolean"
+        },
+        "resumeBlockedReason": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "connectionId",
+        "provider",
+        "operation",
+        "status",
+        "attempts",
+        "createdBy",
+        "createdAt",
+        "updatedAt",
+        "finishedAt",
+        "result",
+        "errorCode",
+        "error"
+      ],
+      "additionalProperties": false
+    },
+    "CreateTask": {
+      "type": "object",
+      "properties": {
+        "portalId": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_-]{8,80}$",
+          "minLength": 8,
+          "maxLength": 80
+        },
+        "title": {
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 240
+        },
+        "description": {
+          "type": "string",
+          "maxLength": 6000
+        },
+        "assigneeEmail": {
+          "type": "string",
+          "format": "email",
+          "minLength": 3,
+          "maxLength": 254
+        }
+      },
+      "required": [
+        "portalId",
+        "title"
+      ],
+      "additionalProperties": false
+    },
+    "UpdateTask": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 240
+        },
+        "description": {
+          "type": "string",
+          "maxLength": 6000
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "todo",
+            "in_progress",
+            "blocked",
+            "review",
+            "done",
+            "cancelled"
+          ]
+        }
+      },
+      "required": [],
+      "additionalProperties": false,
+      "minProperties": 1
+    },
+    "ConfigureConnection": {
+      "type": "object",
+      "properties": {
+        "expectedAccountId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 160
+        },
+        "expectedCompanyName": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 160
+        },
+        "authMode": {
+          "type": "string",
+          "enum": [
+            "secrets_manager",
+            "agentcore",
+            "browser_session"
+          ]
+        },
+        "credentialRef": {
+          "type": "string",
+          "maxLength": 512,
+          "description": "A company-scoped credential reference, never a provider secret. Omit to retain an existing reference with unchanged authMode; empty string clears it. Browser mode forbids a reference."
+        }
+      },
+      "required": [
+        "expectedAccountId",
+        "expectedCompanyName",
+        "authMode"
+      ],
+      "additionalProperties": false
+    },
+    "ServicePermissions": {
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string",
+          "format": "email",
+          "minLength": 3,
+          "maxLength": 254
+        },
+        "actions": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "read",
+              "verify",
+              "configure",
+              "jobs_read_all",
+              "jobs_cancel_all"
+            ]
+          },
+          "uniqueItems": true,
+          "maxItems": 5,
+          "description": "Nonempty actions require read. jobs_cancel_all requires jobs_read_all. Empty array denies access. Viewer members may receive read-only actions only."
+        }
+      },
+      "required": [
+        "email",
+        "actions"
+      ],
+      "additionalProperties": false
+    },
+    "Empty": {
+      "type": "object",
+      "properties": {},
+      "required": [],
+      "additionalProperties": false
+    },
+    "Ok": {
+      "type": "object",
+      "properties": {
+        "ok": {
+          "const": true
+        }
+      },
+      "required": [
+        "ok"
+      ],
+      "additionalProperties": false
+    },
+    "TaskResponse": {
+      "type": "object",
+      "properties": {
+        "ok": {
+          "const": true
+        },
+        "workspaceId": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_-]{8,80}$",
+          "minLength": 8,
+          "maxLength": 80
+        },
+        "task": {
+          "$ref": "#/components/schemas/Task"
+        }
+      },
+      "required": [
+        "ok",
+        "workspaceId",
+        "task"
+      ],
+      "additionalProperties": false
+    },
+    "JobResponse": {
+      "type": "object",
+      "properties": {
+        "job": {
+          "$ref": "#/components/schemas/Job"
+        }
+      },
+      "required": [
+        "job"
+      ],
+      "additionalProperties": false
+    },
+    "ConnectionResponse": {
+      "type": "object",
+      "properties": {
+        "connection": {
+          "$ref": "#/components/schemas/Connection"
+        },
+        "reused": {
+          "const": true
+        }
+      },
+      "required": [
+        "connection"
+      ],
+      "additionalProperties": false
+    },
+    "WorkspaceList": {
+      "type": "object",
+      "properties": {
+        "workspaces": {
+          "type": "array",
+          "items": {
+            "$ref": "#/components/schemas/Workspace"
+          },
+          "maxItems": 200
+        },
+        "page": {
+          "$ref": "#/components/schemas/Page"
+        }
+      },
+      "required": [
+        "workspaces",
+        "page"
+      ],
+      "additionalProperties": false
+    },
+    "ConnectionList": {
+      "type": "object",
+      "properties": {
+        "connections": {
+          "type": "array",
+          "items": {
+            "$ref": "#/components/schemas/Connection"
+          },
+          "maxItems": 200
+        },
+        "page": {
+          "$ref": "#/components/schemas/Page"
+        },
+        "runtime": {
+          "$ref": "#/components/schemas/Runtime"
+        }
+      },
+      "required": [
+        "connections",
+        "page",
+        "runtime"
+      ],
+      "additionalProperties": false
+    },
+    "PortalList": {
+      "type": "object",
+      "properties": {
+        "portals": {
+          "type": "array",
+          "items": {
+            "$ref": "#/components/schemas/Portal"
+          },
+          "maxItems": 200
+        },
+        "page": {
+          "$ref": "#/components/schemas/Page"
+        }
+      },
+      "required": [
+        "portals",
+        "page"
+      ],
+      "additionalProperties": false
+    },
+    "TaskList": {
+      "type": "object",
+      "properties": {
+        "tasks": {
+          "type": "array",
+          "items": {
+            "$ref": "#/components/schemas/Task"
+          },
+          "maxItems": 200
+        },
+        "page": {
+          "$ref": "#/components/schemas/Page"
+        }
+      },
+      "required": [
+        "tasks",
+        "page"
+      ],
+      "additionalProperties": false
+    },
+    "JobList": {
+      "type": "object",
+      "properties": {
+        "jobs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/components/schemas/Job"
+          },
+          "maxItems": 100
+        },
+        "page": {
+          "$ref": "#/components/schemas/Page"
+        }
+      },
+      "required": [
+        "jobs",
+        "page"
+      ],
+      "additionalProperties": false
+    }
+  }
+}
