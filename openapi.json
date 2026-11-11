@@ -3,7 +3,7 @@
   "info": {
     "title": "OrcheSphere API",
     "version": "1.0.0",
-    "description": "Resource-bound company API. The initial release exposes saved workspaces, connections, portals, tasks and identity-verification jobs. Provider business-record reads/writes are not implemented. OAuth issuer remains https://orchesphere.ai. Backend/native clients only; no client secret, API key, client_credentials or browser CORS contract."
+    "description": "Resource-bound company API for workspaces, connection evidence, tasks, verification jobs, governed QuickBooks income reports, and governed Pipe17 records/order operations. Each business operation requires separate current service rights and client scope. OAuth issuer remains https://orchesphere.ai. Backend/native clients use PKCE; no client-secret, API-key or browser CORS contract."
   },
   "servers": [
     {
@@ -167,16 +167,6 @@
               }
             }
           },
-          "503": {
-            "description": "Temporarily unavailable; a lost mutation response does not prove nothing was saved.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
           "502": {
             "description": "The gateway received an unexpected upstream response (upstream_response_invalid). For a write, read the current state and reconcile before repeating it.",
             "content": {
@@ -189,6 +179,16 @@
                     "code": "upstream_response_invalid",
                     "message": "The API returned an unexpected response. Retry later."
                   }
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Temporarily unavailable; a lost mutation response does not prove nothing was saved.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
                 }
               }
             }
@@ -390,16 +390,6 @@
               }
             }
           },
-          "503": {
-            "description": "Temporarily unavailable; a lost mutation response does not prove nothing was saved.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
           "502": {
             "description": "The gateway received an unexpected upstream response (upstream_response_invalid). For a write, read the current state and reconcile before repeating it.",
             "content": {
@@ -412,6 +402,16 @@
                     "code": "upstream_response_invalid",
                     "message": "The API returned an unexpected response. Retry later."
                   }
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Temporarily unavailable; a lost mutation response does not prove nothing was saved.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
                 }
               }
             }
@@ -596,16 +596,6 @@
               }
             }
           },
-          "503": {
-            "description": "Temporarily unavailable; a lost mutation response does not prove nothing was saved.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
           "502": {
             "description": "The gateway received an unexpected upstream response (upstream_response_invalid). For a write, read the current state and reconcile before repeating it.",
             "content": {
@@ -618,6 +608,16 @@
                     "code": "upstream_response_invalid",
                     "message": "The API returned an unexpected response. Retry later."
                   }
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Temporarily unavailable; a lost mutation response does not prove nothing was saved.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
                 }
               }
             }
@@ -806,16 +806,6 @@
               }
             }
           },
-          "503": {
-            "description": "Temporarily unavailable; a lost mutation response does not prove nothing was saved.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
           "502": {
             "description": "The gateway received an unexpected upstream response (upstream_response_invalid). For a write, read the current state and reconcile before repeating it.",
             "content": {
@@ -828,6 +818,16 @@
                     "code": "upstream_response_invalid",
                     "message": "The API returned an unexpected response. Retry later."
                   }
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Temporarily unavailable; a lost mutation response does not prove nothing was saved.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
                 }
               }
             }
@@ -1025,16 +1025,6 @@
               }
             }
           },
-          "503": {
-            "description": "Temporarily unavailable; a lost mutation response does not prove nothing was saved.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
           "502": {
             "description": "The gateway received an unexpected upstream response (upstream_response_invalid). For a write, read the current state and reconcile before repeating it.",
             "content": {
@@ -1047,6 +1037,16 @@
                     "code": "upstream_response_invalid",
                     "message": "The API returned an unexpected response. Read the current state and reconcile the result before repeating this request."
                   }
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Temporarily unavailable; a lost mutation response does not prove nothing was saved.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
                 }
               }
             }
@@ -1235,16 +1235,6 @@
               }
             }
           },
-          "503": {
-            "description": "Temporarily unavailable; a lost mutation response does not prove nothing was saved.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
           "502": {
             "description": "The gateway received an unexpected upstream response (upstream_response_invalid). For a write, read the current state and reconcile before repeating it.",
             "content": {
@@ -1257,6 +1247,16 @@
                     "code": "upstream_response_invalid",
                     "message": "The API returned an unexpected response. Retry later."
                   }
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Temporarily unavailable; a lost mutation response does not prove nothing was saved.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
                 }
               }
             }
@@ -1457,16 +1457,6 @@
               }
             }
           },
-          "503": {
-            "description": "Temporarily unavailable; a lost mutation response does not prove nothing was saved.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
           "502": {
             "description": "The gateway received an unexpected upstream response (upstream_response_invalid). For a write, read the current state and reconcile before repeating it.",
             "content": {
@@ -1479,6 +1469,16 @@
                     "code": "upstream_response_invalid",
                     "message": "The API returned an unexpected response. Retry later."
                   }
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Temporarily unavailable; a lost mutation response does not prove nothing was saved.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
                 }
               }
             }
@@ -1688,16 +1688,6 @@
               }
             }
           },
-          "503": {
-            "description": "Temporarily unavailable; a lost mutation response does not prove nothing was saved.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
           "502": {
             "description": "The gateway received an unexpected upstream response (upstream_response_invalid). For a write, read the current state and reconcile before repeating it.",
             "content": {
@@ -1710,6 +1700,16 @@
                     "code": "upstream_response_invalid",
                     "message": "The API returned an unexpected response. Read the current state and reconcile the result before repeating this request."
                   }
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Temporarily unavailable; a lost mutation response does not prove nothing was saved.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
                 }
               }
             }
@@ -1927,16 +1927,6 @@
               }
             }
           },
-          "503": {
-            "description": "Temporarily unavailable; a lost mutation response does not prove nothing was saved.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
           "502": {
             "description": "The gateway received an unexpected upstream response (upstream_response_invalid). For a write, read the current state and reconcile before repeating it.",
             "content": {
@@ -1949,6 +1939,16 @@
                     "code": "upstream_response_invalid",
                     "message": "The API returned an unexpected response. Read the current state and reconcile the result before repeating this request."
                   }
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Temporarily unavailable; a lost mutation response does not prove nothing was saved.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
                 }
               }
             }
@@ -2140,16 +2140,6 @@
               }
             }
           },
-          "503": {
-            "description": "Temporarily unavailable; a lost mutation response does not prove nothing was saved.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
           "502": {
             "description": "The gateway received an unexpected upstream response (upstream_response_invalid). For a write, read the current state and reconcile before repeating it.",
             "content": {
@@ -2162,6 +2152,16 @@
                     "code": "upstream_response_invalid",
                     "message": "The API returned an unexpected response. Read the current state and reconcile the result before repeating this request."
                   }
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Temporarily unavailable; a lost mutation response does not prove nothing was saved.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
                 }
               }
             }
@@ -2548,16 +2548,6 @@
               }
             }
           },
-          "503": {
-            "description": "Temporarily unavailable; a lost mutation response does not prove nothing was saved.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
           "502": {
             "description": "The gateway received an unexpected upstream response (upstream_response_invalid). For a write, read the current state and reconcile before repeating it.",
             "content": {
@@ -2570,6 +2560,16 @@
                     "code": "upstream_response_invalid",
                     "message": "The API returned an unexpected response. Read the current state and reconcile the result before repeating this request."
                   }
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Temporarily unavailable; a lost mutation response does not prove nothing was saved.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
                 }
               }
             }
@@ -2938,8 +2938,221 @@
               }
             }
           },
+          "502": {
+            "description": "The gateway received an unexpected upstream response (upstream_response_invalid). For a write, read the current state and reconcile before repeating it.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "code": "upstream_response_invalid",
+                    "message": "The API returned an unexpected response. Read the current state and reconcile the result before repeating this request."
+                  }
+                }
+              }
+            }
+          },
           "503": {
             "description": "Temporarily unavailable; a lost mutation response does not prove nothing was saved.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "x-permission": "Designated global access administrator only, for an existing active/invited company member. Exact production/sandbox grant overrides the * default; empty actions deny access. Does not assign company membership."
+      }
+    },
+    "/v1/workspaces/{workspaceId}/accounting/quickbooks/report": {
+      "post": {
+        "operationId": "readQuickbooksReport",
+        "summary": "Read QuickBooks Total Income",
+        "description": "Read the native production whole-company ProfitAndLoss Total Income amount with exact dates and explicit Cash or Accrual basis. Requires both OAuth accounting scope and explicit accounting_reports_read service right, including external clients of company owners. No provider writes or AI calls. Current native company identity, credentials, scope and permission are checked before and after the bounded provider read. Not reconciled — in progress.",
+        "tags": [
+          "Accounting"
+        ],
+        "security": [
+          {
+            "OAuth2": [
+              "orchesphere.read",
+              "orchesphere.accounting.read"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "workspaceId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_-]{8,80}$",
+              "minLength": 8,
+              "maxLength": 80
+            },
+            "description": "Accessible OrcheSphere company workspace ID from GET /v1/workspaces. Other record IDs in this request must belong to this company."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/QuickbooksReportPeriod"
+              },
+              "example": {
+                "startDate": "2026-10-01",
+                "endDate": "2026-10-31",
+                "basis": "ACCRUAL"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Verified native report; source verification does not establish financial reconciliation.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QuickbooksIncomeReport"
+                },
+                "example": {
+                  "schemaVersion": 1,
+                  "provider": "quickbooks",
+                  "companyId": "123456789",
+                  "environment": "production",
+                  "reportName": "ProfitAndLoss",
+                  "metric": "QUICKBOOKS_TOTAL_INCOME",
+                  "metricLabel": "Total income",
+                  "startDate": "2026-10-01",
+                  "endDate": "2026-10-31",
+                  "basis": "ACCRUAL",
+                  "currency": "USD",
+                  "amount": 1250.25,
+                  "sourceHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                  "evidenceHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+                  "readAt": "2026-11-11T12:00:00.000Z",
+                  "reconciliationStatus": "NOT_RECONCILED",
+                  "note": "Not reconciled — in progress. QuickBooks Total Income is not a certified net-merchandise revenue measure.",
+                  "workspaceId": "11111111-1111-4111-8111-111111111111",
+                  "connectionId": "22222222-2222-4222-8222-222222222222"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid path/query/body/header or business validation.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired, revoked, invalid or wrong-resource token.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "headers": {
+              "WWW-Authenticate": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "Bearer resource metadata challenge; scope upgrade details when insufficient_scope."
+              }
+            }
+          },
+          "402": {
+            "description": "Verified company payment is required.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Insufficient token scope or current company/service/portal/task authority.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "headers": {
+              "WWW-Authenticate": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "Bearer resource metadata challenge; scope upgrade details when insufficient_scope."
+              }
+            }
+          },
+          "404": {
+            "description": "Unknown endpoint or record not found/inaccessible.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "405": {
+            "description": "Method is not supported for this path.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "State, quota or idempotency conflict; re-read current state.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "Request exceeds 24,000 bytes.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "415": {
+            "description": "Use uncompressed application/json.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Company job/rate/paid-period allowance reached.",
             "content": {
               "application/json": {
                 "schema": {
@@ -2958,14 +3171,1088 @@
                 "example": {
                   "error": {
                     "code": "upstream_response_invalid",
-                    "message": "The API returned an unexpected response. Read the current state and reconcile the result before repeating this request."
+                    "message": "The API returned an unexpected response. Retry later."
+                  }
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Temporarily unavailable; a lost mutation response does not prove nothing was saved.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/workspaces/{workspaceId}/providers/pipe17/tools": {
+      "get": {
+        "operationId": "listPipe17Tools",
+        "summary": "Discover Pipe17 operations",
+        "description": "Retrieve current native tool schemas allowed for this identity and company; no business records are read. Current active company identity, verified Pipe17 connection and exact service right are required. External owner clients receive no business-data permission bypass.",
+        "tags": [
+          "Pipe17"
+        ],
+        "security": [
+          {
+            "OAuth2": [
+              "orchesphere.read"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "workspaceId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_-]{8,80}$",
+              "minLength": 8,
+              "maxLength": 80
+            },
+            "description": "Accessible OrcheSphere company workspace ID from GET /v1/workspaces. Other record IDs in this request must belong to this company."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Current native response or guarded operation receipt.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Pipe17ToolList"
+                },
+                "example": {
+                  "provider": "pipe17",
+                  "workspaceId": "11111111-1111-4111-8111-111111111111",
+                  "connectionId": "22222222-2222-4222-8222-222222222222",
+                  "tools": [],
+                  "readAt": "2026-11-11T12:00:00.000Z"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid path/query/body/header or business validation.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired, revoked, invalid or wrong-resource token.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "headers": {
+              "WWW-Authenticate": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "Bearer resource metadata challenge; scope upgrade details when insufficient_scope."
+              }
+            }
+          },
+          "402": {
+            "description": "Verified company payment is required.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Insufficient token scope or current company/service/portal/task authority.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "headers": {
+              "WWW-Authenticate": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "Bearer resource metadata challenge; scope upgrade details when insufficient_scope."
+              }
+            }
+          },
+          "404": {
+            "description": "Unknown endpoint or record not found/inaccessible.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "405": {
+            "description": "Method is not supported for this path.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "State, quota or idempotency conflict; re-read current state.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "Request exceeds 24,000 bytes.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "415": {
+            "description": "Use uncompressed application/json.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Company job/rate/paid-period allowance reached.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "The gateway received an unexpected upstream response (upstream_response_invalid). For a write, read the current state and reconcile before repeating it.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "code": "upstream_response_invalid",
+                    "message": "The API returned an unexpected response. Retry later."
+                  }
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Temporarily unavailable; a lost mutation response does not prove nothing was saved.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/workspaces/{workspaceId}/providers/pipe17/records/read": {
+      "post": {
+        "operationId": "readPipe17Records",
+        "summary": "Read Pipe17 records",
+        "description": "Read native company records through an explicitly allowed read tool with its current argument schema. Current active company identity, verified Pipe17 connection and exact service right are required. External owner clients receive no business-data permission bypass.",
+        "tags": [
+          "Pipe17"
+        ],
+        "security": [
+          {
+            "OAuth2": [
+              "orchesphere.read",
+              "orchesphere.records.read"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "workspaceId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_-]{8,80}$",
+              "minLength": 8,
+              "maxLength": 80
+            },
+            "description": "Accessible OrcheSphere company workspace ID from GET /v1/workspaces. Other record IDs in this request must belong to this company."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Pipe17ReadRequest"
+              },
+              "example": {
+                "toolName": "get-order",
+                "arguments": {
+                  "id": "example-order"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Current native response or guarded operation receipt.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Pipe17ReadResult"
+                },
+                "example": {
+                  "provider": "pipe17",
+                  "workspaceId": "11111111-1111-4111-8111-111111111111",
+                  "connectionId": "22222222-2222-4222-8222-222222222222",
+                  "toolName": "get-order",
+                  "result": {
+                    "content": [
+                      {
+                        "type": "text",
+                        "text": "{\"id\":\"example-order\"}"
+                      }
+                    ]
+                  },
+                  "resultHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                  "readAt": "2026-11-11T12:00:00.000Z"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid path/query/body/header or business validation.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired, revoked, invalid or wrong-resource token.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "headers": {
+              "WWW-Authenticate": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "Bearer resource metadata challenge; scope upgrade details when insufficient_scope."
+              }
+            }
+          },
+          "402": {
+            "description": "Verified company payment is required.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Insufficient token scope or current company/service/portal/task authority.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "headers": {
+              "WWW-Authenticate": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "Bearer resource metadata challenge; scope upgrade details when insufficient_scope."
+              }
+            }
+          },
+          "404": {
+            "description": "Unknown endpoint or record not found/inaccessible.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "405": {
+            "description": "Method is not supported for this path.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "State, quota or idempotency conflict; re-read current state.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "Request exceeds 24,000 bytes.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "415": {
+            "description": "Use uncompressed application/json.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Company job/rate/paid-period allowance reached.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "The gateway received an unexpected upstream response (upstream_response_invalid). For a write, read the current state and reconcile before repeating it.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "code": "upstream_response_invalid",
+                    "message": "The API returned an unexpected response. Retry later."
+                  }
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Temporarily unavailable; a lost mutation response does not prove nothing was saved.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/workspaces/{workspaceId}/providers/pipe17/writes/preview": {
+      "post": {
+        "operationId": "previewPipe17Write",
+        "summary": "Review a Pipe17 write",
+        "description": "Create a five-minute review bound to the exact identity, client, company, connection, schema and payload. No provider write occurs. Current active company identity, verified Pipe17 connection and exact service right are required. External owner clients receive no business-data permission bypass.",
+        "tags": [
+          "Pipe17"
+        ],
+        "security": [
+          {
+            "OAuth2": [
+              "orchesphere.read",
+              "orchesphere.records.write"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "workspaceId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_-]{8,80}$",
+              "minLength": 8,
+              "maxLength": 80
+            },
+            "description": "Accessible OrcheSphere company workspace ID from GET /v1/workspaces. Other record IDs in this request must belong to this company."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Pipe17WritePreview"
+              },
+              "example": {
+                "requestId": "33333333-3333-4333-8333-333333333333",
+                "toolName": "update-order",
+                "arguments": {
+                  "id": "example-order",
+                  "updates": {
+                    "orderNote": "Approved delivery note"
                   }
                 }
               }
             }
           }
         },
-        "x-permission": "Designated global access administrator only, for an existing active/invited company member. Exact production/sandbox grant overrides the * default; empty actions deny access. Does not assign company membership."
+        "responses": {
+          "200": {
+            "description": "Current native response or guarded operation receipt.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Pipe17WriteReceipt"
+                },
+                "example": {
+                  "provider": "pipe17",
+                  "workspaceId": "11111111-1111-4111-8111-111111111111",
+                  "connectionId": "22222222-2222-4222-8222-222222222222",
+                  "operationId": "33333333-3333-4333-8333-333333333333",
+                  "toolName": "update-order",
+                  "status": "pending",
+                  "expiresAt": "2026-11-11T12:05:00.000Z",
+                  "message": "Review the exact company and payload before submitting.",
+                  "arguments": {
+                    "id": "example-order",
+                    "updates": {
+                      "orderNote": "Approved delivery note"
+                    }
+                  },
+                  "companyName": "Example Company"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid path/query/body/header or business validation.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired, revoked, invalid or wrong-resource token.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "headers": {
+              "WWW-Authenticate": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "Bearer resource metadata challenge; scope upgrade details when insufficient_scope."
+              }
+            }
+          },
+          "402": {
+            "description": "Verified company payment is required.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Insufficient token scope or current company/service/portal/task authority.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "headers": {
+              "WWW-Authenticate": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "Bearer resource metadata challenge; scope upgrade details when insufficient_scope."
+              }
+            }
+          },
+          "404": {
+            "description": "Unknown endpoint or record not found/inaccessible.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "405": {
+            "description": "Method is not supported for this path.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "State, quota or idempotency conflict; re-read current state.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "Request exceeds 24,000 bytes.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "415": {
+            "description": "Use uncompressed application/json.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Company job/rate/paid-period allowance reached.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "The gateway received an unexpected upstream response (upstream_response_invalid). For a write, read the current state and reconcile before repeating it.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "code": "upstream_response_invalid",
+                    "message": "The API returned an unexpected response. Retry later."
+                  }
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Temporarily unavailable; a lost mutation response does not prove nothing was saved.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/workspaces/{workspaceId}/providers/pipe17/writes/apply": {
+      "post": {
+        "operationId": "applyPipe17Write",
+        "summary": "Submit a Pipe17 write",
+        "description": "Consume a reviewed operation once and call its exact native provider tool. A lost response remains unknown and cannot be replayed. Current active company identity, verified Pipe17 connection and exact service right are required. External owner clients receive no business-data permission bypass.",
+        "tags": [
+          "Pipe17"
+        ],
+        "security": [
+          {
+            "OAuth2": [
+              "orchesphere.read",
+              "orchesphere.records.write"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "workspaceId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_-]{8,80}$",
+              "minLength": 8,
+              "maxLength": 80
+            },
+            "description": "Accessible OrcheSphere company workspace ID from GET /v1/workspaces. Other record IDs in this request must belong to this company."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Pipe17WriteApply"
+              },
+              "example": {
+                "operationId": "33333333-3333-4333-8333-333333333333",
+                "arguments": {
+                  "id": "example-order",
+                  "updates": {
+                    "orderNote": "Approved delivery note"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Current native response or guarded operation receipt.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Pipe17WriteReceipt"
+                },
+                "example": {
+                  "provider": "pipe17",
+                  "workspaceId": "11111111-1111-4111-8111-111111111111",
+                  "connectionId": "22222222-2222-4222-8222-222222222222",
+                  "operationId": "33333333-3333-4333-8333-333333333333",
+                  "toolName": "update-order",
+                  "status": "responded",
+                  "expiresAt": "2026-11-11T12:05:00.000Z",
+                  "message": "Pipe17 returned a response. Inspect its native result before claiming completion.",
+                  "resultHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+                  "result": {
+                    "content": [
+                      {
+                        "type": "text",
+                        "text": "{\"id\":\"example-order\"}"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid path/query/body/header or business validation.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired, revoked, invalid or wrong-resource token.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "headers": {
+              "WWW-Authenticate": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "Bearer resource metadata challenge; scope upgrade details when insufficient_scope."
+              }
+            }
+          },
+          "402": {
+            "description": "Verified company payment is required.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Insufficient token scope or current company/service/portal/task authority.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "headers": {
+              "WWW-Authenticate": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "Bearer resource metadata challenge; scope upgrade details when insufficient_scope."
+              }
+            }
+          },
+          "404": {
+            "description": "Unknown endpoint or record not found/inaccessible.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "405": {
+            "description": "Method is not supported for this path.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "State, quota or idempotency conflict; re-read current state.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "Request exceeds 24,000 bytes.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "415": {
+            "description": "Use uncompressed application/json.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Company job/rate/paid-period allowance reached.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "The gateway received an unexpected upstream response (upstream_response_invalid). For a write, read the current state and reconcile before repeating it.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "code": "upstream_response_invalid",
+                    "message": "The API returned an unexpected response. Retry later."
+                  }
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Temporarily unavailable; a lost mutation response does not prove nothing was saved.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/workspaces/{workspaceId}/providers/pipe17/writes/{operationId}": {
+      "get": {
+        "operationId": "getPipe17Operation",
+        "summary": "Read a Pipe17 receipt",
+        "description": "Read a saved receipt belonging to this exact identity and client. Does not execute or retry the provider operation. Current active company identity, verified Pipe17 connection and exact service right are required. External owner clients receive no business-data permission bypass.",
+        "tags": [
+          "Pipe17"
+        ],
+        "security": [
+          {
+            "OAuth2": [
+              "orchesphere.read",
+              "orchesphere.records.write"
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "workspaceId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_-]{8,80}$",
+              "minLength": 8,
+              "maxLength": 80
+            },
+            "description": "Accessible OrcheSphere company workspace ID from GET /v1/workspaces. Other record IDs in this request must belong to this company."
+          },
+          {
+            "name": "operationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_-]{8,80}$",
+              "minLength": 8,
+              "maxLength": 80
+            },
+            "description": "Operation ID returned by this client and identity’s write review."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Current native response or guarded operation receipt.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Pipe17WriteReceipt"
+                },
+                "example": {
+                  "provider": "pipe17",
+                  "workspaceId": "11111111-1111-4111-8111-111111111111",
+                  "connectionId": "22222222-2222-4222-8222-222222222222",
+                  "operationId": "33333333-3333-4333-8333-333333333333",
+                  "toolName": "update-order",
+                  "status": "unknown",
+                  "expiresAt": "2026-11-11T12:05:00.000Z",
+                  "message": "Check the native record before another action. Do not automatically retry."
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid path/query/body/header or business validation.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired, revoked, invalid or wrong-resource token.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "headers": {
+              "WWW-Authenticate": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "Bearer resource metadata challenge; scope upgrade details when insufficient_scope."
+              }
+            }
+          },
+          "402": {
+            "description": "Verified company payment is required.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Insufficient token scope or current company/service/portal/task authority.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "headers": {
+              "WWW-Authenticate": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "Bearer resource metadata challenge; scope upgrade details when insufficient_scope."
+              }
+            }
+          },
+          "404": {
+            "description": "Unknown endpoint or record not found/inaccessible.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "405": {
+            "description": "Method is not supported for this path.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "State, quota or idempotency conflict; re-read current state.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "Request exceeds 24,000 bytes.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "415": {
+            "description": "Use uncompressed application/json.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Company job/rate/paid-period allowance reached.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "The gateway received an unexpected upstream response (upstream_response_invalid). For a write, read the current state and reconcile before repeating it.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "code": "upstream_response_invalid",
+                    "message": "The API returned an unexpected response. Retry later."
+                  }
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Temporarily unavailable; a lost mutation response does not prove nothing was saved.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
       }
     }
   },
@@ -2983,7 +4270,10 @@
               "orchesphere.read": "Read only the current user’s permitted company data. Required for every operation.",
               "orchesphere.jobs": "Create/update authorized tasks and queue/cancel permitted identity-verification jobs.",
               "orchesphere.manage": "Configure permitted connections; service-grant changes still require the designated access administrator.",
-              "offline_access": "Receive rotating refresh tokens, bounded by the grant lifetime. Adds no company permission."
+              "offline_access": "Receive rotating refresh tokens, bounded by the grant lifetime. Adds no company permission.",
+              "orchesphere.accounting.read": "Read native QuickBooks accounting reports with an explicit current accounting report service right.",
+              "orchesphere.records.read": "Read permitted Pipe17 business records with an explicit current records_read service right.",
+              "orchesphere.records.write": "Review and submit supported Pipe17 order changes with exact current service rights. Writes require one-use reviews; unknown outcomes must not be automatically retried."
             }
           }
         }
@@ -3286,10 +4576,11 @@
                 "verify",
                 "configure",
                 "jobs_read_all",
-                "jobs_cancel_all"
+                "jobs_cancel_all",
+                "accounting_reports_read"
               ]
             },
-            "description": "Current effective OrcheSphere service rights when supplied by a connection list. These control saved configuration and verification work, not provider business-record read/write roles."
+            "description": "Current effective OrcheSphere service rights. read covers saved connection evidence; accounting_reports_read is a separate QuickBooks report permission. Provider grants and current OAuth scope still apply."
           },
           "providerContext": {
             "$ref": "#/components/schemas/ProviderContext",
@@ -3863,6 +5154,12 @@
               "type": "string",
               "enum": [
                 "read",
+                "accounting_reports_read",
+                "records_read",
+                "orders_create",
+                "orders_update",
+                "orders_fulfill",
+                "orders_cancel",
                 "verify",
                 "configure",
                 "jobs_read_all",
@@ -3870,7 +5167,7 @@
               ]
             },
             "uniqueItems": true,
-            "maxItems": 5,
+            "maxItems": 11,
             "description": "Exact replacement rights, not additions to the current list. Nonempty actions require read. jobs_cancel_all requires jobs_read_all. Empty array denies access. Viewer members may receive read-only actions only."
           }
         },
@@ -4080,6 +5377,426 @@
         ],
         "additionalProperties": false,
         "description": "At most the latest 100 visible verification jobs, ordered newest first."
+      },
+      "QuickbooksReportPeriod": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "startDate": {
+            "type": "string",
+            "format": "date",
+            "description": "Inclusive first calendar date of the requested report."
+          },
+          "endDate": {
+            "type": "string",
+            "format": "date",
+            "description": "Inclusive last calendar date of the requested report."
+          },
+          "basis": {
+            "type": "string",
+            "enum": [
+              "ACCRUAL",
+              "CASH"
+            ],
+            "description": "Explicit accounting basis selected for the report."
+          }
+        },
+        "required": [
+          "startDate",
+          "endDate",
+          "basis"
+        ],
+        "description": "Inclusive exact calendar dates, ordered and at most ten years. Whole-company production report only; no channel, account, SKU, customer or arbitrary filters."
+      },
+      "QuickbooksIncomeReport": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "schemaVersion": {
+            "type": "integer",
+            "const": 1,
+            "description": "Version of this report response contract."
+          },
+          "provider": {
+            "type": "string",
+            "const": "quickbooks",
+            "description": "Native provider supplying the verified report."
+          },
+          "companyId": {
+            "type": "string",
+            "description": "Exact native QuickBooks company realm ID."
+          },
+          "environment": {
+            "type": "string",
+            "const": "production",
+            "description": "The production provider environment."
+          },
+          "reportName": {
+            "type": "string",
+            "const": "ProfitAndLoss",
+            "description": "Native QuickBooks report name."
+          },
+          "metric": {
+            "type": "string",
+            "const": "QUICKBOOKS_TOTAL_INCOME",
+            "description": "Stable identifier for the extracted report metric."
+          },
+          "metricLabel": {
+            "type": "string",
+            "const": "Total income",
+            "description": "Human-readable label for the extracted metric."
+          },
+          "startDate": {
+            "type": "string",
+            "format": "date",
+            "description": "Inclusive first calendar date of the requested report."
+          },
+          "endDate": {
+            "type": "string",
+            "format": "date",
+            "description": "Inclusive last calendar date of the requested report."
+          },
+          "basis": {
+            "type": "string",
+            "enum": [
+              "ACCRUAL",
+              "CASH"
+            ],
+            "description": "Explicit accounting basis selected for the report."
+          },
+          "currency": {
+            "type": "string",
+            "const": "USD",
+            "description": "Verified report currency, currently USD."
+          },
+          "amount": {
+            "type": "number",
+            "description": "Native QuickBooks Total Income. May be negative. This is not an approved net-merchandise revenue definition."
+          },
+          "sourceHash": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$",
+            "description": "Stable canonical native report content hash bound to company/environment, excluding only Header.Time."
+          },
+          "evidenceHash": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$",
+            "description": "SHA256 of raw provider response bytes."
+          },
+          "readAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Timestamp when the provider report was retrieved."
+          },
+          "reconciliationStatus": {
+            "type": "string",
+            "const": "NOT_RECONCILED",
+            "description": "Explicit reconciliation state; source reads do not establish reconciliation."
+          },
+          "note": {
+            "type": "string",
+            "description": "Limits on interpreting this native report amount."
+          },
+          "workspaceId": {
+            "type": "string",
+            "description": "Assigned OrcheSphere company workspace."
+          },
+          "connectionId": {
+            "type": "string",
+            "description": "Saved connection used for this report."
+          }
+        },
+        "required": [
+          "schemaVersion",
+          "provider",
+          "companyId",
+          "environment",
+          "reportName",
+          "metric",
+          "metricLabel",
+          "startDate",
+          "endDate",
+          "basis",
+          "currency",
+          "amount",
+          "sourceHash",
+          "evidenceHash",
+          "readAt",
+          "reconciliationStatus",
+          "note",
+          "workspaceId",
+          "connectionId"
+        ]
+      },
+      "Pipe17ReadRequest": {
+        "type": "object",
+        "properties": {
+          "toolName": {
+            "type": "string",
+            "description": "A read tool name returned by current Pipe17 discovery."
+          },
+          "arguments": {
+            "type": "object",
+            "description": "Arguments matching that tool’s current provider input schema. No company selectors or credentials.",
+            "additionalProperties": true
+          }
+        },
+        "required": [
+          "toolName",
+          "arguments"
+        ],
+        "additionalProperties": false
+      },
+      "Pipe17WritePreview": {
+        "type": "object",
+        "properties": {
+          "requestId": {
+            "type": "string",
+            "description": "Stable UUID for this intended action; reuse only for the identical review.",
+            "format": "uuid"
+          },
+          "toolName": {
+            "type": "string",
+            "description": "A supported write tool from Pipe17 discovery.",
+            "enum": [
+              "create-sales-order",
+              "update-order",
+              "fulfill-order",
+              "cancel-order"
+            ]
+          },
+          "arguments": {
+            "type": "object",
+            "description": "The exact provider operation arguments to review and later submit unchanged.",
+            "additionalProperties": true
+          }
+        },
+        "required": [
+          "requestId",
+          "toolName",
+          "arguments"
+        ],
+        "additionalProperties": false
+      },
+      "Pipe17WriteApply": {
+        "type": "object",
+        "properties": {
+          "operationId": {
+            "type": "string",
+            "description": "The one-use operation ID returned by a current write review.",
+            "format": "uuid"
+          },
+          "arguments": {
+            "type": "object",
+            "description": "Exactly the arguments shown in the review, without changing fields or values.",
+            "additionalProperties": true
+          }
+        },
+        "required": [
+          "operationId",
+          "arguments"
+        ],
+        "additionalProperties": false
+      },
+      "Pipe17Tool": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Current native Pipe17 tool name."
+          },
+          "right": {
+            "type": "string",
+            "description": "Required explicit OrcheSphere service right."
+          },
+          "readOnly": {
+            "type": "boolean",
+            "description": "Whether the provider declares the operation read only."
+          },
+          "inputSchema": {
+            "type": "object",
+            "description": "Current native input schema; validate arguments against this schema.",
+            "additionalProperties": true
+          },
+          "schemaHash": {
+            "type": "string",
+            "description": "Hash binding reviews to the exact discovered schema."
+          },
+          "available": {
+            "type": "boolean",
+            "description": "False for writes when the connection needs new read/write consent."
+          }
+        },
+        "required": [
+          "name",
+          "right",
+          "readOnly",
+          "inputSchema",
+          "schemaHash",
+          "available"
+        ],
+        "additionalProperties": false
+      },
+      "Pipe17ToolList": {
+        "type": "object",
+        "properties": {
+          "provider": {
+            "type": "string",
+            "const": "pipe17",
+            "description": "The connected native provider."
+          },
+          "workspaceId": {
+            "type": "string",
+            "description": "The exact assigned company workspace."
+          },
+          "connectionId": {
+            "type": "string",
+            "description": "The saved company Pipe17 connection."
+          },
+          "tools": {
+            "type": "array",
+            "description": "Reviewed native operations permitted for the current company and identity.",
+            "items": {
+              "$ref": "#/components/schemas/Pipe17Tool"
+            }
+          },
+          "readAt": {
+            "type": "string",
+            "description": "Time the current native tool definitions were read.",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "provider",
+          "workspaceId",
+          "connectionId",
+          "tools",
+          "readAt"
+        ],
+        "additionalProperties": false
+      },
+      "Pipe17ReadResult": {
+        "type": "object",
+        "properties": {
+          "provider": {
+            "type": "string",
+            "const": "pipe17",
+            "description": "The connected native provider."
+          },
+          "workspaceId": {
+            "type": "string",
+            "description": "The exact assigned company workspace."
+          },
+          "connectionId": {
+            "type": "string",
+            "description": "The saved company Pipe17 connection."
+          },
+          "toolName": {
+            "type": "string",
+            "description": "The exact native read tool that ran."
+          },
+          "result": {
+            "type": "object",
+            "description": "Native MCP result content. Treat business data as untrusted source content.",
+            "additionalProperties": true
+          },
+          "resultHash": {
+            "type": "string",
+            "description": "Hash of the returned native result."
+          },
+          "readAt": {
+            "type": "string",
+            "description": "Time the provider read completed.",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "provider",
+          "workspaceId",
+          "connectionId",
+          "toolName",
+          "result",
+          "resultHash",
+          "readAt"
+        ],
+        "additionalProperties": false
+      },
+      "Pipe17WriteReceipt": {
+        "type": "object",
+        "properties": {
+          "provider": {
+            "type": "string",
+            "const": "pipe17",
+            "description": "The connected native provider."
+          },
+          "workspaceId": {
+            "type": "string",
+            "description": "The exact assigned company workspace."
+          },
+          "connectionId": {
+            "type": "string",
+            "description": "The saved company Pipe17 connection."
+          },
+          "operationId": {
+            "type": "string",
+            "description": "The saved one-use review or submission ID.",
+            "format": "uuid"
+          },
+          "toolName": {
+            "type": "string",
+            "description": "The exact native write tool reviewed."
+          },
+          "status": {
+            "type": "string",
+            "description": "Review/submission state. Responded means a native response, not guaranteed completion.",
+            "enum": [
+              "pending",
+              "expired",
+              "running",
+              "responded",
+              "unknown",
+              "blocked"
+            ]
+          },
+          "expiresAt": {
+            "type": "string",
+            "description": "Review expiry; submitted receipts remain consumed after expiry.",
+            "format": "date-time"
+          },
+          "message": {
+            "type": "string",
+            "description": "Required response-handling guidance."
+          },
+          "resultHash": {
+            "type": "string",
+            "description": "Hash of a native response, when received."
+          },
+          "result": {
+            "type": "object",
+            "description": "Native response returned only with the successful submission response. Cancellation can still require confirmation.",
+            "additionalProperties": true
+          },
+          "arguments": {
+            "type": "object",
+            "description": "Exact reviewed arguments, present on pending review responses.",
+            "additionalProperties": true
+          },
+          "companyName": {
+            "type": "string",
+            "description": "Provider company name shown for review."
+          }
+        },
+        "required": [
+          "provider",
+          "workspaceId",
+          "connectionId",
+          "operationId",
+          "toolName",
+          "status",
+          "expiresAt",
+          "message"
+        ],
+        "additionalProperties": false
       }
     }
   },

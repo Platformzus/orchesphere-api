@@ -1,6 +1,6 @@
 {
-  "version": "2026-11-10.1",
-  "reviewedAt": "2026-11-10",
+  "version": "2026-11-11.2",
+  "reviewedAt": "2026-11-11",
   "mcp": {
     "list_workspaces": {
       "title": "List accessible companies",
@@ -433,7 +433,7 @@
         "Requires orchesphere.manage in addition to read and designated global access-administrator authority. Company-admin status or scope approval alone is insufficient.",
         "The target must be an assigned company member. An exact production/sandbox grant overrides the all-environments default; an empty actions array denies that grant’s access.",
         "Nonempty actions must include read. jobs_cancel_all also requires jobs_read_all. Viewers can receive read-only rights only.",
-        "Supported rights are read, verify, configure, jobs_read_all and jobs_cancel_all. This is not a universal provider business-record read/write role mapping."
+        "Supported rights are read, verify, configure, jobs_read_all, jobs_cancel_all and accounting_reports_read. The accounting report right is separate from evidence read; no universal business-write permission is implied."
       ],
       "retry": "Review the member’s current permissions in OrcheSphere after an uncertain response before repeating a replacement.",
       "exampleArguments": {
@@ -471,6 +471,221 @@
       },
       "exampleResult": {
         "ok": true
+      }
+    },
+    "read_quickbooks_report": {
+      "title": "Read QuickBooks Total Income",
+      "purpose": "Read the native production whole-company ProfitAndLoss Total Income amount with exact dates and explicit Cash or Accrual basis. Requires both OAuth accounting scope and explicit accounting_reports_read service right, including external clients of company owners. No provider writes or AI calls. Current native company identity, credentials, scope and permission are checked before and after the bounded provider read. Not reconciled — in progress.",
+      "useWhen": "Read a native income report for exact dates and accounting basis.",
+      "effects": [
+        "Reads native accounting data and audits the report receipt. No provider business mutation or AI call."
+      ],
+      "limitations": [
+        "Whole-company USD report only. Unsupported filters, missing or ambiguous Income summaries, unexpected basis/date/currency and oversized responses fail closed.",
+        "Provider consent alone is not an OrcheSphere business-data right. Existing read and default OAuth grants are unchanged.",
+        "Total Income is distinct from net merchandise revenue; this response is not reconciliation or Finance approval."
+      ],
+      "retry": "Use bounded retries for temporary failures. Renew expired consent when required. Check result.isError even with HTTP 200.",
+      "exampleArguments": {
+        "workspaceId": "11111111-1111-4111-8111-111111111111",
+        "startDate": "2026-10-01",
+        "endDate": "2026-10-31",
+        "basis": "ACCRUAL"
+      },
+      "exampleResult": {
+        "schemaVersion": 1,
+        "provider": "quickbooks",
+        "companyId": "123456789",
+        "environment": "production",
+        "reportName": "ProfitAndLoss",
+        "metric": "QUICKBOOKS_TOTAL_INCOME",
+        "metricLabel": "Total income",
+        "startDate": "2026-10-01",
+        "endDate": "2026-10-31",
+        "basis": "ACCRUAL",
+        "currency": "USD",
+        "amount": 1250.25,
+        "sourceHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "evidenceHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "readAt": "2026-11-11T12:00:00.000Z",
+        "reconciliationStatus": "NOT_RECONCILED",
+        "note": "Not reconciled — in progress. QuickBooks Total Income is not a certified net-merchandise revenue measure.",
+        "workspaceId": "11111111-1111-4111-8111-111111111111",
+        "connectionId": "22222222-2222-4222-8222-222222222222"
+      }
+    },
+    "list_pipe17_tools": {
+      "title": "Discover Pipe17 operations",
+      "purpose": "Retrieve current native tool schemas allowed for this identity and company; no business records are read.",
+      "useWhen": "Discover supported operations and their argument schemas after connecting the company.",
+      "effects": [
+        "Retrieve current native tool schemas allowed for this identity and company; no business records are read."
+      ],
+      "limitations": [
+        "Uses only the saved production company. No arbitrary provider URLs, organizations, credentials or RPC methods are accepted.",
+        "The provider and OrcheSphere both enforce permissions. Old read-only connections must reconnect before writes.",
+        "Native cancellation changes nothing on its first call and returns a confirmationToken. Show the summary, obtain explicit user confirmation, then create a new exact review including that token. Partial line-item cancellation is not supported."
+      ],
+      "retry": "Use bounded retries for temporary read failures. Recheck current connection and access after a denial.",
+      "exampleArguments": {
+        "workspaceId": "11111111-1111-4111-8111-111111111111"
+      },
+      "exampleResult": {
+        "provider": "pipe17",
+        "workspaceId": "11111111-1111-4111-8111-111111111111",
+        "connectionId": "22222222-2222-4222-8222-222222222222",
+        "tools": [],
+        "readAt": "2026-11-11T12:00:00.000Z"
+      }
+    },
+    "read_pipe17_records": {
+      "title": "Read Pipe17 records",
+      "purpose": "Read native company records through an explicitly allowed read tool with its current argument schema.",
+      "useWhen": "Use this after discovering the current operation schema and verifying the corresponding service permission.",
+      "effects": [
+        "Read native company records through an explicitly allowed read tool with its current argument schema."
+      ],
+      "limitations": [
+        "Uses only the saved production company. No arbitrary provider URLs, organizations, credentials or RPC methods are accepted.",
+        "The provider and OrcheSphere both enforce permissions. Old read-only connections must reconnect before writes.",
+        "Native cancellation changes nothing on its first call and returns a confirmationToken. Show the summary, obtain explicit user confirmation, then create a new exact review including that token. Partial line-item cancellation is not supported."
+      ],
+      "retry": "Use bounded retries for temporary read failures. Recheck current connection and access after a denial.",
+      "exampleArguments": {
+        "workspaceId": "11111111-1111-4111-8111-111111111111",
+        "toolName": "get-order",
+        "arguments": {
+          "id": "example-order"
+        }
+      },
+      "exampleResult": {
+        "provider": "pipe17",
+        "workspaceId": "11111111-1111-4111-8111-111111111111",
+        "connectionId": "22222222-2222-4222-8222-222222222222",
+        "toolName": "get-order",
+        "result": {
+          "content": [
+            {
+              "type": "text",
+              "text": "{\"id\":\"example-order\"}"
+            }
+          ]
+        },
+        "resultHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "readAt": "2026-11-11T12:00:00.000Z"
+      }
+    },
+    "preview_pipe17_write": {
+      "title": "Review a Pipe17 write",
+      "purpose": "Create a five-minute review bound to the exact identity, client, company, connection, schema and payload. No provider write occurs.",
+      "useWhen": "Use this after discovering the current operation schema and verifying the corresponding service permission.",
+      "effects": [
+        "Create a five-minute review bound to the exact identity, client, company, connection, schema and payload. No provider write occurs."
+      ],
+      "limitations": [
+        "Uses only the saved production company. No arbitrary provider URLs, organizations, credentials or RPC methods are accepted.",
+        "The provider and OrcheSphere both enforce permissions. Old read-only connections must reconnect before writes.",
+        "Native cancellation changes nothing on its first call and returns a confirmationToken. Show the summary, obtain explicit user confirmation, then create a new exact review including that token. Partial line-item cancellation is not supported."
+      ],
+      "retry": "Never automatically retry a running or unknown write. Read the receipt and check the native record. A responded receipt can still require native confirmation. Reuse the same requestId for an identical preview; apply is one-use.",
+      "exampleArguments": {
+        "workspaceId": "11111111-1111-4111-8111-111111111111",
+        "requestId": "33333333-3333-4333-8333-333333333333",
+        "toolName": "update-order",
+        "arguments": {
+          "id": "example-order",
+          "updates": {
+            "orderNote": "Approved delivery note"
+          }
+        }
+      },
+      "exampleResult": {
+        "provider": "pipe17",
+        "workspaceId": "11111111-1111-4111-8111-111111111111",
+        "connectionId": "22222222-2222-4222-8222-222222222222",
+        "operationId": "33333333-3333-4333-8333-333333333333",
+        "toolName": "update-order",
+        "status": "pending",
+        "expiresAt": "2026-11-11T12:05:00.000Z",
+        "message": "Review the exact company and payload before submitting.",
+        "arguments": {
+          "id": "example-order",
+          "updates": {
+            "orderNote": "Approved delivery note"
+          }
+        },
+        "companyName": "Example Company"
+      }
+    },
+    "apply_pipe17_write": {
+      "title": "Submit a Pipe17 write",
+      "purpose": "Consume a reviewed operation once and call its exact native provider tool. A lost response remains unknown and cannot be replayed.",
+      "useWhen": "Use this after discovering the current operation schema and verifying the corresponding service permission.",
+      "effects": [
+        "Consume a reviewed operation once and call its exact native provider tool. A lost response remains unknown and cannot be replayed."
+      ],
+      "limitations": [
+        "Uses only the saved production company. No arbitrary provider URLs, organizations, credentials or RPC methods are accepted.",
+        "The provider and OrcheSphere both enforce permissions. Old read-only connections must reconnect before writes.",
+        "Native cancellation changes nothing on its first call and returns a confirmationToken. Show the summary, obtain explicit user confirmation, then create a new exact review including that token. Partial line-item cancellation is not supported."
+      ],
+      "retry": "Never automatically retry a running or unknown write. Read the receipt and check the native record. A responded receipt can still require native confirmation. Reuse the same requestId for an identical preview; apply is one-use.",
+      "exampleArguments": {
+        "workspaceId": "11111111-1111-4111-8111-111111111111",
+        "operationId": "33333333-3333-4333-8333-333333333333",
+        "arguments": {
+          "id": "example-order",
+          "updates": {
+            "orderNote": "Approved delivery note"
+          }
+        }
+      },
+      "exampleResult": {
+        "provider": "pipe17",
+        "workspaceId": "11111111-1111-4111-8111-111111111111",
+        "connectionId": "22222222-2222-4222-8222-222222222222",
+        "operationId": "33333333-3333-4333-8333-333333333333",
+        "toolName": "update-order",
+        "status": "responded",
+        "expiresAt": "2026-11-11T12:05:00.000Z",
+        "message": "Pipe17 returned a response. Inspect its native result before claiming completion.",
+        "resultHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "result": {
+          "content": [
+            {
+              "type": "text",
+              "text": "{\"id\":\"example-order\"}"
+            }
+          ]
+        }
+      }
+    },
+    "get_pipe17_operation": {
+      "title": "Read a Pipe17 receipt",
+      "purpose": "Read a saved receipt belonging to this exact identity and client. Does not execute or retry the provider operation.",
+      "useWhen": "Use this after discovering the current operation schema and verifying the corresponding service permission.",
+      "effects": [
+        "Read a saved receipt belonging to this exact identity and client. Does not execute or retry the provider operation."
+      ],
+      "limitations": [
+        "Uses only the saved production company. No arbitrary provider URLs, organizations, credentials or RPC methods are accepted.",
+        "The provider and OrcheSphere both enforce permissions. Old read-only connections must reconnect before writes.",
+        "Native cancellation changes nothing on its first call and returns a confirmationToken. Show the summary, obtain explicit user confirmation, then create a new exact review including that token. Partial line-item cancellation is not supported."
+      ],
+      "retry": "Use bounded retries for temporary read failures. Recheck current connection and access after a denial.",
+      "exampleArguments": {
+        "workspaceId": "11111111-1111-4111-8111-111111111111",
+        "operationId": "33333333-3333-4333-8333-333333333333"
+      },
+      "exampleResult": {
+        "provider": "pipe17",
+        "workspaceId": "11111111-1111-4111-8111-111111111111",
+        "connectionId": "22222222-2222-4222-8222-222222222222",
+        "operationId": "33333333-3333-4333-8333-333333333333",
+        "toolName": "update-order",
+        "status": "unknown",
+        "expiresAt": "2026-11-11T12:05:00.000Z",
+        "message": "Check the native record before another action. Do not automatically retry."
       }
     }
   },
@@ -586,22 +801,24 @@
     }
   ],
   "coverage": {
-    "mcpToolCount": 13,
-    "publicMcpToolCount": 12,
+    "mcpToolCount": 19,
+    "publicMcpToolCount": 18,
     "internalMcpToolCount": 1,
     "protocolEndpointCount": 7,
     "examples": "All identifiers, accounts, people and timestamps in these examples are fictional. Replace them with values returned for the consenting user. Examples are not live receipts.",
     "mcpResultFormat": "exampleArguments is the tools/call arguments object. exampleResult is the successful structuredContent payload, also JSON-encoded in text content; it is not the enclosing JSON-RPC response. No separate runtime outputSchema is claimed.",
     "scopeDiscoveryCounts": {
-      "read": 6,
-      "readAndJobs": 10,
-      "readJobsAndManage": 12,
-      "includingInternalAdmin": 13
+      "read": 7,
+      "readAndJobs": 11,
+      "readJobsAndManage": 13,
+      "includingInternalAdmin": 14,
+      "includingAccountingReports": 15,
+      "includingPipe17": 19
     },
     "boundaries": [
       "Only the API companion is public. Browser/session APIs, provider callbacks and private application source are outside this developer endpoint catalog.",
       "Provider directory entries are not equivalent to implemented adapters or verified company connections.",
-      "Current public operations cover saved company information, task coordination, connection configuration/access and provider-identity verification. No provider business-record read/write API is enabled.",
+      "Public operations include governed QuickBooks income reads and Pipe17 record/order operations. Listing a provider never implies every native API operation is implemented.",
       "Service rights control OrcheSphere operations and never expand the native provider credentials’ rights."
     ],
     "updatePolicy": "Review endpoint/tool/protocol documentation with every contract change. Release checks should compare the actual private runtime definitions with the approved public contract, validate examples and links, and require a changelog/reviewed-version update before publication."

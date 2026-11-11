@@ -4,7 +4,7 @@ const MAX_BODY_BYTES=24000;
 const privateHeaders={'cache-control':'private, no-store','x-content-type-options':'nosniff','x-robots-tag':'noindex, nofollow'};
 const error=(status,code,message,headers={})=>Response.json({error:{code,message}},{status,headers:{...privateHeaders,...headers}});
 const denied=()=>error(404,'not_found','This route is not available.');
-const patterns={workspaceId:'[A-Za-z0-9_-]{8,80}',taskId:'[A-Za-z0-9_-]{8,80}',jobId:'[A-Za-z0-9_-]{8,80}',connectionId:'[A-Za-z0-9_-]{8,80}',provider:'[a-z0-9][a-z0-9-]{1,63}',environment:'(?:production|sandbox|\\*)'};
+const patterns={operationId:'[A-Za-z0-9_-]{8,80}',workspaceId:'[A-Za-z0-9_-]{8,80}',taskId:'[A-Za-z0-9_-]{8,80}',jobId:'[A-Za-z0-9_-]{8,80}',connectionId:'[A-Za-z0-9_-]{8,80}',provider:'[a-z0-9][a-z0-9-]{1,63}',environment:'(?:production|sandbox|\\*)'};
 function routePattern(path){return new RegExp('^'+path.split('/').map(part=>{const parameter=/^\{([A-Za-z]+)\}$/.exec(part);if(parameter){if(!patterns[parameter[1]])throw Error('Unsupported route parameter.');if(parameter[1]==='environment'&&!path.includes('/service-permissions/'))return '(?:production|sandbox)';return patterns[parameter[1]];}return part.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');}).join('/')+'$');}
 async function boundedBody(request){
  if(request.headers.has('content-encoding')&&request.headers.get('content-encoding')!=='identity')throw 415;

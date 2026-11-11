@@ -26,7 +26,7 @@ Version 1 is available with registered public-client OAuth, explicit scopes and 
 - [OAuth guide](https://api.orchesphere.ai/authentication)
 - [MCP reference](https://api.orchesphere.ai/reference/mcp)
 
-The REST API exposes assigned workspaces, permitted connections and portals, tasks, and saved verification jobs. It applies the consenting user's current company and service permissions on every call. A provider directory entry or saved connection is not evidence of live provider access. There is no general provider business-record API.
+The REST API exposes assigned workspaces, permitted connections and portals, tasks, saved verification jobs, and native whole-company QuickBooks Total Income reports. Accounting reports require separate `orchesphere.accounting.read` consent and the current `accounting_reports_read` service right. They are explicitly not reconciled. The API applies the consenting user's current company and service permissions on every call. A provider directory entry or saved connection is not evidence of live provider access. Pipe17 provides governed business record reads and reviewed order create/update/fulfill/cancel operations. Request explicit `orchesphere.records.read` or `orchesphere.records.write` consent and corresponding service rights. A write review is one-use; inspect native responses and never automatically retry unknown outcomes. Other provider operations are not implied.
 
 ## Addresses and authorization
 
