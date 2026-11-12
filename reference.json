@@ -770,18 +770,18 @@
         "operationId": "readQuickbooksReport",
         "method": "POST",
         "path": "/v1/workspaces/{workspaceId}/accounting/quickbooks/report",
-        "summary": "Read QuickBooks Total Income",
-        "description": "Read the native production whole-company ProfitAndLoss Total Income amount with exact dates and explicit Cash or Accrual basis. Requires both OAuth accounting scope and explicit accounting_reports_read service right, including external clients of company owners. No provider writes or AI calls. Current native company identity, credentials, scope and permission are checked before and after the bounded provider read. Not reconciled — in progress.",
+        "summary": "Read governed QuickBooks reports",
+        "description": "Read legacy whole-company Total Income or an explicit schema 2 verified native FUR4 executive report with exact dates, basis and native filters. Requires current resource-bound OAuth accounting scope and explicit accounting_reports_read service right, including company owners using delegated clients. Schema 2 revalidates the original grant, principal, current authority and exact provider connection around reads and every cache delivery. Not reconciled — in progress.",
         "scope": [
           "orchesphere.read",
           "orchesphere.accounting.read"
         ],
         "permission": "Explicit current QuickBooks accounting_reports_read service right in production and current company access; read alone confers no accounting access.",
         "requestSchema": {
-          "$ref": "#/components/schemas/QuickbooksReportPeriod"
+          "$ref": "#/components/schemas/QuickbooksReportRequest"
         },
         "responseSchema": {
-          "$ref": "#/components/schemas/QuickbooksIncomeReport"
+          "$ref": "#/components/schemas/QuickbooksReportResult"
         },
         "status": 200,
         "requestRequired": true,
@@ -816,12 +816,14 @@
           "Performs one bounded native QuickBooks GET and writes an audit receipt. Credential renewal may persist a rotated token. No accounting records are changed."
         ],
         "retry": [
-          "Read requests can be retried after current permission and company checks; sourceHash ignores only native Header.Time."
+          "Respect Retry-After for rate-limited or temporarily unavailable reads. Use bounded backoff; manual refresh joins an existing read. Schema 1 requests and results remain unchanged."
         ],
         "limitations": [
           "Whole-company USD report only. Unsupported filters, missing or ambiguous Income summaries, unexpected basis/date/currency and oversized responses fail closed.",
           "Provider consent alone is not an OrcheSphere business-data right. Existing read and default OAuth grants are unchanged.",
-          "Total Income is distinct from net merchandise revenue; this response is not reconciliation or Finance approval."
+          "Total Income is distinct from net merchandise revenue; this response is not reconciliation or Finance approval.",
+          "Schema 2 accepts only the exact {schemaVersion:2,input,page} envelope and FUR4 production realm. No provider writes or AI calls. Its 45-second whole-report budget fits existing proxy limits.",
+          "An isolated bounded process cache shares validated whole reports and deduplicates concurrent reads. It refreshes after 60 seconds from the earliest constituent source; evidence expires within 300 seconds. Cache hits never advance provider timestamps. Every delivery rechecks current access."
         ]
       },
       {
@@ -3561,6 +3563,990 @@
           ]
         }
       }
+    },
+    "QuickbooksExecutiveInput": {
+      "type": "object",
+      "description": "Verified executive request. No future dates, duplicate filters or unsupported keys.",
+      "properties": {
+        "report": {
+          "type": "string",
+          "description": "Select the verified native executive report.",
+          "const": "EXECUTIVE"
+        },
+        "range": {
+          "type": "string",
+          "description": "Exact dates or discovered native all-time history.",
+          "enum": [
+            "DATES",
+            "ALL_TIME"
+          ]
+        },
+        "startDate": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Start date; null only for ALL_TIME."
+        },
+        "endDate": {
+          "type": "string",
+          "description": "Exact UTC calendar date in YYYY-MM-DD form.",
+          "format": "date"
+        },
+        "basis": {
+          "type": "string",
+          "description": "Explicit native accounting basis.",
+          "enum": [
+            "ACCRUAL",
+            "CASH"
+          ]
+        },
+        "customerIds": {
+          "type": "array",
+          "description": "Exact native QuickBooks IDs, unique and bounded; an empty list selects the company scope.",
+          "items": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]{0,19}$"
+          },
+          "uniqueItems": true,
+          "maxItems": 20
+        },
+        "departmentIds": {
+          "type": "array",
+          "description": "Exact native QuickBooks IDs, unique and bounded; an empty list selects the company scope.",
+          "items": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]{0,19}$"
+          },
+          "uniqueItems": true,
+          "maxItems": 20
+        },
+        "itemIds": {
+          "type": "array",
+          "description": "Exact native QuickBooks IDs, unique and bounded; an empty list selects the company scope.",
+          "items": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]{0,19}$"
+          },
+          "uniqueItems": true,
+          "maxItems": 20
+        },
+        "comparison": {
+          "description": "Optional exact prior period; omitted or null disables comparison.",
+          "anyOf": [
+            {
+              "type": "object",
+              "description": "Exact comparison period.",
+              "properties": {
+                "startDate": {
+                  "type": "string",
+                  "description": "Exact UTC calendar date in YYYY-MM-DD form.",
+                  "format": "date"
+                },
+                "endDate": {
+                  "type": "string",
+                  "description": "Exact UTC calendar date in YYYY-MM-DD form.",
+                  "format": "date"
+                }
+              },
+              "required": [
+                "startDate",
+                "endDate"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "report",
+        "range",
+        "startDate",
+        "endDate",
+        "basis",
+        "customerIds",
+        "departmentIds",
+        "itemIds"
+      ],
+      "additionalProperties": false
+    },
+    "QuickbooksExecutivePage": {
+      "type": "object",
+      "description": "Optional page members use GROUP/0/50/empty/amount/desc defaults.",
+      "properties": {
+        "detail": {
+          "type": "string",
+          "description": "Native detail projection to return.",
+          "enum": [
+            "GROUP",
+            "ACCOUNT",
+            "SKU"
+          ]
+        },
+        "offset": {
+          "type": "integer",
+          "description": "Zero-based bounded row offset.",
+          "minimum": 0,
+          "maximum": 25000
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Maximum detail rows returned.",
+          "minimum": 1,
+          "maximum": 100
+        },
+        "search": {
+          "type": "string",
+          "description": "Case-insensitive native row name search.",
+          "maxLength": 200
+        },
+        "sortBy": {
+          "type": "string",
+          "description": "Stable sort field for this projection.",
+          "enum": [
+            "amount",
+            "name",
+            "id"
+          ]
+        },
+        "direction": {
+          "type": "string",
+          "description": "Stable sort direction.",
+          "enum": [
+            "asc",
+            "desc"
+          ]
+        }
+      },
+      "required": [],
+      "additionalProperties": false
+    },
+    "QuickbooksExecutiveRequest": {
+      "type": "object",
+      "description": "Version 2 exact resource request envelope. All three keys are required.",
+      "properties": {
+        "schemaVersion": {
+          "type": "integer",
+          "description": "Explicit version selects the executive API.",
+          "const": 2
+        },
+        "input": {
+          "$ref": "#/components/schemas/QuickbooksExecutiveInput",
+          "description": "Exact native executive request."
+        },
+        "page": {
+          "$ref": "#/components/schemas/QuickbooksExecutivePage",
+          "description": "Strict projection; does not trigger one provider read per card or page."
+        }
+      },
+      "required": [
+        "schemaVersion",
+        "input",
+        "page"
+      ],
+      "additionalProperties": false
+    },
+    "QuickbooksReportRequest": {
+      "description": "Legacy schema 1 body remains unchanged. Explicit schemaVersion 2 selects the executive envelope.",
+      "anyOf": [
+        {
+          "$ref": "#/components/schemas/QuickbooksReportPeriod"
+        },
+        {
+          "$ref": "#/components/schemas/QuickbooksExecutiveRequest"
+        }
+      ]
+    },
+    "QuickbooksExecutiveReport": {
+      "type": "object",
+      "description": "Strict verified projected schema 2 report; no transport metadata is embedded.",
+      "properties": {
+        "schemaVersion": {
+          "type": "integer",
+          "description": "Executive response schema version.",
+          "const": 2
+        },
+        "provider": {
+          "type": "string",
+          "description": "Native financial source.",
+          "const": "quickbooks"
+        },
+        "workspaceId": {
+          "type": "string",
+          "description": "Exact FUR4 workspace.",
+          "const": "30a4b542-64ca-44b4-bfea-7ea7da4d0d88"
+        },
+        "connectionId": {
+          "type": "string",
+          "description": "Current verified native provider connection ID."
+        },
+        "connectionVersion": {
+          "type": "integer",
+          "description": "Current connection version.",
+          "minimum": 1
+        },
+        "companyId": {
+          "type": "string",
+          "description": "Exact verified FUR4 realm.",
+          "const": "9130357979379316"
+        },
+        "environment": {
+          "type": "string",
+          "description": "Only the production provider connection is admitted.",
+          "const": "production"
+        },
+        "request": {
+          "$ref": "#/components/schemas/QuickbooksExecutiveInput",
+          "description": "Normalized exact request scope."
+        },
+        "startDate": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Native history start, null only for verified absent all-time history."
+        },
+        "endDate": {
+          "type": "string",
+          "description": "Exact UTC calendar date in YYYY-MM-DD form.",
+          "format": "date"
+        },
+        "basis": {
+          "type": "string",
+          "description": "Exact requested native accounting basis.",
+          "enum": [
+            "ACCRUAL",
+            "CASH"
+          ]
+        },
+        "currency": {
+          "type": "string",
+          "description": "Verified native currency.",
+          "const": "USD"
+        },
+        "readAt": {
+          "type": "string",
+          "description": "Actual source read timestamp; cache checks never advance it.",
+          "format": "date-time"
+        },
+        "sourceHash": {
+          "type": "string",
+          "description": "SHA-256 identity of the native verified source content or evidence.",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "evidenceHashes": {
+          "type": "array",
+          "description": "Ordered raw evidence hashes, matching sources.",
+          "items": {
+            "type": "string",
+            "description": "SHA-256 identity of the native verified source content or evidence.",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "maxItems": 64
+        },
+        "sources": {
+          "type": "array",
+          "description": "Actual per-source read times. Evidence expires at the earliest source read plus 300 seconds.",
+          "items": {
+            "type": "object",
+            "description": "A native constituent read, preserving its own source time and hashes.",
+            "properties": {
+              "source": {
+                "type": "string",
+                "description": "Named constituent native read, such as income or customerSales."
+              },
+              "reportName": {
+                "type": "string",
+                "description": "Exact native provider report or query name."
+              },
+              "readAt": {
+                "type": "string",
+                "description": "Actual source read timestamp; cache checks never advance it.",
+                "format": "date-time"
+              },
+              "sourceHash": {
+                "type": "string",
+                "description": "SHA-256 identity of the native verified source content or evidence.",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "evidenceHash": {
+                "type": "string",
+                "description": "SHA-256 identity of the native verified source content or evidence.",
+                "pattern": "^[a-f0-9]{64}$"
+              }
+            },
+            "required": [
+              "source",
+              "reportName",
+              "readAt",
+              "sourceHash",
+              "evidenceHash"
+            ],
+            "additionalProperties": false
+          },
+          "minItems": 1,
+          "maxItems": 64
+        },
+        "reconciliationStatus": {
+          "type": "string",
+          "description": "Source verification never certifies finance reconciliation.",
+          "const": "NOT_RECONCILED"
+        },
+        "historyStatus": {
+          "type": "string",
+          "description": "Native history discovery result.",
+          "enum": [
+            "AVAILABLE",
+            "NO_HISTORY"
+          ]
+        },
+        "sections": {
+          "type": "object",
+          "description": "Typed native financial sections. Negative and zero values retain native meaning.",
+          "properties": {
+            "income": {
+              "type": "object",
+              "description": "Verified section: status AVAILABLE includes native totals, rows and integer cents as appropriate; UNAVAILABLE includes a typed reason. Runtime rejects unknown section members and verifies all ties.",
+              "properties": {
+                "status": {
+                  "type": "string",
+                  "description": "Current native section availability.",
+                  "enum": [
+                    "AVAILABLE",
+                    "UNAVAILABLE"
+                  ]
+                },
+                "scope": {
+                  "type": "object",
+                  "description": "Exact native filter intersection for this report section.",
+                  "properties": {
+                    "customerIds": {
+                      "type": "array",
+                      "description": "Exact native QuickBooks IDs, unique and bounded; an empty list selects the company scope.",
+                      "items": {
+                        "type": "string",
+                        "pattern": "^[1-9][0-9]{0,19}$"
+                      },
+                      "uniqueItems": true,
+                      "maxItems": 20
+                    },
+                    "departmentIds": {
+                      "type": "array",
+                      "description": "Exact native QuickBooks IDs, unique and bounded; an empty list selects the company scope.",
+                      "items": {
+                        "type": "string",
+                        "pattern": "^[1-9][0-9]{0,19}$"
+                      },
+                      "uniqueItems": true,
+                      "maxItems": 20
+                    },
+                    "itemIds": {
+                      "type": "array",
+                      "description": "Exact native QuickBooks IDs, unique and bounded; an empty list selects the company scope.",
+                      "items": {
+                        "type": "string",
+                        "pattern": "^[1-9][0-9]{0,19}$"
+                      },
+                      "uniqueItems": true,
+                      "maxItems": 20
+                    }
+                  },
+                  "required": [
+                    "customerIds",
+                    "departmentIds",
+                    "itemIds"
+                  ],
+                  "additionalProperties": false
+                },
+                "reason": {
+                  "type": "string",
+                  "description": "Typed reason when native section data is unavailable."
+                }
+              },
+              "required": [
+                "status",
+                "scope"
+              ],
+              "additionalProperties": true
+            },
+            "customerSales": {
+              "type": "object",
+              "description": "Verified section: status AVAILABLE includes native totals, rows and integer cents as appropriate; UNAVAILABLE includes a typed reason. Runtime rejects unknown section members and verifies all ties.",
+              "properties": {
+                "status": {
+                  "type": "string",
+                  "description": "Current native section availability.",
+                  "enum": [
+                    "AVAILABLE",
+                    "UNAVAILABLE"
+                  ]
+                },
+                "scope": {
+                  "type": "object",
+                  "description": "Exact native filter intersection for this report section.",
+                  "properties": {
+                    "customerIds": {
+                      "type": "array",
+                      "description": "Exact native QuickBooks IDs, unique and bounded; an empty list selects the company scope.",
+                      "items": {
+                        "type": "string",
+                        "pattern": "^[1-9][0-9]{0,19}$"
+                      },
+                      "uniqueItems": true,
+                      "maxItems": 20
+                    },
+                    "departmentIds": {
+                      "type": "array",
+                      "description": "Exact native QuickBooks IDs, unique and bounded; an empty list selects the company scope.",
+                      "items": {
+                        "type": "string",
+                        "pattern": "^[1-9][0-9]{0,19}$"
+                      },
+                      "uniqueItems": true,
+                      "maxItems": 20
+                    },
+                    "itemIds": {
+                      "type": "array",
+                      "description": "Exact native QuickBooks IDs, unique and bounded; an empty list selects the company scope.",
+                      "items": {
+                        "type": "string",
+                        "pattern": "^[1-9][0-9]{0,19}$"
+                      },
+                      "uniqueItems": true,
+                      "maxItems": 20
+                    }
+                  },
+                  "required": [
+                    "customerIds",
+                    "departmentIds",
+                    "itemIds"
+                  ],
+                  "additionalProperties": false
+                },
+                "reason": {
+                  "type": "string",
+                  "description": "Typed reason when native section data is unavailable."
+                }
+              },
+              "required": [
+                "status",
+                "scope"
+              ],
+              "additionalProperties": true
+            },
+            "itemSales": {
+              "type": "object",
+              "description": "Verified section: status AVAILABLE includes native totals, rows and integer cents as appropriate; UNAVAILABLE includes a typed reason. Runtime rejects unknown section members and verifies all ties.",
+              "properties": {
+                "status": {
+                  "type": "string",
+                  "description": "Current native section availability.",
+                  "enum": [
+                    "AVAILABLE",
+                    "UNAVAILABLE"
+                  ]
+                },
+                "scope": {
+                  "type": "object",
+                  "description": "Exact native filter intersection for this report section.",
+                  "properties": {
+                    "customerIds": {
+                      "type": "array",
+                      "description": "Exact native QuickBooks IDs, unique and bounded; an empty list selects the company scope.",
+                      "items": {
+                        "type": "string",
+                        "pattern": "^[1-9][0-9]{0,19}$"
+                      },
+                      "uniqueItems": true,
+                      "maxItems": 20
+                    },
+                    "departmentIds": {
+                      "type": "array",
+                      "description": "Exact native QuickBooks IDs, unique and bounded; an empty list selects the company scope.",
+                      "items": {
+                        "type": "string",
+                        "pattern": "^[1-9][0-9]{0,19}$"
+                      },
+                      "uniqueItems": true,
+                      "maxItems": 20
+                    },
+                    "itemIds": {
+                      "type": "array",
+                      "description": "Exact native QuickBooks IDs, unique and bounded; an empty list selects the company scope.",
+                      "items": {
+                        "type": "string",
+                        "pattern": "^[1-9][0-9]{0,19}$"
+                      },
+                      "uniqueItems": true,
+                      "maxItems": 20
+                    }
+                  },
+                  "required": [
+                    "customerIds",
+                    "departmentIds",
+                    "itemIds"
+                  ],
+                  "additionalProperties": false
+                },
+                "reason": {
+                  "type": "string",
+                  "description": "Typed reason when native section data is unavailable."
+                }
+              },
+              "required": [
+                "status",
+                "scope"
+              ],
+              "additionalProperties": true
+            },
+            "inventory": {
+              "type": "object",
+              "description": "Verified section: status AVAILABLE includes native totals, rows and integer cents as appropriate; UNAVAILABLE includes a typed reason. Runtime rejects unknown section members and verifies all ties.",
+              "properties": {
+                "status": {
+                  "type": "string",
+                  "description": "Current native section availability.",
+                  "enum": [
+                    "AVAILABLE",
+                    "UNAVAILABLE"
+                  ]
+                },
+                "scope": {
+                  "type": "object",
+                  "description": "Exact native filter intersection for this report section.",
+                  "properties": {
+                    "customerIds": {
+                      "type": "array",
+                      "description": "Exact native QuickBooks IDs, unique and bounded; an empty list selects the company scope.",
+                      "items": {
+                        "type": "string",
+                        "pattern": "^[1-9][0-9]{0,19}$"
+                      },
+                      "uniqueItems": true,
+                      "maxItems": 20
+                    },
+                    "departmentIds": {
+                      "type": "array",
+                      "description": "Exact native QuickBooks IDs, unique and bounded; an empty list selects the company scope.",
+                      "items": {
+                        "type": "string",
+                        "pattern": "^[1-9][0-9]{0,19}$"
+                      },
+                      "uniqueItems": true,
+                      "maxItems": 20
+                    },
+                    "itemIds": {
+                      "type": "array",
+                      "description": "Exact native QuickBooks IDs, unique and bounded; an empty list selects the company scope.",
+                      "items": {
+                        "type": "string",
+                        "pattern": "^[1-9][0-9]{0,19}$"
+                      },
+                      "uniqueItems": true,
+                      "maxItems": 20
+                    }
+                  },
+                  "required": [
+                    "customerIds",
+                    "departmentIds",
+                    "itemIds"
+                  ],
+                  "additionalProperties": false
+                },
+                "reason": {
+                  "type": "string",
+                  "description": "Typed reason when native section data is unavailable."
+                }
+              },
+              "required": [
+                "status",
+                "scope"
+              ],
+              "additionalProperties": true
+            },
+            "salesTax": {
+              "type": "object",
+              "description": "Verified section: status AVAILABLE includes native totals, rows and integer cents as appropriate; UNAVAILABLE includes a typed reason. Runtime rejects unknown section members and verifies all ties.",
+              "properties": {
+                "status": {
+                  "type": "string",
+                  "description": "Current native section availability.",
+                  "enum": [
+                    "AVAILABLE",
+                    "UNAVAILABLE"
+                  ]
+                },
+                "scope": {
+                  "type": "object",
+                  "description": "Exact native filter intersection for this report section.",
+                  "properties": {
+                    "customerIds": {
+                      "type": "array",
+                      "description": "Exact native QuickBooks IDs, unique and bounded; an empty list selects the company scope.",
+                      "items": {
+                        "type": "string",
+                        "pattern": "^[1-9][0-9]{0,19}$"
+                      },
+                      "uniqueItems": true,
+                      "maxItems": 20
+                    },
+                    "departmentIds": {
+                      "type": "array",
+                      "description": "Exact native QuickBooks IDs, unique and bounded; an empty list selects the company scope.",
+                      "items": {
+                        "type": "string",
+                        "pattern": "^[1-9][0-9]{0,19}$"
+                      },
+                      "uniqueItems": true,
+                      "maxItems": 20
+                    },
+                    "itemIds": {
+                      "type": "array",
+                      "description": "Exact native QuickBooks IDs, unique and bounded; an empty list selects the company scope.",
+                      "items": {
+                        "type": "string",
+                        "pattern": "^[1-9][0-9]{0,19}$"
+                      },
+                      "uniqueItems": true,
+                      "maxItems": 20
+                    }
+                  },
+                  "required": [
+                    "customerIds",
+                    "departmentIds",
+                    "itemIds"
+                  ],
+                  "additionalProperties": false
+                },
+                "reason": {
+                  "type": "string",
+                  "description": "Typed reason when native section data is unavailable."
+                }
+              },
+              "required": [
+                "status",
+                "scope"
+              ],
+              "additionalProperties": true
+            },
+            "salesDocuments": {
+              "type": "object",
+              "description": "Verified section: status AVAILABLE includes native totals, rows and integer cents as appropriate; UNAVAILABLE includes a typed reason. Runtime rejects unknown section members and verifies all ties.",
+              "properties": {
+                "status": {
+                  "type": "string",
+                  "description": "Current native section availability.",
+                  "enum": [
+                    "AVAILABLE",
+                    "UNAVAILABLE"
+                  ]
+                },
+                "scope": {
+                  "type": "object",
+                  "description": "Exact native filter intersection for this report section.",
+                  "properties": {
+                    "customerIds": {
+                      "type": "array",
+                      "description": "Exact native QuickBooks IDs, unique and bounded; an empty list selects the company scope.",
+                      "items": {
+                        "type": "string",
+                        "pattern": "^[1-9][0-9]{0,19}$"
+                      },
+                      "uniqueItems": true,
+                      "maxItems": 20
+                    },
+                    "departmentIds": {
+                      "type": "array",
+                      "description": "Exact native QuickBooks IDs, unique and bounded; an empty list selects the company scope.",
+                      "items": {
+                        "type": "string",
+                        "pattern": "^[1-9][0-9]{0,19}$"
+                      },
+                      "uniqueItems": true,
+                      "maxItems": 20
+                    },
+                    "itemIds": {
+                      "type": "array",
+                      "description": "Exact native QuickBooks IDs, unique and bounded; an empty list selects the company scope.",
+                      "items": {
+                        "type": "string",
+                        "pattern": "^[1-9][0-9]{0,19}$"
+                      },
+                      "uniqueItems": true,
+                      "maxItems": 20
+                    }
+                  },
+                  "required": [
+                    "customerIds",
+                    "departmentIds",
+                    "itemIds"
+                  ],
+                  "additionalProperties": false
+                },
+                "reason": {
+                  "type": "string",
+                  "description": "Typed reason when native section data is unavailable."
+                }
+              },
+              "required": [
+                "status",
+                "scope"
+              ],
+              "additionalProperties": true
+            },
+            "groups": {
+              "type": "object",
+              "description": "Verified section: status AVAILABLE includes native totals, rows and integer cents as appropriate; UNAVAILABLE includes a typed reason. Runtime rejects unknown section members and verifies all ties.",
+              "properties": {
+                "status": {
+                  "type": "string",
+                  "description": "Current native section availability.",
+                  "enum": [
+                    "AVAILABLE",
+                    "UNAVAILABLE"
+                  ]
+                },
+                "scope": {
+                  "type": "object",
+                  "description": "Exact native filter intersection for this report section.",
+                  "properties": {
+                    "customerIds": {
+                      "type": "array",
+                      "description": "Exact native QuickBooks IDs, unique and bounded; an empty list selects the company scope.",
+                      "items": {
+                        "type": "string",
+                        "pattern": "^[1-9][0-9]{0,19}$"
+                      },
+                      "uniqueItems": true,
+                      "maxItems": 20
+                    },
+                    "departmentIds": {
+                      "type": "array",
+                      "description": "Exact native QuickBooks IDs, unique and bounded; an empty list selects the company scope.",
+                      "items": {
+                        "type": "string",
+                        "pattern": "^[1-9][0-9]{0,19}$"
+                      },
+                      "uniqueItems": true,
+                      "maxItems": 20
+                    },
+                    "itemIds": {
+                      "type": "array",
+                      "description": "Exact native QuickBooks IDs, unique and bounded; an empty list selects the company scope.",
+                      "items": {
+                        "type": "string",
+                        "pattern": "^[1-9][0-9]{0,19}$"
+                      },
+                      "uniqueItems": true,
+                      "maxItems": 20
+                    }
+                  },
+                  "required": [
+                    "customerIds",
+                    "departmentIds",
+                    "itemIds"
+                  ],
+                  "additionalProperties": false
+                },
+                "reason": {
+                  "type": "string",
+                  "description": "Typed reason when native section data is unavailable."
+                }
+              },
+              "required": [
+                "status",
+                "scope"
+              ],
+              "additionalProperties": true
+            },
+            "comparison": {
+              "type": "object",
+              "description": "Verified section: status AVAILABLE includes native totals, rows and integer cents as appropriate; UNAVAILABLE includes a typed reason. Runtime rejects unknown section members and verifies all ties.",
+              "properties": {
+                "status": {
+                  "type": "string",
+                  "description": "Current native section availability.",
+                  "enum": [
+                    "AVAILABLE",
+                    "UNAVAILABLE"
+                  ]
+                },
+                "scope": {
+                  "type": "object",
+                  "description": "Exact native filter intersection for this report section.",
+                  "properties": {
+                    "customerIds": {
+                      "type": "array",
+                      "description": "Exact native QuickBooks IDs, unique and bounded; an empty list selects the company scope.",
+                      "items": {
+                        "type": "string",
+                        "pattern": "^[1-9][0-9]{0,19}$"
+                      },
+                      "uniqueItems": true,
+                      "maxItems": 20
+                    },
+                    "departmentIds": {
+                      "type": "array",
+                      "description": "Exact native QuickBooks IDs, unique and bounded; an empty list selects the company scope.",
+                      "items": {
+                        "type": "string",
+                        "pattern": "^[1-9][0-9]{0,19}$"
+                      },
+                      "uniqueItems": true,
+                      "maxItems": 20
+                    },
+                    "itemIds": {
+                      "type": "array",
+                      "description": "Exact native QuickBooks IDs, unique and bounded; an empty list selects the company scope.",
+                      "items": {
+                        "type": "string",
+                        "pattern": "^[1-9][0-9]{0,19}$"
+                      },
+                      "uniqueItems": true,
+                      "maxItems": 20
+                    }
+                  },
+                  "required": [
+                    "customerIds",
+                    "departmentIds",
+                    "itemIds"
+                  ],
+                  "additionalProperties": false
+                },
+                "reason": {
+                  "type": "string",
+                  "description": "Typed reason when native section data is unavailable."
+                }
+              },
+              "required": [
+                "status",
+                "scope"
+              ],
+              "additionalProperties": true
+            }
+          },
+          "required": [
+            "income",
+            "customerSales",
+            "itemSales",
+            "inventory",
+            "salesTax",
+            "salesDocuments",
+            "groups",
+            "comparison"
+          ],
+          "additionalProperties": false
+        },
+        "exceptions": {
+          "type": "array",
+          "description": "Bounded native discrepancies and unavailable supplemental source reasons.",
+          "items": {
+            "type": "object"
+          },
+          "maxItems": 50000
+        },
+        "detail": {
+          "type": "string",
+          "description": "Native detail projection to return.",
+          "enum": [
+            "GROUP",
+            "ACCOUNT",
+            "SKU"
+          ]
+        },
+        "offset": {
+          "type": "integer",
+          "description": "Zero-based bounded row offset.",
+          "minimum": 0,
+          "maximum": 25000
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Maximum detail rows returned.",
+          "minimum": 1,
+          "maximum": 100
+        },
+        "search": {
+          "type": "string",
+          "description": "Case-insensitive native row name search.",
+          "maxLength": 200
+        },
+        "sortBy": {
+          "type": "string",
+          "description": "Stable sort field for this projection.",
+          "enum": [
+            "amount",
+            "name",
+            "id"
+          ]
+        },
+        "direction": {
+          "type": "string",
+          "description": "Stable sort direction.",
+          "enum": [
+            "asc",
+            "desc"
+          ]
+        },
+        "totalRows": {
+          "type": "integer",
+          "description": "Matched detail rows before bounded paging.",
+          "minimum": 0
+        },
+        "rows": {
+          "type": "array",
+          "description": "Verified native rows for the requested projection, retaining cents and source IDs.",
+          "items": {
+            "type": "object"
+          },
+          "maxItems": 100
+        }
+      },
+      "required": [
+        "schemaVersion",
+        "provider",
+        "workspaceId",
+        "connectionId",
+        "connectionVersion",
+        "companyId",
+        "environment",
+        "request",
+        "startDate",
+        "endDate",
+        "basis",
+        "currency",
+        "readAt",
+        "sourceHash",
+        "evidenceHashes",
+        "sources",
+        "reconciliationStatus",
+        "historyStatus",
+        "sections",
+        "exceptions",
+        "detail",
+        "offset",
+        "limit",
+        "search",
+        "sortBy",
+        "direction",
+        "totalRows",
+        "rows"
+      ],
+      "additionalProperties": false
+    },
+    "QuickbooksReportResult": {
+      "description": "Legacy income result or strict projected executive report; source verification is not financial reconciliation.",
+      "anyOf": [
+        {
+          "$ref": "#/components/schemas/QuickbooksIncomeReport"
+        },
+        {
+          "$ref": "#/components/schemas/QuickbooksExecutiveReport"
+        }
+      ]
     }
   }
 }
