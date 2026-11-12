@@ -4254,6 +4254,190 @@
           }
         }
       }
+    },
+    "/v1/identity": {
+      "get": {
+        "operationId": "readIdentity",
+        "summary": "Read the current data identity",
+        "description": "Bind this API connection to its authenticated subject and exact native Microsoft identity when available. A current unrevoked API-resource token with read scope; returns only its own subject.",
+        "tags": [
+          "Identity"
+        ],
+        "security": [
+          {
+            "OAuth2": [
+              "orchesphere.read"
+            ]
+          }
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DataIdentity"
+                },
+                "example": {
+                  "issuer": "https://orchesphere.ai",
+                  "resource": "https://api.orchesphere.ai",
+                  "clientId": "orch_app_33333333-3333-4333-8333-333333333333",
+                  "subject": "principal:example",
+                  "identity": {
+                    "provider": "entra",
+                    "tenantId": "11111111-1111-4111-8111-111111111111",
+                    "objectId": "22222222-2222-4222-8222-222222222222"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid path/query/body/header or business validation.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, expired, revoked, invalid or wrong-resource token.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "headers": {
+              "WWW-Authenticate": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "Bearer resource metadata challenge; scope upgrade details when insufficient_scope."
+              }
+            }
+          },
+          "402": {
+            "description": "Verified company payment is required.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Insufficient token scope or current company/service/portal/task authority.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "headers": {
+              "WWW-Authenticate": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "Bearer resource metadata challenge; scope upgrade details when insufficient_scope."
+              }
+            }
+          },
+          "404": {
+            "description": "Unknown endpoint or record not found/inaccessible.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "405": {
+            "description": "Method is not supported for this path.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "State, quota or idempotency conflict; re-read current state.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "Request exceeds 24,000 bytes.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "415": {
+            "description": "Use uncompressed application/json.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Company job/rate/paid-period allowance reached.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "The gateway received an unexpected upstream response (upstream_response_invalid). For a write, read the current state and reconcile before repeating it.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": {
+                    "code": "upstream_response_invalid",
+                    "message": "The API returned an unexpected response. Retry later."
+                  }
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Temporarily unavailable; a lost mutation response does not prove nothing was saved.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "x-permission": "Current active company assignments; verified global authority may see all company workspaces."
+      }
     }
   },
   "components": {
@@ -5797,6 +5981,72 @@
           "message"
         ],
         "additionalProperties": false
+      },
+      "DataIdentity": {
+        "type": "object",
+        "description": "Resource-bound identity of the consenting caller, with no directory lookup for other users.",
+        "additionalProperties": false,
+        "required": [
+          "issuer",
+          "resource",
+          "clientId",
+          "subject",
+          "identity"
+        ],
+        "properties": {
+          "issuer": {
+            "type": "string",
+            "description": "Verified OAuth issuer."
+          },
+          "resource": {
+            "type": "string",
+            "description": "Verified audience; always the OrcheSphere API."
+          },
+          "clientId": {
+            "type": "string",
+            "description": "Application to which this token was issued."
+          },
+          "subject": {
+            "type": "string",
+            "description": "Opaque current authenticated subject; never use an email as immutable identity."
+          },
+          "identity": {
+            "description": "Exact current Microsoft identity, or null for a non-Microsoft login. This does not merge identities or grant access.",
+            "anyOf": [
+              {
+                "type": "null"
+              },
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "provider",
+                  "tenantId",
+                  "objectId"
+                ],
+                "properties": {
+                  "provider": {
+                    "type": "string",
+                    "enum": [
+                      "entra"
+                    ],
+                    "description": "Native login provider."
+                  },
+                  "tenantId": {
+                    "type": "string",
+                    "format": "uuid",
+                    "description": "Microsoft tenant ID."
+                  },
+                  "objectId": {
+                    "type": "string",
+                    "format": "uuid",
+                    "description": "Microsoft object ID within that tenant."
+                  }
+                }
+              }
+            ]
+          }
+        }
       }
     }
   },

@@ -5,6 +5,46 @@
     "base": "https://api.orchesphere.ai/v1",
     "operations": [
       {
+        "operationId": "readIdentity",
+        "method": "GET",
+        "path": "/v1/identity",
+        "summary": "Read the current data identity",
+        "description": "Bind this API connection to its authenticated subject and exact native Microsoft identity when available.",
+        "scope": [
+          "orchesphere.read"
+        ],
+        "permission": "A current unrevoked API-resource token with read scope; returns only its own subject.",
+        "requestSchema": null,
+        "responseSchema": {
+          "$ref": "#/components/schemas/DataIdentity"
+        },
+        "status": 200,
+        "requestRequired": false,
+        "exampleRequest": null,
+        "exampleResponse": {
+          "issuer": "https://orchesphere.ai",
+          "resource": "https://api.orchesphere.ai",
+          "clientId": "orch_app_33333333-3333-4333-8333-333333333333",
+          "subject": "principal:example",
+          "identity": {
+            "provider": "entra",
+            "tenantId": "11111111-1111-4111-8111-111111111111",
+            "objectId": "22222222-2222-4222-8222-222222222222"
+          }
+        },
+        "useWhen": "Verify that the consenting identity matches the account currently using an integrated application.",
+        "effects": [
+          "Reads the current token identity. It does not link identities, create membership, or grant provider rights."
+        ],
+        "retry": [
+          "Read requests may be retried with bounded backoff after a temporary failure; renew an expired token through the documented OAuth flow."
+        ],
+        "limitations": [
+          "Microsoft identity is null for non-Microsoft logins; never fall back to matching email aliases.",
+          "Company membership and provider permissions must still be checked by each subsequent data operation."
+        ]
+      },
+      {
         "operationId": "listWorkspaces",
         "method": "GET",
         "path": "/v1/workspaces",
@@ -3455,6 +3495,72 @@
         "message"
       ],
       "additionalProperties": false
+    },
+    "DataIdentity": {
+      "type": "object",
+      "description": "Resource-bound identity of the consenting caller, with no directory lookup for other users.",
+      "additionalProperties": false,
+      "required": [
+        "issuer",
+        "resource",
+        "clientId",
+        "subject",
+        "identity"
+      ],
+      "properties": {
+        "issuer": {
+          "type": "string",
+          "description": "Verified OAuth issuer."
+        },
+        "resource": {
+          "type": "string",
+          "description": "Verified audience; always the OrcheSphere API."
+        },
+        "clientId": {
+          "type": "string",
+          "description": "Application to which this token was issued."
+        },
+        "subject": {
+          "type": "string",
+          "description": "Opaque current authenticated subject; never use an email as immutable identity."
+        },
+        "identity": {
+          "description": "Exact current Microsoft identity, or null for a non-Microsoft login. This does not merge identities or grant access.",
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "provider",
+                "tenantId",
+                "objectId"
+              ],
+              "properties": {
+                "provider": {
+                  "type": "string",
+                  "enum": [
+                    "entra"
+                  ],
+                  "description": "Native login provider."
+                },
+                "tenantId": {
+                  "type": "string",
+                  "format": "uuid",
+                  "description": "Microsoft tenant ID."
+                },
+                "objectId": {
+                  "type": "string",
+                  "format": "uuid",
+                  "description": "Microsoft object ID within that tenant."
+                }
+              }
+            }
+          ]
+        }
+      }
     }
   }
 }
