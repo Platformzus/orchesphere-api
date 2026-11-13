@@ -771,7 +771,7 @@
         "method": "POST",
         "path": "/v1/workspaces/{workspaceId}/accounting/quickbooks/report",
         "summary": "Read governed QuickBooks reports",
-        "description": "Read legacy whole-company Total Income or an explicit schema 2 verified native FUR4 executive report with exact dates, basis and native filters. Requires current resource-bound OAuth accounting scope and explicit accounting_reports_read service right, including company owners using delegated clients. Schema 2 revalidates the original grant, principal, current authority and exact provider connection around reads and every cache delivery. Not reconciled — in progress. Explicit schema3 background requests add independently verified recorded contributed capital and Total liabilities from the same BalanceSheet read, with current account57 metadata proof. Narrowed sales filters never inherit whole-company balances. Schema1 and exact schema2 command/receipt results are unchanged.",
+        "description": "Read legacy whole-company Total Income or an explicit schema 2 verified native FUR4 executive report with exact dates, basis and native filters. Requires current resource-bound OAuth accounting scope and explicit accounting_reports_read service right, including company owners using delegated clients. Schema 2 revalidates the original grant, principal, current authority and exact provider connection around reads and every cache delivery. Not reconciled \u2014 in progress. Explicit schema3 background requests add independently verified recorded contributed capital and Total liabilities from the same BalanceSheet read, with current account57 metadata proof. Narrowed sales filters never inherit whole-company balances. Schema1 and exact schema2 command/receipt results are unchanged.",
         "scope": [
           "orchesphere.read",
           "orchesphere.accounting.read"
@@ -807,7 +807,7 @@
           "evidenceHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
           "readAt": "2026-11-11T12:00:00.000Z",
           "reconciliationStatus": "NOT_RECONCILED",
-          "note": "Not reconciled — in progress. QuickBooks Total Income is not a certified net-merchandise revenue measure.",
+          "note": "Not reconciled \u2014 in progress. QuickBooks Total Income is not a certified net-merchandise revenue measure.",
           "workspaceId": "11111111-1111-4111-8111-111111111111",
           "connectionId": "22222222-2222-4222-8222-222222222222"
         },
@@ -824,7 +824,7 @@
           "Total Income is distinct from net merchandise revenue; this response is not reconciliation or Finance approval.",
           "Schema 2 accepts only the exact {schemaVersion:2,input,page} envelope and FUR4 production realm. No provider writes or AI calls. Its 45-second whole-report budget fits existing proxy limits.",
           "An isolated bounded process cache shares validated whole reports and deduplicates concurrent reads. It refreshes after 60 seconds from the earliest constituent source; evidence expires within 300 seconds. Cache hits never advance provider timestamps. Every delivery rechecks current access.",
-          "Schema3 adds only financialPosition outside the unchanged schema2 core. Metadata evidence is separate and must stay current; source matching remains distinct from Not reconciled — in progress. No new consent or provider writes."
+          "Schema3 adds only financialPosition outside the unchanged schema2 core. Metadata evidence is separate and must stay current; source matching remains distinct from Not reconciled \u2014 in progress. No new consent or provider writes."
         ]
       },
       {
@@ -1083,7 +1083,7 @@
         "method": "POST",
         "path": "/v1/workspaces/{workspaceId}/accounting/quickbooks/payments",
         "summary": "Read recorded Platformz-related gross payments",
-        "description": "Read current recorded gross outflows to verified Platformz Vendor83 plus direct-Tim Customer24 expenses carrying Platformz routing evidence, with separate breakouts and prior-first-recorded-payment capital. Complete bounded All-history discovery precedes explicit dated ledger reads; the selected cutoff must be echoed. Bills are not counted as payments. Returned checks, duplicate-looking outflows, capital incoming and unclassified incoming remain distinct; net settled compensation is unavailable and Finance close remains Not reconciled — in progress.",
+        "description": "Read current recorded gross outflows to verified Platformz Vendor83 plus direct-Tim Customer24 expenses carrying Platformz routing evidence, with separate breakouts and prior-first-recorded-payment capital. Complete bounded All-history discovery precedes explicit dated ledger reads; the selected cutoff must be echoed. Bills are not counted as payments. Returned checks, duplicate-looking outflows, capital incoming and unclassified incoming remain distinct; net settled compensation is unavailable and Finance close remains Not reconciled \u2014 in progress.",
         "scope": [
           "orchesphere.read",
           "orchesphere.accounting.read"
@@ -1432,6 +1432,68 @@
           "Uses native quantities with unknown values preserved. No SKU mappings, unit multipliers or reconciliation are inferred.",
           "This is a focused inventory read. It does not implement the full ShipBob read/write API catalog."
         ]
+      },
+      {
+        "operationId": "readGoogleAnalyticsSummary",
+        "method": "POST",
+        "path": "/v1/workspaces/{workspaceId}/providers/google-analytics/summary/read",
+        "summary": "Read Google Analytics traffic summary",
+        "description": "Read active users, sessions and pageviews over the last 28 completed property-local days for the saved company property.",
+        "scope": [
+          "orchesphere.read",
+          "orchesphere.records.read"
+        ],
+        "permission": "Requires active company identity, current Google Analytics read and records_read rights, records OAuth scope, and a verified property-bound connection.",
+        "requestSchema": {
+          "$ref": "#/components/schemas/GoogleAnalyticsReadRequest"
+        },
+        "responseSchema": {
+          "$ref": "#/components/schemas/GoogleAnalyticsReadResult"
+        },
+        "status": 200,
+        "requestRequired": true,
+        "exampleRequest": {},
+        "exampleResponse": {
+          "provider": "google-analytics",
+          "workspaceId": "11111111-1111-4111-8111-111111111111",
+          "connectionId": "22222222-2222-4222-8222-222222222222",
+          "connectionVersion": 1,
+          "result": {
+            "propertyId": "123",
+            "accountId": "456",
+            "range": {
+              "startDate": "2026-10-16",
+              "endDate": "2026-11-12",
+              "timeZone": "America/Chicago"
+            },
+            "summary": {
+              "activeUsers": 0,
+              "sessions": 0,
+              "pageviews": 0
+            },
+            "thresholded": false,
+            "sampled": false,
+            "collectionVerified": false,
+            "readAt": "2026-11-13T16:00:00.000Z",
+            "source": "Google Analytics Data API",
+            "note": "A successful report proves API access. Tag installation and received events require separate collection verification."
+          },
+          "resultHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "readAt": "2026-11-13T16:00:00.000Z",
+          "propertyId": "123"
+        },
+        "useWhen": "Read aggregate website traffic after native Google consent and property confirmation.",
+        "effects": [
+          "Reads aggregate traffic counts from the fixed Google Analytics Data API report; performs no provider writes."
+        ],
+        "retry": [
+          "No automatic provider retries. Recheck current access after a denial and use bounded retries for temporary read failures."
+        ],
+        "limitations": [
+          "Only the company-bound property is used; caller IDs, URLs, custom metrics, dates and queries are rejected.",
+          "The fixed window excludes today using the property time zone. Zero is a valid report result; it is not proof that tags collect events.",
+          "Consent, tag installation and received events require separate collection verification. Thresholding and sampling are reported."
+        ]
       }
     ]
   },
@@ -1687,7 +1749,7 @@
       },
       {
         "name": "get_pipe17_operation",
-        "description": "Read this identity and client’s Pipe17 write receipt. A running or unknown receipt does not prove success or failure; check the native record before taking another action.",
+        "description": "Read this identity and client\u2019s Pipe17 write receipt. A running or unknown receipt does not prove success or failure; check the native record before taking another action.",
         "inputSchema": {
           "type": "object",
           "properties": {
@@ -2080,7 +2142,7 @@
       },
       {
         "name": "configure_connection",
-        "description": "Register or replace this company’s provider configuration. Use an AWS credential reference, never a secret. This does not establish live provider access.",
+        "description": "Register or replace this company\u2019s provider configuration. Use an AWS credential reference, never a secret. This does not establish live provider access.",
         "inputSchema": {
           "type": "object",
           "properties": {
@@ -2174,6 +2236,7 @@
                 "enum": [
                   "read",
                   "accounting_reports_read",
+                  "inventory_adjust",
                   "records_read",
                   "orders_create",
                   "orders_update",
@@ -2185,7 +2248,7 @@
                   "jobs_cancel_all"
                 ]
               },
-              "maxItems": 11
+              "maxItems": 12
             }
           },
           "required": [
@@ -2255,6 +2318,38 @@
             ]
           }
         ]
+      },
+      {
+        "name": "read_google_analytics_summary",
+        "description": "Read a fixed 28-completed-day Google Analytics traffic summary for the company-bound property. Requires current explicit records_read rights. API access does not prove tag collection.",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "workspaceId": {
+              "type": "string",
+              "description": "An assigned company workspace ID."
+            }
+          },
+          "required": [
+            "workspaceId"
+          ],
+          "additionalProperties": false
+        },
+        "annotations": {
+          "readOnlyHint": true,
+          "destructiveHint": false,
+          "idempotentHint": true,
+          "openWorldHint": true
+        },
+        "securitySchemes": [
+          {
+            "type": "oauth2",
+            "scopes": [
+              "orchesphere.read",
+              "orchesphere.records.read"
+            ]
+          }
+        ]
       }
     ],
     "notes": [
@@ -2264,7 +2359,7 @@
     ]
   },
   "scopes": {
-    "orchesphere.read": "Read only the current user’s permitted company data. Required for every operation.",
+    "orchesphere.read": "Read only the current user\u2019s permitted company data. Required for every operation.",
     "orchesphere.jobs": "Create/update authorized tasks and queue/cancel permitted identity-verification jobs.",
     "orchesphere.manage": "Configure permitted connections; service-grant changes still require the designated access administrator.",
     "offline_access": "Receive rotating refresh tokens, bounded by the grant lifetime. Adds no company permission.",
@@ -2286,6 +2381,7 @@
     "serviceRights": [
       "read",
       "accounting_reports_read",
+      "inventory_adjust",
       "records_read",
       "orders_create",
       "orders_update",
@@ -2345,6 +2441,10 @@
       {
         "id": "hubspot",
         "name": "HubSpot"
+      },
+      {
+        "id": "google-analytics",
+        "name": "Google Analytics"
       },
       {
         "id": "cloudflare",
@@ -3247,6 +3347,7 @@
             "enum": [
               "read",
               "accounting_reports_read",
+              "inventory_adjust",
               "records_read",
               "orders_create",
               "orders_update",
@@ -3259,7 +3360,7 @@
             ]
           },
           "uniqueItems": true,
-          "maxItems": 11,
+          "maxItems": 12,
           "description": "Exact replacement rights, not additions to the current list. Nonempty actions require read. jobs_cancel_all requires jobs_read_all. Empty array denies access. Viewer members may receive read-only actions only."
         }
       },
@@ -3629,7 +3730,7 @@
         },
         "arguments": {
           "type": "object",
-          "description": "Arguments matching that tool’s current provider input schema. No company selectors or credentials.",
+          "description": "Arguments matching that tool\u2019s current provider input schema. No company selectors or credentials.",
           "additionalProperties": true
         }
       },
@@ -7000,6 +7101,156 @@
         "result",
         "resultHash",
         "readAt"
+      ],
+      "additionalProperties": false
+    },
+    "GoogleAnalyticsReadRequest": {
+      "type": "object",
+      "description": "An empty request. Company identity and property scope come from the saved connection.",
+      "additionalProperties": false
+    },
+    "GoogleAnalyticsReadResult": {
+      "type": "object",
+      "description": "A property-bound traffic summary with current connection and audit evidence.",
+      "properties": {
+        "provider": {
+          "type": "string",
+          "description": "Returned provider for the fixed aggregate traffic report.",
+          "const": "google-analytics"
+        },
+        "workspaceId": {
+          "type": "string",
+          "description": "Returned workspaceId for the fixed aggregate traffic report."
+        },
+        "connectionId": {
+          "type": "string",
+          "description": "Returned connectionId for the fixed aggregate traffic report."
+        },
+        "connectionVersion": {
+          "type": "integer",
+          "description": "Returned connectionVersion for the fixed aggregate traffic report."
+        },
+        "result": {
+          "type": "object",
+          "description": "Returned result for the fixed aggregate traffic report.",
+          "properties": {
+            "propertyId": {
+              "type": "string",
+              "description": "Verified Google Analytics property identifier."
+            },
+            "accountId": {
+              "type": "string",
+              "description": "Owning Google Analytics account identifier."
+            },
+            "range": {
+              "type": "object",
+              "description": "Returned range for the fixed aggregate traffic report.",
+              "properties": {
+                "startDate": {
+                  "type": "string",
+                  "description": "Returned startDate for the fixed aggregate traffic report."
+                },
+                "endDate": {
+                  "type": "string",
+                  "description": "Returned endDate for the fixed aggregate traffic report."
+                },
+                "timeZone": {
+                  "type": "string",
+                  "description": "Property reporting time zone."
+                }
+              },
+              "required": [
+                "startDate",
+                "endDate",
+                "timeZone"
+              ],
+              "additionalProperties": false
+            },
+            "summary": {
+              "type": "object",
+              "description": "Returned summary for the fixed aggregate traffic report.",
+              "properties": {
+                "activeUsers": {
+                  "type": "integer",
+                  "description": "Returned activeUsers for the fixed aggregate traffic report."
+                },
+                "sessions": {
+                  "type": "integer",
+                  "description": "Returned sessions for the fixed aggregate traffic report."
+                },
+                "pageviews": {
+                  "type": "integer",
+                  "description": "Returned pageviews for the fixed aggregate traffic report."
+                }
+              },
+              "required": [
+                "activeUsers",
+                "sessions",
+                "pageviews"
+              ],
+              "additionalProperties": false
+            },
+            "thresholded": {
+              "type": "boolean",
+              "description": "Returned thresholded for the fixed aggregate traffic report."
+            },
+            "sampled": {
+              "type": "boolean",
+              "description": "Returned sampled for the fixed aggregate traffic report."
+            },
+            "collectionVerified": {
+              "type": "boolean",
+              "description": "Always false here; this response does not verify event collection."
+            },
+            "readAt": {
+              "type": "string",
+              "description": "Time the provider report was read."
+            },
+            "source": {
+              "type": "string",
+              "description": "Returned source for the fixed aggregate traffic report."
+            },
+            "note": {
+              "type": "string",
+              "description": "Returned note for the fixed aggregate traffic report."
+            }
+          },
+          "required": [
+            "propertyId",
+            "accountId",
+            "range",
+            "summary",
+            "thresholded",
+            "sampled",
+            "collectionVerified",
+            "readAt",
+            "source",
+            "note"
+          ],
+          "additionalProperties": false
+        },
+        "resultHash": {
+          "type": "string",
+          "description": "Returned resultHash for the fixed aggregate traffic report."
+        },
+        "readAt": {
+          "type": "string",
+          "description": "Time the provider report was read."
+        },
+        "propertyId": {
+          "type": "string",
+          "description": "Verified Google Analytics property identifier."
+        }
+      },
+      "required": [
+        "provider",
+        "workspaceId",
+        "connectionId",
+        "connectionVersion",
+        "result",
+        "resultHash",
+        "readAt",
+        "propertyId"
       ],
       "additionalProperties": false
     }

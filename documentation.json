@@ -1,5 +1,5 @@
 {
-  "version": "2026-11-13.1",
+  "version": "2026-11-13.2",
   "reviewedAt": "2026-11-13",
   "mcp": {
     "list_workspaces": {
@@ -83,10 +83,10 @@
       "purpose": "Find the portals the current user may access within a company.",
       "useWhen": "Choose an accessible portal before creating a task.",
       "effects": [
-        "Reads portal names, descriptions and the current user’s portal capabilities."
+        "Reads portal names, descriptions and the current user\u2019s portal capabilities."
       ],
       "limitations": [
-        "Current company and portal assignments apply. Company administrators can access their company’s portals.",
+        "Current company and portal assignments apply. Company administrators can access their company\u2019s portals.",
         "canCreateTask and canManage describe current OrcheSphere rights; they do not grant provider access.",
         "This MCP result has a portals array and no REST page wrapper or pagination parameters."
       ],
@@ -115,7 +115,7 @@
       "purpose": "Read saved tasks visible to the current user in one company.",
       "useWhen": "Find a taskId, review work status or reconcile a task change after an uncertain response.",
       "effects": [
-        "Reads saved task details and the current user’s task role and edit capabilities."
+        "Reads saved task details and the current user\u2019s task role and edit capabilities."
       ],
       "limitations": [
         "Requires company access, parent-portal access and task assignment, unless current company or portal administrator rights apply.",
@@ -322,7 +322,7 @@
       "limitations": [
         "Requires orchesphere.jobs in addition to read and current service verify rights for the connection environment.",
         "The connection needs a supported identity-verification adapter and applicable company access/allowances. A directory entry alone is insufficient.",
-        "idempotencyKey must contain 8–100 ASCII letters, digits, underscores or hyphens. The key is scoped to the current requester and company.",
+        "idempotencyKey must contain 8\u2013100 ASCII letters, digits, underscores or hyphens. The key is scoped to the current requester and company.",
         "Returning a queued job is not completed provider access. Read get_job and do not infer that provider business-record access is implemented.",
         "At most 30 new company jobs may be admitted in one minute; other allowances may apply. A returned job can later need provider sign-in or permission correction."
       ],
@@ -361,7 +361,7 @@
       "limitations": [
         "Requires orchesphere.jobs in addition to read. Company administrators may cancel; other callers must be non-viewers with service read access and either requester rights or jobs_cancel_all.",
         "Terminal jobs are not rewritten. The acknowledgment is {ok:true}, not a refreshed job object.",
-        "Cancellation does not revoke the provider connection or the application’s OAuth grant."
+        "Cancellation does not revoke the provider connection or the application\u2019s OAuth grant."
       ],
       "retry": "Read get_job after an uncertain cancellation response. Confirm the current job state before repeating.",
       "exampleArguments": {
@@ -423,19 +423,19 @@
     },
     "set_service_permissions": {
       "title": "Set connection permissions",
-      "purpose": "Replace an assigned company member’s OrcheSphere rights for one provider and environment.",
+      "purpose": "Replace an assigned company member\u2019s OrcheSphere rights for one provider and environment.",
       "useWhen": "An authorized access administrator needs to set or remove service-specific access.",
       "effects": [
-        "Replaces that member’s saved service grant and records the permission change.",
-        "Changes OrcheSphere authorization only. It does not edit the provider account’s API role or increase what its credentials permit."
+        "Replaces that member\u2019s saved service grant and records the permission change.",
+        "Changes OrcheSphere authorization only. It does not edit the provider account\u2019s API role or increase what its credentials permit."
       ],
       "limitations": [
         "Requires orchesphere.manage in addition to read and designated global access-administrator authority. Company-admin status or scope approval alone is insufficient.",
-        "The target must be an assigned company member. An exact production/sandbox grant overrides the all-environments default; an empty actions array denies that grant’s access.",
+        "The target must be an assigned company member. An exact production/sandbox grant overrides the all-environments default; an empty actions array denies that grant\u2019s access.",
         "Nonempty actions must include read. jobs_cancel_all also requires jobs_read_all. Viewers can receive read-only rights only.",
         "Supported rights are read, verify, configure, jobs_read_all, jobs_cancel_all and accounting_reports_read. The accounting report right is separate from evidence read; no universal business-write permission is implied."
       ],
-      "retry": "Review the member’s current permissions in OrcheSphere after an uncertain response before repeating a replacement.",
+      "retry": "Review the member\u2019s current permissions in OrcheSphere after an uncertain response before repeating a replacement.",
       "exampleArguments": {
         "workspaceId": "11111111-1111-4111-8111-111111111111",
         "email": "operator@example.com",
@@ -475,7 +475,7 @@
     },
     "read_quickbooks_report": {
       "title": "Read QuickBooks Total Income",
-      "purpose": "Read the native production whole-company ProfitAndLoss Total Income amount with exact dates and explicit Cash or Accrual basis. Requires both OAuth accounting scope and explicit accounting_reports_read service right, including external clients of company owners. No provider writes or AI calls. Current native company identity, credentials, scope and permission are checked before and after the bounded provider read. Not reconciled — in progress.",
+      "purpose": "Read the native production whole-company ProfitAndLoss Total Income amount with exact dates and explicit Cash or Accrual basis. Requires both OAuth accounting scope and explicit accounting_reports_read service right, including external clients of company owners. No provider writes or AI calls. Current native company identity, credentials, scope and permission are checked before and after the bounded provider read. Not reconciled \u2014 in progress.",
       "useWhen": "Read a native income report for exact dates and accounting basis.",
       "effects": [
         "Reads native accounting data and audits the report receipt. No provider business mutation or AI call."
@@ -509,7 +509,7 @@
         "evidenceHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
         "readAt": "2026-11-11T12:00:00.000Z",
         "reconciliationStatus": "NOT_RECONCILED",
-        "note": "Not reconciled — in progress. QuickBooks Total Income is not a certified net-merchandise revenue measure.",
+        "note": "Not reconciled \u2014 in progress. QuickBooks Total Income is not a certified net-merchandise revenue measure.",
         "workspaceId": "11111111-1111-4111-8111-111111111111",
         "connectionId": "22222222-2222-4222-8222-222222222222"
       }
@@ -720,6 +720,52 @@
         "resultHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
         "readAt": "2026-11-13T16:00:00.000Z"
       }
+    },
+    "read_google_analytics_summary": {
+      "title": "Read Google Analytics traffic summary",
+      "purpose": "Read active users, sessions and pageviews over the last 28 completed property-local days for the saved company property.",
+      "useWhen": "Read aggregate website traffic after native Google consent and property confirmation.",
+      "effects": [
+        "Reads aggregate traffic counts from the fixed Google Analytics Data API report; performs no provider writes."
+      ],
+      "limitations": [
+        "Only the company-bound property is used; caller IDs, URLs, custom metrics, dates and queries are rejected.",
+        "The fixed window excludes today using the property time zone. Zero is a valid report result; it is not proof that tags collect events.",
+        "Consent, tag installation and received events require separate collection verification. Thresholding and sampling are reported."
+      ],
+      "retry": "No automatic provider retries. Recheck current access after a denial and use bounded retries for temporary read failures.",
+      "exampleArguments": {
+        "workspaceId": "11111111-1111-4111-8111-111111111111"
+      },
+      "exampleResult": {
+        "provider": "google-analytics",
+        "workspaceId": "11111111-1111-4111-8111-111111111111",
+        "connectionId": "22222222-2222-4222-8222-222222222222",
+        "connectionVersion": 1,
+        "result": {
+          "propertyId": "123",
+          "accountId": "456",
+          "range": {
+            "startDate": "2026-10-16",
+            "endDate": "2026-11-12",
+            "timeZone": "America/Chicago"
+          },
+          "summary": {
+            "activeUsers": 0,
+            "sessions": 0,
+            "pageviews": 0
+          },
+          "thresholded": false,
+          "sampled": false,
+          "collectionVerified": false,
+          "readAt": "2026-11-13T16:00:00.000Z",
+          "source": "Google Analytics Data API",
+          "note": "A successful report proves API access. Tag installation and received events require separate collection verification."
+        },
+        "resultHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "readAt": "2026-11-13T16:00:00.000Z",
+        "propertyId": "123"
+      }
     }
   },
   "protocol": [
@@ -773,9 +819,9 @@
       "title": "Authorize an application",
       "method": "GET",
       "url": "https://orchesphere.ai/oauth/authorize",
-      "purpose": "Let a signed-in user review and approve an application’s resource and scopes using Authorization Code with S256 PKCE.",
+      "purpose": "Let a signed-in user review and approve an application\u2019s resource and scopes using Authorization Code with S256 PKCE.",
       "authentication": "The user completes OrcheSphere browser sign-in, current account-security requirements and explicit consent.",
-      "input": "Browser query: response_type=code, registered client_id, exact redirect_uri, explicit resource, requested scope, fresh random state, code_challenge and code_challenge_method=S256. Keep the original verifier in the client’s one-use pending authorization record.",
+      "input": "Browser query: response_type=code, registered client_id, exact redirect_uri, explicit resource, requested scope, fresh random state, code_challenge and code_challenge_method=S256. Keep the original verifier in the client\u2019s one-use pending authorization record.",
       "result": "The browser shows sign-in or consent. On approval, the registered callback receives code, the original state and iss=https://orchesphere.ai. On denial, it receives error=access_denied, state and iss. The authorization code expires after 120 seconds.",
       "limitations": [
         "The exact resource is https://api.orchesphere.ai for REST or https://orchesphere.ai/mcp for MCP. Scope approval grants no company membership.",
@@ -805,7 +851,7 @@
       "title": "Revoke an authorization",
       "method": "POST",
       "url": "https://orchesphere.ai/oauth/revoke",
-      "purpose": "Disconnect the grant associated with an application’s access or refresh token.",
+      "purpose": "Disconnect the grant associated with an application\u2019s access or refresh token.",
       "authentication": "Public client_id and the token to revoke. No Authorization header or client secret.",
       "input": "application/x-www-form-urlencoded with client_id and token. token_type_hint may be sent but the current implementation does not use it to select the token type.",
       "result": "Empty HTTP 200. A matching token revokes its authorization grant; an unknown token is a successful no-op. Later use of tokens from a revoked grant is rejected.",
@@ -852,7 +898,7 @@
       "Only the API companion is public. Browser/session APIs, provider callbacks and private application source are outside this developer endpoint catalog.",
       "Provider directory entries are not equivalent to implemented adapters or verified company connections.",
       "Public operations include governed QuickBooks income reads and Pipe17 record/order operations. Listing a provider never implies every native API operation is implemented.",
-      "Service rights control OrcheSphere operations and never expand the native provider credentials’ rights."
+      "Service rights control OrcheSphere operations and never expand the native provider credentials\u2019 rights."
     ],
     "updatePolicy": "Review endpoint/tool/protocol documentation with every contract change. Release checks should compare the actual private runtime definitions with the approved public contract, validate examples and links, and require a changelog/reviewed-version update before publication."
   }
