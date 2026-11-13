@@ -32,3 +32,9 @@ test('generated production Worker derives API admission from the documentation r
   }finally{await fs.rm(temporary,{recursive:true,force:true});}
  }
 });
+
+test('every generated documentation page mounts the consented collector, while machine contracts stay JSON',async()=>{
+ execFileSync(process.execPath,['scripts/build.mjs'],{cwd:root});const html=await fs.readFile(path.join(root,'dist/index.html'),'utf8'),asset=html.match(/<script type="module" src="([^"]+analytics[^"]+)"/)[1];
+ const code=await fs.readFile(path.join(root,'dist',asset),'utf8');assert.match(code,/mountConsentedAnalytics/);assert.match(code,/G-JGN2165N83/);assert.doesNotMatch(code,/window\.location\.search|document\.referrer|document\.title/);
+ const contract=JSON.parse(await fs.readFile(path.join(root,'dist/openapi.json'),'utf8'));assert.ok(contract.paths);assert.doesNotMatch(JSON.stringify(contract),/mountConsentedAnalytics/);
+});

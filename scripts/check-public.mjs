@@ -7,8 +7,8 @@ export const PUBLIC_FILES=[
  'assets/icon.png','assets/orchesphere.png',
  'examples/api-client.mjs','examples/oauth-client.mjs','examples/oauth.mjs','examples/read-workspaces.py',
  'scripts/check-docs.mjs','scripts/build.mjs','scripts/check-public.mjs','scripts/preview.mjs',
- 'src/catalog-pages.mjs','src/content.mjs','src/reference-pages.mjs','src/site.css','src/site.js','src/worker-core.mjs','src/worker.mjs',
- 'tests/oauth-example.test.mjs','tests/reference-docs.test.mjs','tests/worker.test.mjs','tests/public-build.test.mjs',
+ 'src/analytics.mjs','src/catalog-pages.mjs','src/content.mjs','src/reference-pages.mjs','src/site.css','src/site.js','src/worker-core.mjs','src/worker.mjs',
+ 'tests/analytics.test.mjs','tests/oauth-example.test.mjs','tests/reference-docs.test.mjs','tests/worker.test.mjs','tests/public-build.test.mjs',
 ];
 const ignored=new Set(['.git','dist','node_modules','.wrangler','src/generated.mjs']);
 export async function inspectPublicTree(root){

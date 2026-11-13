@@ -19,7 +19,7 @@ async function boundedBody(request){
 const publicSecurity={
  'x-content-type-options':'nosniff','referrer-policy':'strict-origin-when-cross-origin','x-frame-options':'DENY','strict-transport-security':'max-age=31536000',
  'permissions-policy':'camera=(), microphone=(), geolocation=()',
- 'content-security-policy':"default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self'; font-src 'self'; object-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'none'; upgrade-insecure-requests",
+ 'content-security-policy':"default-src 'self'; script-src 'self' https://www.googletagmanager.com; style-src 'self'; img-src 'self' data:; connect-src 'self' https://*.google-analytics.com https://analytics.google.com https://www.googletagmanager.com; font-src 'self'; object-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'none'; upgrade-insecure-requests",
 };
 export function createWorker({routes,publicPaths,apiEnabled=false,fetcher=fetch}){
  const admitted=routes.map(route=>({...route,pattern:routePattern(route.path)}));
