@@ -771,7 +771,7 @@
         "method": "POST",
         "path": "/v1/workspaces/{workspaceId}/accounting/quickbooks/report",
         "summary": "Read governed QuickBooks reports",
-        "description": "Read legacy whole-company Total Income or an explicit schema 2 verified native FUR4 executive report with exact dates, basis and native filters. Requires current resource-bound OAuth accounting scope and explicit accounting_reports_read service right, including company owners using delegated clients. Schema 2 revalidates the original grant, principal, current authority and exact provider connection around reads and every cache delivery. Not reconciled — in progress.",
+        "description": "Read legacy whole-company Total Income or an explicit schema 2 verified native FUR4 executive report with exact dates, basis and native filters. Requires current resource-bound OAuth accounting scope and explicit accounting_reports_read service right, including company owners using delegated clients. Schema 2 revalidates the original grant, principal, current authority and exact provider connection around reads and every cache delivery. Not reconciled — in progress. Explicit schema3 background requests add independently verified recorded contributed capital and Total liabilities from the same BalanceSheet read, with current account57 metadata proof. Narrowed sales filters never inherit whole-company balances. Schema1 and exact schema2 command/receipt results are unchanged.",
         "scope": [
           "orchesphere.read",
           "orchesphere.accounting.read"
@@ -823,7 +823,8 @@
           "Provider consent alone is not an OrcheSphere business-data right. Existing read and default OAuth grants are unchanged.",
           "Total Income is distinct from net merchandise revenue; this response is not reconciliation or Finance approval.",
           "Schema 2 accepts only the exact {schemaVersion:2,input,page} envelope and FUR4 production realm. No provider writes or AI calls. Its 45-second whole-report budget fits existing proxy limits.",
-          "An isolated bounded process cache shares validated whole reports and deduplicates concurrent reads. It refreshes after 60 seconds from the earliest constituent source; evidence expires within 300 seconds. Cache hits never advance provider timestamps. Every delivery rechecks current access."
+          "An isolated bounded process cache shares validated whole reports and deduplicates concurrent reads. It refreshes after 60 seconds from the earliest constituent source; evidence expires within 300 seconds. Cache hits never advance provider timestamps. Every delivery rechecks current access.",
+          "Schema3 adds only financialPosition outside the unchanged schema2 core. Metadata evidence is separate and must stay current; source matching remains distinct from Not reconciled — in progress. No new consent or provider writes."
         ]
       },
       {
@@ -1075,6 +1076,312 @@
           "Uses only the saved production company. No arbitrary provider URLs, organizations, credentials or RPC methods are accepted.",
           "The provider and OrcheSphere both enforce permissions. Old read-only connections must reconnect before writes.",
           "Native cancellation changes nothing on its first call and returns a confirmationToken. Show the summary, obtain explicit user confirmation, then create a new exact review including that token. Partial line-item cancellation is not supported."
+        ]
+      },
+      {
+        "operationId": "readQuickbooksPayments",
+        "method": "POST",
+        "path": "/v1/workspaces/{workspaceId}/accounting/quickbooks/payments",
+        "summary": "Read recorded Platformz-related gross payments",
+        "description": "Read current recorded gross outflows to verified Platformz Vendor83 plus direct-Tim Customer24 expenses carrying Platformz routing evidence, with separate breakouts and prior-first-recorded-payment capital. Complete bounded All-history discovery precedes explicit dated ledger reads; the selected cutoff must be echoed. Bills are not counted as payments. Returned checks, duplicate-looking outflows, capital incoming and unclassified incoming remain distinct; net settled compensation is unavailable and Finance close remains Not reconciled — in progress.",
+        "scope": [
+          "orchesphere.read",
+          "orchesphere.accounting.read"
+        ],
+        "permission": "Current exact FUR4 accounting report rights and resource-bound read/accounting scope; delegated owners require the same explicit service grant.",
+        "requestSchema": {
+          "$ref": "#/components/schemas/QuickbooksPaymentsInput"
+        },
+        "responseSchema": {
+          "$ref": "#/components/schemas/QuickbooksPaymentsReport"
+        },
+        "status": 200,
+        "requestRequired": true,
+        "exampleRequest": {
+          "schemaVersion": 1,
+          "asOfDate": "2026-11-12",
+          "basis": "ACCRUAL"
+        },
+        "exampleResponse": {
+          "schemaVersion": 1,
+          "provider": "quickbooks",
+          "companyId": "9130357979379316",
+          "workspaceId": "30a4b542-64ca-44b4-bfea-7ea7da4d0d88",
+          "connectionId": "fixture-connection",
+          "connectionVersion": 1,
+          "environment": "production",
+          "request": {
+            "schemaVersion": 1,
+            "asOfDate": "2026-11-12",
+            "basis": "ACCRUAL"
+          },
+          "currency": "USD",
+          "readAt": "2026-11-13T01:01:37.835Z",
+          "scope": "VENDOR83_AND_PLATFORMZ_MEMO_CUSTOMER24_EXPENSES",
+          "proofs": {
+            "vendor": {
+              "id": "83",
+              "name": "Platformz",
+              "type": "Vendor",
+              "currency": "USD"
+            },
+            "customer": {
+              "id": "24",
+              "name": "Timothy Roberts",
+              "type": "Customer",
+              "currency": "USD"
+            },
+            "capitalAccount": {
+              "id": "57",
+              "active": true,
+              "accountType": "Equity",
+              "accountSubType": "OwnersEquity",
+              "subAccount": false,
+              "currency": "USD",
+              "accountNumber": "30010"
+            },
+            "vendorStartDate": "2023-11-24",
+            "relatedStartDate": "2023-12-22"
+          },
+          "sources": [
+            {
+              "source": "billPayments",
+              "reportName": "query",
+              "readAt": "2026-11-13T01:01:37.820Z",
+              "sourceHash": "f6f05c39114c8f7faac5e215cf4f2e7c51e5a02f2856db549ba429e18aa7684c",
+              "evidenceHash": "f3de4f86366195c96b338a22709486156a6141270166c98c1ac51288213c4feb"
+            },
+            {
+              "source": "capitalAccount",
+              "reportName": "query",
+              "readAt": "2026-11-13T01:01:37.820Z",
+              "sourceHash": "e672c6fdaddc3ee87a867f82fa18d7490b2144c980034a370ae3f290f9effd85",
+              "evidenceHash": "d0043759a962644f82532ade478c09340fa67a6b375782167fd94b0fb9c33323"
+            },
+            {
+              "source": "customer",
+              "reportName": "query",
+              "readAt": "2026-11-13T01:01:37.818Z",
+              "sourceHash": "1744e8e24ddf4814e7aa6508af5064f6a6d1dba638dd1531c83fa889c8e02ec3",
+              "evidenceHash": "7553d03acfa655f357f35189f93300e355899920ccb431982323469602ad62d7"
+            },
+            {
+              "source": "deposits",
+              "reportName": "query",
+              "readAt": "2026-11-13T01:01:37.831Z",
+              "sourceHash": "cd4f8ae96bd11304dbe95158c239bdc77c65aca273cf7396a59392f29a2ca118",
+              "evidenceHash": "32a09e045b9eaf047f0ccce1b7789614bfd6e620063091f7bbb339fa47f0bca5"
+            },
+            {
+              "source": "preCapitalBalance",
+              "reportName": "BalanceSheet",
+              "readAt": "2026-11-13T01:01:37.834Z",
+              "sourceHash": "cd010c74700c83c09e7afda6ba3742559c72ed3f519b7fe4d3b8f386d024318b",
+              "evidenceHash": "0989049e84790f3dc73a93dd6ef09eeba27be71308b641f0ae5976a1e3e3d93b"
+            },
+            {
+              "source": "purchases",
+              "reportName": "query",
+              "readAt": "2026-11-13T01:01:37.831Z",
+              "sourceHash": "2979edb5ac835538fd10793d2db5fe8e470ae05b78202ea3e78173d67ade5f96",
+              "evidenceHash": "43dfa8897192aa26e462520c8b959214e82d5b1b964d117c6601a36048b8770c"
+            },
+            {
+              "source": "relatedAll",
+              "reportName": "GeneralLedger",
+              "readAt": "2026-11-13T01:01:37.819Z",
+              "sourceHash": "1d121a88f2483af9528c32bba98ebc7076de0fd1379e41991b5ce2db111d15bf",
+              "evidenceHash": "753f4bb6c589479eed6caa0568fce6f92cf0543859233f618c943fbf870fec35"
+            },
+            {
+              "source": "relatedLedger",
+              "reportName": "GeneralLedger",
+              "readAt": "2026-11-13T01:01:37.826Z",
+              "sourceHash": "7db9a4e22fa4f1e68e07e9d41f78084844a08199adbde550fae32c7cf28fd062",
+              "evidenceHash": "c2c2e58ab316f602426cb4fccd3e0a4c0a00aa1cde15d92fb9feb07861fc4e52"
+            },
+            {
+              "source": "vendor",
+              "reportName": "query",
+              "readAt": "2026-11-13T01:01:37.817Z",
+              "sourceHash": "69894125694ba07ab151efc6ddc6d13725649964109c3c62667cc446fc32599a",
+              "evidenceHash": "212e425047ab534b8c8eb359e9ed14757cd5c3e890427a545c342d84e2a3bdd1"
+            },
+            {
+              "source": "vendorAll",
+              "reportName": "GeneralLedger",
+              "readAt": "2026-11-13T01:01:37.818Z",
+              "sourceHash": "782a2ba7954fef95e6c218674df80a07c7fe904ffbd45cbd479f079311fd5f3b",
+              "evidenceHash": "1f1bbe75ecadd3901c64d8cf0ee16b5bcc22b56cc16c2e1a10f43a4939185c97"
+            },
+            {
+              "source": "vendorCredits",
+              "reportName": "query",
+              "readAt": "2026-11-13T01:01:37.820Z",
+              "sourceHash": "1b9f66c135aa4f481c213d8b795266bc918f353fcfae9978d55b7cd7316ea651",
+              "evidenceHash": "e5a7c33162623a6ee8ff55a52e02032465b409e4f30d1ee34b0634a8ed86bb96"
+            },
+            {
+              "source": "vendorLedger",
+              "reportName": "GeneralLedger",
+              "readAt": "2026-11-13T01:01:37.826Z",
+              "sourceHash": "be832b531934baf653d08accb817f40a52e1cd72e3a8798ef2967e98f7359e29",
+              "evidenceHash": "7858c5ec8f32fa5fb8df9ebaa87ae9c838ffe7927856788f24c4c81a31b402d9"
+            }
+          ],
+          "evidenceExpiresAt": "2026-11-13T01:06:37.817Z",
+          "data": {
+            "vendorGross": {
+              "status": "AVAILABLE",
+              "amount": 220,
+              "amountCents": 22000
+            },
+            "relatedGross": {
+              "status": "AVAILABLE",
+              "amount": 10,
+              "amountCents": 1000
+            },
+            "combinedGross": {
+              "status": "AVAILABLE",
+              "amount": 230,
+              "amountCents": 23000
+            },
+            "vendorIncoming": {
+              "status": "AVAILABLE",
+              "amount": 100,
+              "amountCents": 10000
+            },
+            "vendorCredits": {
+              "status": "AVAILABLE",
+              "amount": 0,
+              "amountCents": 0
+            },
+            "netPaid": {
+              "status": "UNAVAILABLE",
+              "reason": "RETURNS_AND_SETTLEMENT_NOT_RECONCILED"
+            },
+            "firstPayment": {
+              "date": "2023-11-24",
+              "id": "1",
+              "type": "Purchase",
+              "scope": "PLATFORMZ_VENDOR83"
+            },
+            "preCapitalDate": "2023-11-23",
+            "transactions": [
+              {
+                "id": "1",
+                "type": "Purchase",
+                "scope": "PLATFORMZ_VENDOR83",
+                "date": "2023-11-24",
+                "amount": 100,
+                "amountCents": 10000,
+                "accountId": "183",
+                "documentNumber": "C1"
+              },
+              {
+                "id": "2",
+                "type": "Purchase",
+                "scope": "PLATFORMZ_VENDOR83",
+                "date": "2024-01-01",
+                "amount": 100,
+                "amountCents": 10000,
+                "accountId": "183",
+                "documentNumber": "C1"
+              },
+              {
+                "id": "4",
+                "type": "Purchase",
+                "scope": "RELATED_TIM_CUSTOMER24",
+                "date": "2023-12-22",
+                "amount": 10,
+                "amountCents": 1000,
+                "accountId": "183",
+                "documentNumber": ""
+              },
+              {
+                "id": "3",
+                "type": "BillPayment",
+                "scope": "PLATFORMZ_VENDOR83",
+                "date": "2025-01-01",
+                "amount": 20,
+                "amountCents": 2000,
+                "accountId": "183",
+                "documentNumber": ""
+              }
+            ],
+            "incoming": [
+              {
+                "id": "8",
+                "date": "2024-01-01",
+                "amountCents": 10000,
+                "accountId": "183",
+                "returned": true,
+                "capital": false,
+                "amount": 100,
+                "classification": "NATIVE_RETURNED_CHECK"
+              }
+            ],
+            "refunds": [],
+            "monthly": [
+              {
+                "month": "2023-11",
+                "amount": 100,
+                "amountCents": 10000
+              },
+              {
+                "month": "2023-12",
+                "amount": 10,
+                "amountCents": 1000
+              },
+              {
+                "month": "2024-01",
+                "amount": 100,
+                "amountCents": 10000
+              },
+              {
+                "month": "2025-01",
+                "amount": 20,
+                "amountCents": 2000
+              }
+            ],
+            "exceptions": [
+              {
+                "code": "POSSIBLE_DUPLICATE_PAYMENT",
+                "transactionIds": [
+                  "1",
+                  "2"
+                ]
+              },
+              {
+                "code": "RETURNED_PAYMENT_RECORDED",
+                "transactionIds": [
+                  "8"
+                ]
+              }
+            ]
+          },
+          "preInvestment": {
+            "status": "AVAILABLE",
+            "amount": 153.5,
+            "amountCents": 15350,
+            "asOfDate": "2023-11-23",
+            "accountId": "57"
+          },
+          "reconciliationStatus": "NOT_RECONCILED",
+          "sourceHash": "3db6b3d45b5ff939910dc18d8f8f02cce7f3770c81bf2a9e567e27bed639bc99"
+        },
+        "useWhen": "Read whole-company contractor-related recorded payments independently from income or sales filters.",
+        "effects": [
+          "Reads fixed native payee metadata, all-history/dateranged ledgers, bounded exact payment and Deposit records, and the historical owner-investment balance. No business writes or model calls."
+        ],
+        "retry": [
+          "Use bounded backoff and respect Retry-After. Concurrent/manual requests share an isolated source read; cache checks never advance source timestamps."
+        ],
+        "limitations": [
+          "Only the exact verified FUR4 company and declared Vendor83/Customer24 classification are supported. No arbitrary payees, URLs, SQL or browser credentials are accepted.",
+          "Gross recorded outflows retain actual duplicate-looking records. Native returned-check entries and incoming owner capital are not silently netted against services. Net settled compensation requires reconciliation.",
+          "Source evidence expires within five minutes of its earliest constituent read. Source refresh uses its own bounded 45-second operation budget and is independent of income.",
+          "First recorded payment is a transaction date in current complete native history, not proof of engagement inception or off-book completeness."
         ]
       }
     ]
@@ -3757,6 +4064,9 @@
         },
         {
           "$ref": "#/components/schemas/QuickbooksExecutiveRequest"
+        },
+        {
+          "$ref": "#/components/schemas/QuickbooksFinancialPositionRequest"
         }
       ]
     },
@@ -4545,8 +4855,2011 @@
         },
         {
           "$ref": "#/components/schemas/QuickbooksExecutiveReport"
+        },
+        {
+          "$ref": "#/components/schemas/QuickbooksFinancialPositionReport"
         }
       ]
+    },
+    "QuickbooksFinancialPosition": {
+      "type": "object",
+      "description": "Strict independently bound schema3 extension. balanceSheetSource equals the existing salesTax BalanceSheet source; capitalAccountSource is a separate current exact-account metadata query. Hash binds input, realm, workspace, connection/version, as-of, basis, currency, amounts and source evidence. Earliest source expires within300seconds.",
+      "properties": {
+        "basis": {
+          "type": "string",
+          "description": "Exact requested native accounting basis.",
+          "enum": [
+            "ACCRUAL",
+            "CASH"
+          ]
+        },
+        "currency": {
+          "type": "string",
+          "description": "Verified native currency.",
+          "const": "USD"
+        },
+        "companyId": {
+          "type": "string",
+          "description": "Exact verified FUR4 realm.",
+          "const": "9130357979379316"
+        },
+        "workspaceId": {
+          "type": "string",
+          "description": "Exact FUR4 workspace.",
+          "const": "30a4b542-64ca-44b4-bfea-7ea7da4d0d88"
+        },
+        "connectionId": {
+          "type": "string",
+          "description": "Current verified native provider connection ID."
+        },
+        "connectionVersion": {
+          "type": "integer",
+          "description": "Current connection version.",
+          "minimum": 1
+        },
+        "scope": {
+          "type": "object",
+          "description": "Exact input filter scope.",
+          "properties": {
+            "departmentIds": {
+              "type": "array",
+              "description": "Exact native QuickBooks IDs, unique and bounded; an empty list selects the company scope.",
+              "items": {
+                "type": "string",
+                "pattern": "^[1-9][0-9]{0,19}$"
+              },
+              "uniqueItems": true,
+              "maxItems": 20
+            },
+            "customerIds": {
+              "type": "array",
+              "description": "Exact native QuickBooks IDs, unique and bounded; an empty list selects the company scope.",
+              "items": {
+                "type": "string",
+                "pattern": "^[1-9][0-9]{0,19}$"
+              },
+              "uniqueItems": true,
+              "maxItems": 20
+            },
+            "itemIds": {
+              "type": "array",
+              "description": "Exact native QuickBooks IDs, unique and bounded; an empty list selects the company scope.",
+              "items": {
+                "type": "string",
+                "pattern": "^[1-9][0-9]{0,19}$"
+              },
+              "uniqueItems": true,
+              "maxItems": 20
+            }
+          },
+          "required": [
+            "departmentIds",
+            "customerIds",
+            "itemIds"
+          ],
+          "additionalProperties": false
+        },
+        "asOfDate": {
+          "type": "string",
+          "description": "Exact UTC calendar date in YYYY-MM-DD form.",
+          "format": "date"
+        },
+        "requestHash": {
+          "type": "string",
+          "description": "SHA-256 identity of the native verified source content or evidence.",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "mappingVersion": {
+          "type": "string",
+          "description": "Explicit FUR4 mapping identity.",
+          "const": "fur4-owner-investments-57-v1"
+        },
+        "capitalAccountIds": {
+          "type": "array",
+          "description": "Mapped native owner-investment account IDs.",
+          "items": {
+            "type": "string",
+            "const": "57"
+          },
+          "minItems": 1,
+          "maxItems": 1
+        },
+        "capitalDefinition": {
+          "type": "string",
+          "description": "Net posted owner investments excluding draws, retained/current earnings, opening equity and loans; not gross cash contributions."
+        },
+        "totalLiabilities": {
+          "description": "An independently verified recorded balance or explicit unavailable reason.",
+          "anyOf": [
+            {
+              "type": "object",
+              "description": "Current native amount, preserving integer cents.",
+              "properties": {
+                "status": {
+                  "type": "string",
+                  "description": "Native amount is available.",
+                  "const": "AVAILABLE"
+                },
+                "amount": {
+                  "type": "number",
+                  "description": "Signed native USD amount."
+                },
+                "amountCents": {
+                  "type": "integer",
+                  "description": "Exact signed integer USD cents."
+                }
+              },
+              "required": [
+                "status",
+                "amount",
+                "amountCents"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "object",
+              "description": "No amount can be safely disclosed.",
+              "properties": {
+                "status": {
+                  "type": "string",
+                  "description": "Native amount is unavailable.",
+                  "const": "UNAVAILABLE"
+                },
+                "reason": {
+                  "type": "string",
+                  "description": "Explicit scope, source or mapping failure.",
+                  "enum": [
+                    "BALANCE_SHEET_SCOPE_UNSUPPORTED",
+                    "NO_HISTORY",
+                    "BALANCE_SHEET_UNAVAILABLE",
+                    "LIABILITIES_INVALID",
+                    "CAPITAL_ACCOUNT_UNVERIFIED",
+                    "CAPITAL_BALANCE_INVALID"
+                  ]
+                }
+              },
+              "required": [
+                "status",
+                "reason"
+              ],
+              "additionalProperties": false
+            }
+          ]
+        },
+        "recordedContributedCapital": {
+          "description": "An independently verified recorded balance or explicit unavailable reason.",
+          "anyOf": [
+            {
+              "type": "object",
+              "description": "Current native amount, preserving integer cents.",
+              "properties": {
+                "status": {
+                  "type": "string",
+                  "description": "Native amount is available.",
+                  "const": "AVAILABLE"
+                },
+                "amount": {
+                  "type": "number",
+                  "description": "Signed native USD amount."
+                },
+                "amountCents": {
+                  "type": "integer",
+                  "description": "Exact signed integer USD cents."
+                }
+              },
+              "required": [
+                "status",
+                "amount",
+                "amountCents"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "object",
+              "description": "No amount can be safely disclosed.",
+              "properties": {
+                "status": {
+                  "type": "string",
+                  "description": "Native amount is unavailable.",
+                  "const": "UNAVAILABLE"
+                },
+                "reason": {
+                  "type": "string",
+                  "description": "Explicit scope, source or mapping failure.",
+                  "enum": [
+                    "BALANCE_SHEET_SCOPE_UNSUPPORTED",
+                    "NO_HISTORY",
+                    "BALANCE_SHEET_UNAVAILABLE",
+                    "LIABILITIES_INVALID",
+                    "CAPITAL_ACCOUNT_UNVERIFIED",
+                    "CAPITAL_BALANCE_INVALID"
+                  ]
+                }
+              },
+              "required": [
+                "status",
+                "reason"
+              ],
+              "additionalProperties": false
+            }
+          ]
+        },
+        "capitalAccount": {
+          "description": "Current exact account metadata proof, independently of report amounts.",
+          "anyOf": [
+            {
+              "type": "object",
+              "description": "Verified current account57 identity; no CurrentBalance amount is used.",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "description": "Exact FUR4 owner-investment account property.",
+                  "const": "57"
+                },
+                "active": {
+                  "type": "boolean",
+                  "description": "Exact FUR4 owner-investment account property.",
+                  "const": true
+                },
+                "accountType": {
+                  "type": "string",
+                  "description": "Exact FUR4 owner-investment account property.",
+                  "const": "Equity"
+                },
+                "accountSubType": {
+                  "type": "string",
+                  "description": "Exact FUR4 owner-investment account property.",
+                  "const": "OwnersEquity"
+                },
+                "subAccount": {
+                  "type": "boolean",
+                  "description": "Exact FUR4 owner-investment account property.",
+                  "const": false
+                },
+                "currency": {
+                  "type": "string",
+                  "description": "Exact FUR4 owner-investment account property.",
+                  "const": "USD"
+                },
+                "accountNumber": {
+                  "type": "string",
+                  "description": "Exact FUR4 owner-investment account property.",
+                  "const": "30010"
+                }
+              },
+              "required": [
+                "id",
+                "active",
+                "accountType",
+                "accountSubType",
+                "subAccount",
+                "currency",
+                "accountNumber"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "balanceSheetSource": {
+          "description": "Exact bound source descriptor, or null when not read.",
+          "anyOf": [
+            {
+              "type": "object",
+              "description": "A native constituent read, preserving its own source time and hashes.",
+              "properties": {
+                "source": {
+                  "type": "string",
+                  "description": "Named constituent native read, such as income or customerSales."
+                },
+                "reportName": {
+                  "type": "string",
+                  "description": "Exact native provider report or query name."
+                },
+                "readAt": {
+                  "type": "string",
+                  "description": "Actual source read timestamp; cache checks never advance it.",
+                  "format": "date-time"
+                },
+                "sourceHash": {
+                  "type": "string",
+                  "description": "SHA-256 identity of the native verified source content or evidence.",
+                  "pattern": "^[a-f0-9]{64}$"
+                },
+                "evidenceHash": {
+                  "type": "string",
+                  "description": "SHA-256 identity of the native verified source content or evidence.",
+                  "pattern": "^[a-f0-9]{64}$"
+                }
+              },
+              "required": [
+                "source",
+                "reportName",
+                "readAt",
+                "sourceHash",
+                "evidenceHash"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "capitalAccountSource": {
+          "description": "Exact bound source descriptor, or null when not read.",
+          "anyOf": [
+            {
+              "type": "object",
+              "description": "A native constituent read, preserving its own source time and hashes.",
+              "properties": {
+                "source": {
+                  "type": "string",
+                  "description": "Named constituent native read, such as income or customerSales."
+                },
+                "reportName": {
+                  "type": "string",
+                  "description": "Exact native provider report or query name."
+                },
+                "readAt": {
+                  "type": "string",
+                  "description": "Actual source read timestamp; cache checks never advance it.",
+                  "format": "date-time"
+                },
+                "sourceHash": {
+                  "type": "string",
+                  "description": "SHA-256 identity of the native verified source content or evidence.",
+                  "pattern": "^[a-f0-9]{64}$"
+                },
+                "evidenceHash": {
+                  "type": "string",
+                  "description": "SHA-256 identity of the native verified source content or evidence.",
+                  "pattern": "^[a-f0-9]{64}$"
+                }
+              },
+              "required": [
+                "source",
+                "reportName",
+                "readAt",
+                "sourceHash",
+                "evidenceHash"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "sourceHash": {
+          "type": "string",
+          "description": "SHA-256 identity of the native verified source content or evidence.",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      },
+      "required": [
+        "basis",
+        "currency",
+        "companyId",
+        "workspaceId",
+        "connectionId",
+        "connectionVersion",
+        "scope",
+        "asOfDate",
+        "requestHash",
+        "mappingVersion",
+        "capitalAccountIds",
+        "capitalDefinition",
+        "totalLiabilities",
+        "recordedContributedCapital",
+        "capitalAccount",
+        "balanceSheetSource",
+        "capitalAccountSource",
+        "sourceHash"
+      ],
+      "additionalProperties": false
+    },
+    "QuickbooksFinancialPositionRequest": {
+      "type": "object",
+      "description": "Explicit negotiated schema3 background request; legacy schema2 remains unchanged.",
+      "properties": {
+        "schemaVersion": {
+          "type": "integer",
+          "description": "Explicit version selects the executive API.",
+          "const": 3
+        },
+        "input": {
+          "$ref": "#/components/schemas/QuickbooksExecutiveInput",
+          "description": "Exact native executive request."
+        },
+        "page": {
+          "$ref": "#/components/schemas/QuickbooksExecutivePage",
+          "description": "Strict projection; does not trigger one provider read per card or page."
+        }
+      },
+      "required": [
+        "schemaVersion",
+        "input",
+        "page"
+      ],
+      "additionalProperties": false
+    },
+    "QuickbooksFinancialPositionReport": {
+      "type": "object",
+      "description": "Negotiated schema3 executive report: unchanged verified schema2 core plus strict financialPosition extension.",
+      "properties": {
+        "schemaVersion": {
+          "type": "integer",
+          "description": "Executive response schema version.",
+          "const": 3
+        },
+        "provider": {
+          "type": "string",
+          "description": "Native financial source.",
+          "const": "quickbooks"
+        },
+        "workspaceId": {
+          "type": "string",
+          "description": "Exact FUR4 workspace.",
+          "const": "30a4b542-64ca-44b4-bfea-7ea7da4d0d88"
+        },
+        "connectionId": {
+          "type": "string",
+          "description": "Current verified native provider connection ID."
+        },
+        "connectionVersion": {
+          "type": "integer",
+          "description": "Current connection version.",
+          "minimum": 1
+        },
+        "companyId": {
+          "type": "string",
+          "description": "Exact verified FUR4 realm.",
+          "const": "9130357979379316"
+        },
+        "environment": {
+          "type": "string",
+          "description": "Only the production provider connection is admitted.",
+          "const": "production"
+        },
+        "request": {
+          "$ref": "#/components/schemas/QuickbooksExecutiveInput",
+          "description": "Normalized exact request scope."
+        },
+        "startDate": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Native history start, null only for verified absent all-time history."
+        },
+        "endDate": {
+          "type": "string",
+          "description": "Exact UTC calendar date in YYYY-MM-DD form.",
+          "format": "date"
+        },
+        "basis": {
+          "type": "string",
+          "description": "Exact requested native accounting basis.",
+          "enum": [
+            "ACCRUAL",
+            "CASH"
+          ]
+        },
+        "currency": {
+          "type": "string",
+          "description": "Verified native currency.",
+          "const": "USD"
+        },
+        "readAt": {
+          "type": "string",
+          "description": "Actual source read timestamp; cache checks never advance it.",
+          "format": "date-time"
+        },
+        "sourceHash": {
+          "type": "string",
+          "description": "SHA-256 identity of the native verified source content or evidence.",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "evidenceHashes": {
+          "type": "array",
+          "description": "Ordered raw evidence hashes, matching sources.",
+          "items": {
+            "type": "string",
+            "description": "SHA-256 identity of the native verified source content or evidence.",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "maxItems": 64
+        },
+        "sources": {
+          "type": "array",
+          "description": "Actual per-source read times. Evidence expires at the earliest source read plus 300 seconds.",
+          "items": {
+            "type": "object",
+            "description": "A native constituent read, preserving its own source time and hashes.",
+            "properties": {
+              "source": {
+                "type": "string",
+                "description": "Named constituent native read, such as income or customerSales."
+              },
+              "reportName": {
+                "type": "string",
+                "description": "Exact native provider report or query name."
+              },
+              "readAt": {
+                "type": "string",
+                "description": "Actual source read timestamp; cache checks never advance it.",
+                "format": "date-time"
+              },
+              "sourceHash": {
+                "type": "string",
+                "description": "SHA-256 identity of the native verified source content or evidence.",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "evidenceHash": {
+                "type": "string",
+                "description": "SHA-256 identity of the native verified source content or evidence.",
+                "pattern": "^[a-f0-9]{64}$"
+              }
+            },
+            "required": [
+              "source",
+              "reportName",
+              "readAt",
+              "sourceHash",
+              "evidenceHash"
+            ],
+            "additionalProperties": false
+          },
+          "minItems": 1,
+          "maxItems": 64
+        },
+        "reconciliationStatus": {
+          "type": "string",
+          "description": "Source verification never certifies finance reconciliation.",
+          "const": "NOT_RECONCILED"
+        },
+        "historyStatus": {
+          "type": "string",
+          "description": "Native history discovery result.",
+          "enum": [
+            "AVAILABLE",
+            "NO_HISTORY"
+          ]
+        },
+        "sections": {
+          "type": "object",
+          "description": "Typed native financial sections. Negative and zero values retain native meaning.",
+          "properties": {
+            "income": {
+              "type": "object",
+              "description": "Verified section: status AVAILABLE includes native totals, rows and integer cents as appropriate; UNAVAILABLE includes a typed reason. Runtime rejects unknown section members and verifies all ties.",
+              "properties": {
+                "status": {
+                  "type": "string",
+                  "description": "Current native section availability.",
+                  "enum": [
+                    "AVAILABLE",
+                    "UNAVAILABLE"
+                  ]
+                },
+                "scope": {
+                  "type": "object",
+                  "description": "Exact native filter intersection for this report section.",
+                  "properties": {
+                    "customerIds": {
+                      "type": "array",
+                      "description": "Exact native QuickBooks IDs, unique and bounded; an empty list selects the company scope.",
+                      "items": {
+                        "type": "string",
+                        "pattern": "^[1-9][0-9]{0,19}$"
+                      },
+                      "uniqueItems": true,
+                      "maxItems": 20
+                    },
+                    "departmentIds": {
+                      "type": "array",
+                      "description": "Exact native QuickBooks IDs, unique and bounded; an empty list selects the company scope.",
+                      "items": {
+                        "type": "string",
+                        "pattern": "^[1-9][0-9]{0,19}$"
+                      },
+                      "uniqueItems": true,
+                      "maxItems": 20
+                    },
+                    "itemIds": {
+                      "type": "array",
+                      "description": "Exact native QuickBooks IDs, unique and bounded; an empty list selects the company scope.",
+                      "items": {
+                        "type": "string",
+                        "pattern": "^[1-9][0-9]{0,19}$"
+                      },
+                      "uniqueItems": true,
+                      "maxItems": 20
+                    }
+                  },
+                  "required": [
+                    "customerIds",
+                    "departmentIds",
+                    "itemIds"
+                  ],
+                  "additionalProperties": false
+                },
+                "reason": {
+                  "type": "string",
+                  "description": "Typed reason when native section data is unavailable."
+                }
+              },
+              "required": [
+                "status",
+                "scope"
+              ],
+              "additionalProperties": true
+            },
+            "customerSales": {
+              "type": "object",
+              "description": "Verified section: status AVAILABLE includes native totals, rows and integer cents as appropriate; UNAVAILABLE includes a typed reason. Runtime rejects unknown section members and verifies all ties.",
+              "properties": {
+                "status": {
+                  "type": "string",
+                  "description": "Current native section availability.",
+                  "enum": [
+                    "AVAILABLE",
+                    "UNAVAILABLE"
+                  ]
+                },
+                "scope": {
+                  "type": "object",
+                  "description": "Exact native filter intersection for this report section.",
+                  "properties": {
+                    "customerIds": {
+                      "type": "array",
+                      "description": "Exact native QuickBooks IDs, unique and bounded; an empty list selects the company scope.",
+                      "items": {
+                        "type": "string",
+                        "pattern": "^[1-9][0-9]{0,19}$"
+                      },
+                      "uniqueItems": true,
+                      "maxItems": 20
+                    },
+                    "departmentIds": {
+                      "type": "array",
+                      "description": "Exact native QuickBooks IDs, unique and bounded; an empty list selects the company scope.",
+                      "items": {
+                        "type": "string",
+                        "pattern": "^[1-9][0-9]{0,19}$"
+                      },
+                      "uniqueItems": true,
+                      "maxItems": 20
+                    },
+                    "itemIds": {
+                      "type": "array",
+                      "description": "Exact native QuickBooks IDs, unique and bounded; an empty list selects the company scope.",
+                      "items": {
+                        "type": "string",
+                        "pattern": "^[1-9][0-9]{0,19}$"
+                      },
+                      "uniqueItems": true,
+                      "maxItems": 20
+                    }
+                  },
+                  "required": [
+                    "customerIds",
+                    "departmentIds",
+                    "itemIds"
+                  ],
+                  "additionalProperties": false
+                },
+                "reason": {
+                  "type": "string",
+                  "description": "Typed reason when native section data is unavailable."
+                }
+              },
+              "required": [
+                "status",
+                "scope"
+              ],
+              "additionalProperties": true
+            },
+            "itemSales": {
+              "type": "object",
+              "description": "Verified section: status AVAILABLE includes native totals, rows and integer cents as appropriate; UNAVAILABLE includes a typed reason. Runtime rejects unknown section members and verifies all ties.",
+              "properties": {
+                "status": {
+                  "type": "string",
+                  "description": "Current native section availability.",
+                  "enum": [
+                    "AVAILABLE",
+                    "UNAVAILABLE"
+                  ]
+                },
+                "scope": {
+                  "type": "object",
+                  "description": "Exact native filter intersection for this report section.",
+                  "properties": {
+                    "customerIds": {
+                      "type": "array",
+                      "description": "Exact native QuickBooks IDs, unique and bounded; an empty list selects the company scope.",
+                      "items": {
+                        "type": "string",
+                        "pattern": "^[1-9][0-9]{0,19}$"
+                      },
+                      "uniqueItems": true,
+                      "maxItems": 20
+                    },
+                    "departmentIds": {
+                      "type": "array",
+                      "description": "Exact native QuickBooks IDs, unique and bounded; an empty list selects the company scope.",
+                      "items": {
+                        "type": "string",
+                        "pattern": "^[1-9][0-9]{0,19}$"
+                      },
+                      "uniqueItems": true,
+                      "maxItems": 20
+                    },
+                    "itemIds": {
+                      "type": "array",
+                      "description": "Exact native QuickBooks IDs, unique and bounded; an empty list selects the company scope.",
+                      "items": {
+                        "type": "string",
+                        "pattern": "^[1-9][0-9]{0,19}$"
+                      },
+                      "uniqueItems": true,
+                      "maxItems": 20
+                    }
+                  },
+                  "required": [
+                    "customerIds",
+                    "departmentIds",
+                    "itemIds"
+                  ],
+                  "additionalProperties": false
+                },
+                "reason": {
+                  "type": "string",
+                  "description": "Typed reason when native section data is unavailable."
+                }
+              },
+              "required": [
+                "status",
+                "scope"
+              ],
+              "additionalProperties": true
+            },
+            "inventory": {
+              "type": "object",
+              "description": "Verified section: status AVAILABLE includes native totals, rows and integer cents as appropriate; UNAVAILABLE includes a typed reason. Runtime rejects unknown section members and verifies all ties.",
+              "properties": {
+                "status": {
+                  "type": "string",
+                  "description": "Current native section availability.",
+                  "enum": [
+                    "AVAILABLE",
+                    "UNAVAILABLE"
+                  ]
+                },
+                "scope": {
+                  "type": "object",
+                  "description": "Exact native filter intersection for this report section.",
+                  "properties": {
+                    "customerIds": {
+                      "type": "array",
+                      "description": "Exact native QuickBooks IDs, unique and bounded; an empty list selects the company scope.",
+                      "items": {
+                        "type": "string",
+                        "pattern": "^[1-9][0-9]{0,19}$"
+                      },
+                      "uniqueItems": true,
+                      "maxItems": 20
+                    },
+                    "departmentIds": {
+                      "type": "array",
+                      "description": "Exact native QuickBooks IDs, unique and bounded; an empty list selects the company scope.",
+                      "items": {
+                        "type": "string",
+                        "pattern": "^[1-9][0-9]{0,19}$"
+                      },
+                      "uniqueItems": true,
+                      "maxItems": 20
+                    },
+                    "itemIds": {
+                      "type": "array",
+                      "description": "Exact native QuickBooks IDs, unique and bounded; an empty list selects the company scope.",
+                      "items": {
+                        "type": "string",
+                        "pattern": "^[1-9][0-9]{0,19}$"
+                      },
+                      "uniqueItems": true,
+                      "maxItems": 20
+                    }
+                  },
+                  "required": [
+                    "customerIds",
+                    "departmentIds",
+                    "itemIds"
+                  ],
+                  "additionalProperties": false
+                },
+                "reason": {
+                  "type": "string",
+                  "description": "Typed reason when native section data is unavailable."
+                }
+              },
+              "required": [
+                "status",
+                "scope"
+              ],
+              "additionalProperties": true
+            },
+            "salesTax": {
+              "type": "object",
+              "description": "Verified section: status AVAILABLE includes native totals, rows and integer cents as appropriate; UNAVAILABLE includes a typed reason. Runtime rejects unknown section members and verifies all ties.",
+              "properties": {
+                "status": {
+                  "type": "string",
+                  "description": "Current native section availability.",
+                  "enum": [
+                    "AVAILABLE",
+                    "UNAVAILABLE"
+                  ]
+                },
+                "scope": {
+                  "type": "object",
+                  "description": "Exact native filter intersection for this report section.",
+                  "properties": {
+                    "customerIds": {
+                      "type": "array",
+                      "description": "Exact native QuickBooks IDs, unique and bounded; an empty list selects the company scope.",
+                      "items": {
+                        "type": "string",
+                        "pattern": "^[1-9][0-9]{0,19}$"
+                      },
+                      "uniqueItems": true,
+                      "maxItems": 20
+                    },
+                    "departmentIds": {
+                      "type": "array",
+                      "description": "Exact native QuickBooks IDs, unique and bounded; an empty list selects the company scope.",
+                      "items": {
+                        "type": "string",
+                        "pattern": "^[1-9][0-9]{0,19}$"
+                      },
+                      "uniqueItems": true,
+                      "maxItems": 20
+                    },
+                    "itemIds": {
+                      "type": "array",
+                      "description": "Exact native QuickBooks IDs, unique and bounded; an empty list selects the company scope.",
+                      "items": {
+                        "type": "string",
+                        "pattern": "^[1-9][0-9]{0,19}$"
+                      },
+                      "uniqueItems": true,
+                      "maxItems": 20
+                    }
+                  },
+                  "required": [
+                    "customerIds",
+                    "departmentIds",
+                    "itemIds"
+                  ],
+                  "additionalProperties": false
+                },
+                "reason": {
+                  "type": "string",
+                  "description": "Typed reason when native section data is unavailable."
+                }
+              },
+              "required": [
+                "status",
+                "scope"
+              ],
+              "additionalProperties": true
+            },
+            "salesDocuments": {
+              "type": "object",
+              "description": "Verified section: status AVAILABLE includes native totals, rows and integer cents as appropriate; UNAVAILABLE includes a typed reason. Runtime rejects unknown section members and verifies all ties.",
+              "properties": {
+                "status": {
+                  "type": "string",
+                  "description": "Current native section availability.",
+                  "enum": [
+                    "AVAILABLE",
+                    "UNAVAILABLE"
+                  ]
+                },
+                "scope": {
+                  "type": "object",
+                  "description": "Exact native filter intersection for this report section.",
+                  "properties": {
+                    "customerIds": {
+                      "type": "array",
+                      "description": "Exact native QuickBooks IDs, unique and bounded; an empty list selects the company scope.",
+                      "items": {
+                        "type": "string",
+                        "pattern": "^[1-9][0-9]{0,19}$"
+                      },
+                      "uniqueItems": true,
+                      "maxItems": 20
+                    },
+                    "departmentIds": {
+                      "type": "array",
+                      "description": "Exact native QuickBooks IDs, unique and bounded; an empty list selects the company scope.",
+                      "items": {
+                        "type": "string",
+                        "pattern": "^[1-9][0-9]{0,19}$"
+                      },
+                      "uniqueItems": true,
+                      "maxItems": 20
+                    },
+                    "itemIds": {
+                      "type": "array",
+                      "description": "Exact native QuickBooks IDs, unique and bounded; an empty list selects the company scope.",
+                      "items": {
+                        "type": "string",
+                        "pattern": "^[1-9][0-9]{0,19}$"
+                      },
+                      "uniqueItems": true,
+                      "maxItems": 20
+                    }
+                  },
+                  "required": [
+                    "customerIds",
+                    "departmentIds",
+                    "itemIds"
+                  ],
+                  "additionalProperties": false
+                },
+                "reason": {
+                  "type": "string",
+                  "description": "Typed reason when native section data is unavailable."
+                }
+              },
+              "required": [
+                "status",
+                "scope"
+              ],
+              "additionalProperties": true
+            },
+            "groups": {
+              "type": "object",
+              "description": "Verified section: status AVAILABLE includes native totals, rows and integer cents as appropriate; UNAVAILABLE includes a typed reason. Runtime rejects unknown section members and verifies all ties.",
+              "properties": {
+                "status": {
+                  "type": "string",
+                  "description": "Current native section availability.",
+                  "enum": [
+                    "AVAILABLE",
+                    "UNAVAILABLE"
+                  ]
+                },
+                "scope": {
+                  "type": "object",
+                  "description": "Exact native filter intersection for this report section.",
+                  "properties": {
+                    "customerIds": {
+                      "type": "array",
+                      "description": "Exact native QuickBooks IDs, unique and bounded; an empty list selects the company scope.",
+                      "items": {
+                        "type": "string",
+                        "pattern": "^[1-9][0-9]{0,19}$"
+                      },
+                      "uniqueItems": true,
+                      "maxItems": 20
+                    },
+                    "departmentIds": {
+                      "type": "array",
+                      "description": "Exact native QuickBooks IDs, unique and bounded; an empty list selects the company scope.",
+                      "items": {
+                        "type": "string",
+                        "pattern": "^[1-9][0-9]{0,19}$"
+                      },
+                      "uniqueItems": true,
+                      "maxItems": 20
+                    },
+                    "itemIds": {
+                      "type": "array",
+                      "description": "Exact native QuickBooks IDs, unique and bounded; an empty list selects the company scope.",
+                      "items": {
+                        "type": "string",
+                        "pattern": "^[1-9][0-9]{0,19}$"
+                      },
+                      "uniqueItems": true,
+                      "maxItems": 20
+                    }
+                  },
+                  "required": [
+                    "customerIds",
+                    "departmentIds",
+                    "itemIds"
+                  ],
+                  "additionalProperties": false
+                },
+                "reason": {
+                  "type": "string",
+                  "description": "Typed reason when native section data is unavailable."
+                }
+              },
+              "required": [
+                "status",
+                "scope"
+              ],
+              "additionalProperties": true
+            },
+            "comparison": {
+              "type": "object",
+              "description": "Verified section: status AVAILABLE includes native totals, rows and integer cents as appropriate; UNAVAILABLE includes a typed reason. Runtime rejects unknown section members and verifies all ties.",
+              "properties": {
+                "status": {
+                  "type": "string",
+                  "description": "Current native section availability.",
+                  "enum": [
+                    "AVAILABLE",
+                    "UNAVAILABLE"
+                  ]
+                },
+                "scope": {
+                  "type": "object",
+                  "description": "Exact native filter intersection for this report section.",
+                  "properties": {
+                    "customerIds": {
+                      "type": "array",
+                      "description": "Exact native QuickBooks IDs, unique and bounded; an empty list selects the company scope.",
+                      "items": {
+                        "type": "string",
+                        "pattern": "^[1-9][0-9]{0,19}$"
+                      },
+                      "uniqueItems": true,
+                      "maxItems": 20
+                    },
+                    "departmentIds": {
+                      "type": "array",
+                      "description": "Exact native QuickBooks IDs, unique and bounded; an empty list selects the company scope.",
+                      "items": {
+                        "type": "string",
+                        "pattern": "^[1-9][0-9]{0,19}$"
+                      },
+                      "uniqueItems": true,
+                      "maxItems": 20
+                    },
+                    "itemIds": {
+                      "type": "array",
+                      "description": "Exact native QuickBooks IDs, unique and bounded; an empty list selects the company scope.",
+                      "items": {
+                        "type": "string",
+                        "pattern": "^[1-9][0-9]{0,19}$"
+                      },
+                      "uniqueItems": true,
+                      "maxItems": 20
+                    }
+                  },
+                  "required": [
+                    "customerIds",
+                    "departmentIds",
+                    "itemIds"
+                  ],
+                  "additionalProperties": false
+                },
+                "reason": {
+                  "type": "string",
+                  "description": "Typed reason when native section data is unavailable."
+                }
+              },
+              "required": [
+                "status",
+                "scope"
+              ],
+              "additionalProperties": true
+            }
+          },
+          "required": [
+            "income",
+            "customerSales",
+            "itemSales",
+            "inventory",
+            "salesTax",
+            "salesDocuments",
+            "groups",
+            "comparison"
+          ],
+          "additionalProperties": false
+        },
+        "exceptions": {
+          "type": "array",
+          "description": "Bounded native discrepancies and unavailable supplemental source reasons.",
+          "items": {
+            "type": "object"
+          },
+          "maxItems": 50000
+        },
+        "detail": {
+          "type": "string",
+          "description": "Native detail projection to return.",
+          "enum": [
+            "GROUP",
+            "ACCOUNT",
+            "SKU"
+          ]
+        },
+        "offset": {
+          "type": "integer",
+          "description": "Zero-based bounded row offset.",
+          "minimum": 0,
+          "maximum": 25000
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Maximum detail rows returned.",
+          "minimum": 1,
+          "maximum": 100
+        },
+        "search": {
+          "type": "string",
+          "description": "Case-insensitive native row name search.",
+          "maxLength": 200
+        },
+        "sortBy": {
+          "type": "string",
+          "description": "Stable sort field for this projection.",
+          "enum": [
+            "amount",
+            "name",
+            "id"
+          ]
+        },
+        "direction": {
+          "type": "string",
+          "description": "Stable sort direction.",
+          "enum": [
+            "asc",
+            "desc"
+          ]
+        },
+        "totalRows": {
+          "type": "integer",
+          "description": "Matched detail rows before bounded paging.",
+          "minimum": 0
+        },
+        "rows": {
+          "type": "array",
+          "description": "Verified native rows for the requested projection, retaining cents and source IDs.",
+          "items": {
+            "type": "object"
+          },
+          "maxItems": 100
+        },
+        "financialPosition": {
+          "$ref": "#/components/schemas/QuickbooksFinancialPosition",
+          "description": "Recorded owner-investment capital and total native liabilities as of requested ending date."
+        }
+      },
+      "required": [
+        "schemaVersion",
+        "provider",
+        "workspaceId",
+        "connectionId",
+        "connectionVersion",
+        "companyId",
+        "environment",
+        "request",
+        "startDate",
+        "endDate",
+        "basis",
+        "currency",
+        "readAt",
+        "sourceHash",
+        "evidenceHashes",
+        "sources",
+        "reconciliationStatus",
+        "historyStatus",
+        "sections",
+        "exceptions",
+        "detail",
+        "offset",
+        "limit",
+        "search",
+        "sortBy",
+        "direction",
+        "totalRows",
+        "rows",
+        "financialPosition"
+      ],
+      "additionalProperties": false
+    },
+    "QuickbooksPaymentsInput": {
+      "type": "object",
+      "description": "Fixed whole-company recorded-payment scope; no arbitrary payee or query input.",
+      "additionalProperties": false,
+      "required": [
+        "schemaVersion",
+        "asOfDate",
+        "basis"
+      ],
+      "properties": {
+        "schemaVersion": {
+          "type": "integer",
+          "const": 1,
+          "description": "The explicit recorded-payments resource version."
+        },
+        "asOfDate": {
+          "type": "string",
+          "format": "date",
+          "description": "Exact selected ending calendar date, not in the future."
+        },
+        "basis": {
+          "type": "string",
+          "enum": [
+            "ACCRUAL",
+            "CASH"
+          ],
+          "description": "Requested native ledger and BalanceSheet accounting basis."
+        }
+      }
+    },
+    "QuickbooksPaymentsReport": {
+      "type": "object",
+      "description": "Verified recorded payments report within the declared recorded-payment scope.",
+      "properties": {
+        "schemaVersion": {
+          "type": "integer",
+          "description": "Verified schemaVersion within the declared recorded-payment scope.",
+          "const": 1
+        },
+        "provider": {
+          "type": "string",
+          "description": "Verified provider within the declared recorded-payment scope.",
+          "const": "quickbooks"
+        },
+        "companyId": {
+          "type": "string",
+          "description": "Verified companyId within the declared recorded-payment scope.",
+          "const": "9130357979379316"
+        },
+        "workspaceId": {
+          "type": "string",
+          "description": "Verified workspaceId within the declared recorded-payment scope.",
+          "const": "30a4b542-64ca-44b4-bfea-7ea7da4d0d88"
+        },
+        "connectionId": {
+          "type": "string",
+          "description": "Verified connectionId within the declared recorded-payment scope."
+        },
+        "connectionVersion": {
+          "type": "integer",
+          "description": "Verified connectionVersion within the declared recorded-payment scope."
+        },
+        "environment": {
+          "type": "string",
+          "description": "Verified environment within the declared recorded-payment scope.",
+          "const": "production"
+        },
+        "request": {
+          "$ref": "#/components/schemas/QuickbooksPaymentsInput",
+          "description": "Exact request echoed and bound to the complete source evidence."
+        },
+        "currency": {
+          "type": "string",
+          "description": "Verified currency within the declared recorded-payment scope.",
+          "const": "USD"
+        },
+        "readAt": {
+          "type": "string",
+          "description": "Verified readAt within the declared recorded-payment scope.",
+          "format": "date-time"
+        },
+        "scope": {
+          "type": "string",
+          "description": "Verified scope within the declared recorded-payment scope.",
+          "const": "VENDOR83_AND_PLATFORMZ_MEMO_CUSTOMER24_EXPENSES"
+        },
+        "proofs": {
+          "type": "object",
+          "description": "Verified proofs within the declared recorded-payment scope.",
+          "properties": {
+            "vendor": {
+              "type": "object",
+              "description": "Verified vendor within the declared recorded-payment scope.",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "description": "Verified id within the declared recorded-payment scope."
+                },
+                "name": {
+                  "type": "string",
+                  "description": "Verified name within the declared recorded-payment scope."
+                },
+                "type": {
+                  "type": "string",
+                  "description": "Verified type within the declared recorded-payment scope."
+                },
+                "currency": {
+                  "type": "string",
+                  "description": "Verified currency within the declared recorded-payment scope."
+                }
+              },
+              "required": [
+                "id",
+                "name",
+                "type",
+                "currency"
+              ],
+              "additionalProperties": false
+            },
+            "customer": {
+              "type": "object",
+              "description": "Verified customer within the declared recorded-payment scope.",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "description": "Verified id within the declared recorded-payment scope."
+                },
+                "name": {
+                  "type": "string",
+                  "description": "Verified name within the declared recorded-payment scope."
+                },
+                "type": {
+                  "type": "string",
+                  "description": "Verified type within the declared recorded-payment scope."
+                },
+                "currency": {
+                  "type": "string",
+                  "description": "Verified currency within the declared recorded-payment scope."
+                }
+              },
+              "required": [
+                "id",
+                "name",
+                "type",
+                "currency"
+              ],
+              "additionalProperties": false
+            },
+            "capitalAccount": {
+              "description": "Current exact owner-investment account metadata, or null when unverifiable.",
+              "anyOf": [
+                {
+                  "type": "object",
+                  "description": "Verified capitalAccount within the declared recorded-payment scope.",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "description": "Verified id within the declared recorded-payment scope."
+                    },
+                    "active": {
+                      "type": "boolean",
+                      "description": "Verified active within the declared recorded-payment scope."
+                    },
+                    "accountType": {
+                      "type": "string",
+                      "description": "Verified accountType within the declared recorded-payment scope."
+                    },
+                    "accountSubType": {
+                      "type": "string",
+                      "description": "Verified accountSubType within the declared recorded-payment scope."
+                    },
+                    "subAccount": {
+                      "type": "boolean",
+                      "description": "Verified subAccount within the declared recorded-payment scope."
+                    },
+                    "currency": {
+                      "type": "string",
+                      "description": "Verified currency within the declared recorded-payment scope."
+                    },
+                    "accountNumber": {
+                      "type": "string",
+                      "description": "Verified accountNumber within the declared recorded-payment scope."
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "active",
+                    "accountType",
+                    "accountSubType",
+                    "subAccount",
+                    "currency",
+                    "accountNumber"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "vendorStartDate": {
+              "type": "string",
+              "description": "Verified vendorStartDate within the declared recorded-payment scope."
+            },
+            "relatedStartDate": {
+              "type": "string",
+              "description": "Verified relatedStartDate within the declared recorded-payment scope."
+            }
+          },
+          "required": [
+            "vendor",
+            "customer",
+            "capitalAccount",
+            "vendorStartDate",
+            "relatedStartDate"
+          ],
+          "additionalProperties": false
+        },
+        "sources": {
+          "type": "array",
+          "description": "Verified sources within the declared recorded-payment scope.",
+          "maxItems": 400,
+          "items": {
+            "type": "object",
+            "description": "Verified sources row within the declared recorded-payment scope.",
+            "properties": {
+              "source": {
+                "type": "string",
+                "description": "Verified source within the declared recorded-payment scope."
+              },
+              "reportName": {
+                "type": "string",
+                "description": "Verified reportName within the declared recorded-payment scope."
+              },
+              "readAt": {
+                "type": "string",
+                "description": "Verified readAt within the declared recorded-payment scope.",
+                "format": "date-time"
+              },
+              "sourceHash": {
+                "type": "string",
+                "description": "Verified sourceHash within the declared recorded-payment scope.",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "evidenceHash": {
+                "type": "string",
+                "description": "Verified evidenceHash within the declared recorded-payment scope.",
+                "pattern": "^[a-f0-9]{64}$"
+              }
+            },
+            "required": [
+              "source",
+              "reportName",
+              "readAt",
+              "sourceHash",
+              "evidenceHash"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "evidenceExpiresAt": {
+          "type": "string",
+          "description": "Verified evidenceExpiresAt within the declared recorded-payment scope.",
+          "format": "date-time"
+        },
+        "data": {
+          "type": "object",
+          "description": "Verified data within the declared recorded-payment scope.",
+          "properties": {
+            "vendorGross": {
+              "type": "object",
+              "description": "Verified vendorGross within the declared recorded-payment scope.",
+              "properties": {
+                "status": {
+                  "type": "string",
+                  "description": "Verified status within the declared recorded-payment scope.",
+                  "const": "AVAILABLE"
+                },
+                "amount": {
+                  "type": "number",
+                  "description": "Verified amount within the declared recorded-payment scope."
+                },
+                "amountCents": {
+                  "type": "integer",
+                  "description": "Verified amountCents within the declared recorded-payment scope."
+                }
+              },
+              "required": [
+                "status",
+                "amount",
+                "amountCents"
+              ],
+              "additionalProperties": false
+            },
+            "relatedGross": {
+              "type": "object",
+              "description": "Verified relatedGross within the declared recorded-payment scope.",
+              "properties": {
+                "status": {
+                  "type": "string",
+                  "description": "Verified status within the declared recorded-payment scope.",
+                  "const": "AVAILABLE"
+                },
+                "amount": {
+                  "type": "number",
+                  "description": "Verified amount within the declared recorded-payment scope."
+                },
+                "amountCents": {
+                  "type": "integer",
+                  "description": "Verified amountCents within the declared recorded-payment scope."
+                }
+              },
+              "required": [
+                "status",
+                "amount",
+                "amountCents"
+              ],
+              "additionalProperties": false
+            },
+            "combinedGross": {
+              "type": "object",
+              "description": "Verified combinedGross within the declared recorded-payment scope.",
+              "properties": {
+                "status": {
+                  "type": "string",
+                  "description": "Verified status within the declared recorded-payment scope.",
+                  "const": "AVAILABLE"
+                },
+                "amount": {
+                  "type": "number",
+                  "description": "Verified amount within the declared recorded-payment scope."
+                },
+                "amountCents": {
+                  "type": "integer",
+                  "description": "Verified amountCents within the declared recorded-payment scope."
+                }
+              },
+              "required": [
+                "status",
+                "amount",
+                "amountCents"
+              ],
+              "additionalProperties": false
+            },
+            "vendorIncoming": {
+              "type": "object",
+              "description": "Verified vendorIncoming within the declared recorded-payment scope.",
+              "properties": {
+                "status": {
+                  "type": "string",
+                  "description": "Verified status within the declared recorded-payment scope.",
+                  "const": "AVAILABLE"
+                },
+                "amount": {
+                  "type": "number",
+                  "description": "Verified amount within the declared recorded-payment scope."
+                },
+                "amountCents": {
+                  "type": "integer",
+                  "description": "Verified amountCents within the declared recorded-payment scope."
+                }
+              },
+              "required": [
+                "status",
+                "amount",
+                "amountCents"
+              ],
+              "additionalProperties": false
+            },
+            "vendorCredits": {
+              "type": "object",
+              "description": "Verified vendorCredits within the declared recorded-payment scope.",
+              "properties": {
+                "status": {
+                  "type": "string",
+                  "description": "Verified status within the declared recorded-payment scope.",
+                  "const": "AVAILABLE"
+                },
+                "amount": {
+                  "type": "number",
+                  "description": "Verified amount within the declared recorded-payment scope."
+                },
+                "amountCents": {
+                  "type": "integer",
+                  "description": "Verified amountCents within the declared recorded-payment scope."
+                }
+              },
+              "required": [
+                "status",
+                "amount",
+                "amountCents"
+              ],
+              "additionalProperties": false
+            },
+            "netPaid": {
+              "type": "object",
+              "description": "Verified netPaid within the declared recorded-payment scope.",
+              "properties": {
+                "status": {
+                  "type": "string",
+                  "description": "Verified status within the declared recorded-payment scope.",
+                  "const": "UNAVAILABLE"
+                },
+                "reason": {
+                  "type": "string",
+                  "description": "Verified reason within the declared recorded-payment scope.",
+                  "const": "RETURNS_AND_SETTLEMENT_NOT_RECONCILED"
+                }
+              },
+              "required": [
+                "status",
+                "reason"
+              ],
+              "additionalProperties": false
+            },
+            "firstPayment": {
+              "description": "Earliest verified outflow TxnDate in the exact declared native scope; not engagement inception.",
+              "anyOf": [
+                {
+                  "type": "object",
+                  "description": "Verified firstPayment within the declared recorded-payment scope.",
+                  "properties": {
+                    "date": {
+                      "type": "string",
+                      "description": "Verified date within the declared recorded-payment scope."
+                    },
+                    "id": {
+                      "type": "string",
+                      "description": "Verified id within the declared recorded-payment scope."
+                    },
+                    "type": {
+                      "type": "string",
+                      "description": "Verified type within the declared recorded-payment scope."
+                    },
+                    "scope": {
+                      "type": "string",
+                      "description": "Verified scope within the declared recorded-payment scope."
+                    }
+                  },
+                  "required": [
+                    "date",
+                    "id",
+                    "type",
+                    "scope"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "preCapitalDate": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Calendar day before first recorded payment, null when no payment exists by the selected cutoff."
+            },
+            "transactions": {
+              "type": "array",
+              "description": "Verified transactions within the declared recorded-payment scope.",
+              "maxItems": 400,
+              "items": {
+                "type": "object",
+                "description": "Verified transactions row within the declared recorded-payment scope.",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "description": "Verified id within the declared recorded-payment scope."
+                  },
+                  "type": {
+                    "type": "string",
+                    "description": "Verified type within the declared recorded-payment scope."
+                  },
+                  "scope": {
+                    "type": "string",
+                    "description": "Verified scope within the declared recorded-payment scope."
+                  },
+                  "date": {
+                    "type": "string",
+                    "description": "Verified date within the declared recorded-payment scope."
+                  },
+                  "amount": {
+                    "type": "number",
+                    "description": "Verified amount within the declared recorded-payment scope."
+                  },
+                  "amountCents": {
+                    "type": "integer",
+                    "description": "Verified amountCents within the declared recorded-payment scope."
+                  },
+                  "accountId": {
+                    "type": "string",
+                    "description": "Verified accountId within the declared recorded-payment scope."
+                  },
+                  "documentNumber": {
+                    "type": "string",
+                    "description": "Verified documentNumber within the declared recorded-payment scope."
+                  }
+                },
+                "required": [
+                  "id",
+                  "type",
+                  "scope",
+                  "date",
+                  "amount",
+                  "amountCents",
+                  "accountId",
+                  "documentNumber"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "incoming": {
+              "type": "array",
+              "description": "Verified incoming within the declared recorded-payment scope.",
+              "maxItems": 400,
+              "items": {
+                "type": "object",
+                "description": "Verified incoming row within the declared recorded-payment scope.",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "description": "Verified id within the declared recorded-payment scope."
+                  },
+                  "date": {
+                    "type": "string",
+                    "description": "Verified date within the declared recorded-payment scope."
+                  },
+                  "amountCents": {
+                    "type": "integer",
+                    "description": "Verified amountCents within the declared recorded-payment scope."
+                  },
+                  "accountId": {
+                    "type": "string",
+                    "description": "Verified accountId within the declared recorded-payment scope."
+                  },
+                  "returned": {
+                    "type": "boolean",
+                    "description": "Verified returned within the declared recorded-payment scope."
+                  },
+                  "capital": {
+                    "type": "boolean",
+                    "description": "Verified capital within the declared recorded-payment scope."
+                  },
+                  "amount": {
+                    "type": "number",
+                    "description": "Verified amount within the declared recorded-payment scope."
+                  },
+                  "classification": {
+                    "type": "string",
+                    "description": "Verified classification within the declared recorded-payment scope.",
+                    "enum": [
+                      "NATIVE_RETURNED_CHECK",
+                      "OWNER_INVESTMENT",
+                      "UNCLASSIFIED_INCOMING"
+                    ]
+                  }
+                },
+                "required": [
+                  "id",
+                  "date",
+                  "amountCents",
+                  "accountId",
+                  "returned",
+                  "capital",
+                  "amount",
+                  "classification"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "refunds": {
+              "type": "array",
+              "description": "Verified refunds within the declared recorded-payment scope.",
+              "maxItems": 400,
+              "items": {
+                "type": "object",
+                "description": "Verified transactions row within the declared recorded-payment scope.",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "description": "Verified id within the declared recorded-payment scope."
+                  },
+                  "type": {
+                    "type": "string",
+                    "description": "Verified type within the declared recorded-payment scope."
+                  },
+                  "scope": {
+                    "type": "string",
+                    "description": "Verified scope within the declared recorded-payment scope."
+                  },
+                  "date": {
+                    "type": "string",
+                    "description": "Verified date within the declared recorded-payment scope."
+                  },
+                  "amount": {
+                    "type": "number",
+                    "description": "Verified amount within the declared recorded-payment scope."
+                  },
+                  "amountCents": {
+                    "type": "integer",
+                    "description": "Verified amountCents within the declared recorded-payment scope."
+                  },
+                  "accountId": {
+                    "type": "string",
+                    "description": "Verified accountId within the declared recorded-payment scope."
+                  },
+                  "documentNumber": {
+                    "type": "string",
+                    "description": "Verified documentNumber within the declared recorded-payment scope."
+                  }
+                },
+                "required": [
+                  "id",
+                  "type",
+                  "scope",
+                  "date",
+                  "amount",
+                  "amountCents",
+                  "accountId",
+                  "documentNumber"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "monthly": {
+              "type": "array",
+              "description": "Verified monthly within the declared recorded-payment scope.",
+              "maxItems": 400,
+              "items": {
+                "type": "object",
+                "description": "Verified monthly row within the declared recorded-payment scope.",
+                "properties": {
+                  "month": {
+                    "type": "string",
+                    "description": "Verified month within the declared recorded-payment scope."
+                  },
+                  "amount": {
+                    "type": "number",
+                    "description": "Verified amount within the declared recorded-payment scope."
+                  },
+                  "amountCents": {
+                    "type": "integer",
+                    "description": "Verified amountCents within the declared recorded-payment scope."
+                  }
+                },
+                "required": [
+                  "month",
+                  "amount",
+                  "amountCents"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "exceptions": {
+              "type": "array",
+              "description": "Verified exceptions within the declared recorded-payment scope.",
+              "maxItems": 400,
+              "items": {
+                "type": "object",
+                "description": "Verified exceptions row within the declared recorded-payment scope.",
+                "properties": {
+                  "code": {
+                    "type": "string",
+                    "description": "Verified code within the declared recorded-payment scope."
+                  },
+                  "transactionIds": {
+                    "type": "array",
+                    "description": "Verified transactionIds within the declared recorded-payment scope.",
+                    "maxItems": 400,
+                    "items": {
+                      "type": "string",
+                      "description": "Verified transactionIds row within the declared recorded-payment scope."
+                    }
+                  }
+                },
+                "required": [
+                  "code",
+                  "transactionIds"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          "required": [
+            "vendorGross",
+            "relatedGross",
+            "combinedGross",
+            "vendorIncoming",
+            "vendorCredits",
+            "netPaid",
+            "firstPayment",
+            "preCapitalDate",
+            "transactions",
+            "incoming",
+            "refunds",
+            "monthly",
+            "exceptions"
+          ],
+          "additionalProperties": false
+        },
+        "preInvestment": {
+          "description": "Recorded net owner investment balance on the day before the derived first recorded payment; never total equity or gross capital.",
+          "anyOf": [
+            {
+              "type": "object",
+              "description": "Verified preInvestment within the declared recorded-payment scope.",
+              "properties": {
+                "status": {
+                  "type": "string",
+                  "description": "Verified status within the declared recorded-payment scope."
+                },
+                "amount": {
+                  "type": "number",
+                  "description": "Verified amount within the declared recorded-payment scope."
+                },
+                "amountCents": {
+                  "type": "integer",
+                  "description": "Verified amountCents within the declared recorded-payment scope."
+                },
+                "asOfDate": {
+                  "type": "string",
+                  "description": "Verified asOfDate within the declared recorded-payment scope."
+                },
+                "accountId": {
+                  "type": "string",
+                  "description": "Verified accountId within the declared recorded-payment scope."
+                }
+              },
+              "required": [
+                "status",
+                "amount",
+                "amountCents",
+                "asOfDate",
+                "accountId"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "status",
+                "reason"
+              ],
+              "properties": {
+                "status": {
+                  "type": "string",
+                  "const": "UNAVAILABLE",
+                  "description": "Historical capital source is unavailable."
+                },
+                "reason": {
+                  "type": "string",
+                  "description": "An explicit missing-cutoff, account or native source reason."
+                }
+              }
+            }
+          ]
+        },
+        "reconciliationStatus": {
+          "type": "string",
+          "description": "Verified reconciliationStatus within the declared recorded-payment scope.",
+          "const": "NOT_RECONCILED"
+        },
+        "sourceHash": {
+          "type": "string",
+          "description": "Verified sourceHash within the declared recorded-payment scope.",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      },
+      "required": [
+        "schemaVersion",
+        "provider",
+        "companyId",
+        "workspaceId",
+        "connectionId",
+        "connectionVersion",
+        "environment",
+        "request",
+        "currency",
+        "readAt",
+        "scope",
+        "proofs",
+        "sources",
+        "evidenceExpiresAt",
+        "data",
+        "preInvestment",
+        "reconciliationStatus",
+        "sourceHash"
+      ],
+      "additionalProperties": false
     }
   }
 }

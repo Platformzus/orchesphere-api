@@ -3,10 +3,10 @@ import assert from 'node:assert/strict';
 import {createWorker} from '../src/worker-core.mjs';
 const origin='https://api.orchesphere.ai';
 const routes=[{method:'GET',path:'/v1/workspaces'},{method:'POST',path:'/v1/workspaces/{workspaceId}/tasks'},{method:'POST',path:'/v1/workspaces/{workspaceId}/connections/{connectionId}/verify'},{method:'PUT',path:'/v1/workspaces/{workspaceId}/service-permissions/{provider}/{environment}'}];
-test('only the admitted accounting POST receives a bounded 50-second proxy budget',async t=>{
+for(const accountingRoute of ['report','payments'])test('only admitted accounting '+accountingRoute+' POST receives a bounded 50-second proxy budget',async t=>{
  t.mock.timers.enable({apis:['setTimeout']});const signals=[];
- const worker=createWorker({apiEnabled:true,routes:[...routes,{method:'POST',path:'/v1/workspaces/{workspaceId}/accounting/quickbooks/report'}],publicPaths:{},fetcher:async(url,{signal})=>{signals.push(signal);return new Promise((resolve,reject)=>signal.addEventListener('abort',()=>reject(Error('timeout')),{once:true}));}});
- const ordinary=worker.fetch(new Request(origin+'/v1/workspaces'),{}),accounting=worker.fetch(new Request(origin+'/v1/workspaces/workspace1/accounting/quickbooks/report',{method:'POST'}),{});
+ const worker=createWorker({apiEnabled:true,routes:[...routes,{method:'POST',path:'/v1/workspaces/{workspaceId}/accounting/quickbooks/'+accountingRoute}],publicPaths:{},fetcher:async(url,{signal})=>{signals.push(signal);return new Promise((resolve,reject)=>signal.addEventListener('abort',()=>reject(Error('timeout')),{once:true}));}});
+ const ordinary=worker.fetch(new Request(origin+'/v1/workspaces'),{}),accounting=worker.fetch(new Request(origin+'/v1/workspaces/workspace1/accounting/quickbooks/'+accountingRoute,{method:'POST'}),{});
  await new Promise(r=>setImmediate(r));t.mock.timers.tick(20001);assert.equal(signals[0].aborted,true);assert.equal(signals[1].aborted,false);assert.equal((await ordinary).status,503);
  t.mock.timers.tick(30000);assert.equal(signals[1].aborted,true);assert.equal((await accounting).status,503);
 });

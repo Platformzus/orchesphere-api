@@ -28,7 +28,7 @@ export function createWorker({routes,publicPaths,apiEnabled=false,fetcher=fetch}
   if(!discovery){for(const name of ['authorization','idempotency-key'])if(request.headers.has(name)){const value=request.headers.get(name);if(value.length>(name==='authorization'?20000:100))return error(400,'invalid_header','A request header exceeds the supported limit.');headers.set(name,value);}}
   let body;try{body=discovery?undefined:await boundedBody(request);}catch(status){return error(status===415?415:413,status===415?'unsupported_media_type':'request_too_large',status===415?'Send a JSON request body.':'The request body exceeds 24000 bytes.');}
   if(body)headers.set('content-type','application/json');
-  const accountingPost=request.method==='POST'&&/^\/v1\/workspaces\/[A-Za-z0-9_-]{8,80}\/accounting\/quickbooks\/report$/.test(path);
+  const accountingPost=request.method==='POST'&&/^\/v1\/workspaces\/[A-Za-z0-9_-]{8,80}\/accounting\/quickbooks\/(?:report|payments)$/.test(path);
   const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),accountingPost?50000:20000);
   const recovery=['GET','HEAD'].includes(request.method)?'Retry later.':'Read the current state and reconcile the result before repeating this request.';
   try{
