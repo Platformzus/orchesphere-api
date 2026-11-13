@@ -1383,6 +1383,55 @@
           "Source evidence expires within five minutes of its earliest constituent read. Source refresh uses its own bounded 45-second operation budget and is independent of income.",
           "First recorded payment is a transaction date in current complete native history, not proof of engagement inception or off-book completeness."
         ]
+      },
+      {
+        "operationId": "readShipbobInventory",
+        "method": "POST",
+        "path": "/v1/workspaces/{workspaceId}/providers/shipbob/inventory/read",
+        "summary": "Read ShipBob inventory by location",
+        "description": "Read a complete bounded production ShipBob inventory snapshot grouped by fulfillment location.",
+        "scope": [
+          "orchesphere.read",
+          "orchesphere.records.read"
+        ],
+        "permission": "Requires active company identity, explicit current ShipBob read and records_read service permissions, records OAuth scope and a verified saved installation.",
+        "requestSchema": {
+          "$ref": "#/components/schemas/ShipbobInventoryReadRequest"
+        },
+        "responseSchema": {
+          "$ref": "#/components/schemas/ShipbobInventoryReadResult"
+        },
+        "status": 200,
+        "requestRequired": true,
+        "exampleRequest": {},
+        "exampleResponse": {
+          "provider": "shipbob",
+          "workspaceId": "11111111-1111-4111-8111-111111111111",
+          "connectionId": "22222222-2222-4222-8222-222222222222",
+          "connectionVersion": 1,
+          "channelId": "123",
+          "result": {
+            "complete": true,
+            "items": [],
+            "unit": "provider_native",
+            "reconciliationStatus": "NOT_RECONCILED"
+          },
+          "resultHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "readAt": "2026-11-13T16:00:00.000Z"
+        },
+        "useWhen": "Use this to obtain independent warehouse inventory after native ShipBob consent and installation verification.",
+        "effects": [
+          "Reads inventory quantities grouped by fulfillment location; performs no business writes."
+        ],
+        "retry": [
+          "No automatic provider retries. Recheck current access after a denial and use bounded retries for temporary read failures."
+        ],
+        "limitations": [
+          "Only the verified production connection is used. Caller URLs, IDs, headers, filters and arbitrary operations are rejected.",
+          "At most 100 pages, 20,000 inventory items and 8 MB of normalized inventory are returned; incomplete captures fail instead of returning partial totals.",
+          "Uses native quantities with unknown values preserved. No SKU mappings, unit multipliers or reconciliation are inferred.",
+          "This is a focused inventory read. It does not implement the full ShipBob read/write API catalog."
+        ]
       }
     ]
   },
@@ -1445,6 +1494,38 @@
             "type": "oauth2",
             "scopes": [
               "orchesphere.read"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "read_shipbob_inventory",
+        "description": "Read a complete bounded ShipBob inventory snapshot by fulfillment location. Requires explicit current ShipBob records_read permission. Quantities remain in provider native units and are not reconciled.",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "workspaceId": {
+              "type": "string",
+              "description": "An assigned company workspace ID."
+            }
+          },
+          "required": [
+            "workspaceId"
+          ],
+          "additionalProperties": false
+        },
+        "annotations": {
+          "readOnlyHint": true,
+          "destructiveHint": false,
+          "idempotentHint": true,
+          "openWorldHint": true
+        },
+        "securitySchemes": [
+          {
+            "type": "oauth2",
+            "scopes": [
+              "orchesphere.read",
+              "orchesphere.records.read"
             ]
           }
         ]
@@ -2246,6 +2327,10 @@
         "name": "BigCommerce"
       },
       {
+        "id": "shipbob",
+        "name": "ShipBob"
+      },
+      {
         "id": "entra",
         "name": "Microsoft Entra"
       },
@@ -2270,7 +2355,7 @@
         "name": "GitHub"
       }
     ],
-    "businessOperations": "QuickBooks whole-company Total Income reads and Pipe17 company record reads/order writes are supported through separate current scopes and service rights. Pipe17 supports create, update, fulfill and cancel orders; other provider business operations are not implied."
+    "businessOperations": "QuickBooks accounting reads, Pipe17 company records and governed order writes, and a focused ShipBob inventory-by-location read are supported under separate current scopes and explicit service rights. Other provider business operations are not implied."
   },
   "errors": {
     "400": "Invalid path/query/body/header or business validation.",
@@ -6858,6 +6943,63 @@
         "preInvestment",
         "reconciliationStatus",
         "sourceHash"
+      ],
+      "additionalProperties": false
+    },
+    "ShipbobInventoryReadRequest": {
+      "type": "object",
+      "description": "An empty request; the saved connection supplies account scope.",
+      "properties": {},
+      "additionalProperties": false
+    },
+    "ShipbobInventoryReadResult": {
+      "type": "object",
+      "description": "Current connection-bound ShipBob inventory snapshot.",
+      "properties": {
+        "provider": {
+          "type": "string",
+          "description": "Native provider identifier.",
+          "const": "shipbob"
+        },
+        "workspaceId": {
+          "type": "string",
+          "description": "Authorized company workspace identifier."
+        },
+        "connectionId": {
+          "type": "string",
+          "description": "Current saved connection identifier."
+        },
+        "connectionVersion": {
+          "type": "integer",
+          "description": "Current saved connection revision."
+        },
+        "channelId": {
+          "type": "string",
+          "description": "Verified OAuth installation channel identifier; not a merchant legal identity."
+        },
+        "result": {
+          "type": "object",
+          "description": "Complete bounded native inventory by fulfillment location. Null quantities are unknown; native units are not converted or reconciled."
+        },
+        "resultHash": {
+          "type": "string",
+          "description": "SHA-256 of the native snapshot result."
+        },
+        "readAt": {
+          "type": "string",
+          "description": "Time the server completed this authorized read.",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "provider",
+        "workspaceId",
+        "connectionId",
+        "connectionVersion",
+        "channelId",
+        "result",
+        "resultHash",
+        "readAt"
       ],
       "additionalProperties": false
     }
